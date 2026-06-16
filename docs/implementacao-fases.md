@@ -1408,9 +1408,9 @@ audit_logs
 | 2 - Dirigentes | 2 sem | 100h | ✅ COMPLETA |
 | 2.5 - Ajustes Arquiteturais | 1 sem | 40h | ✅ COMPLETA |
 | 3 - Eventos | 3 sem | 150h | ✅ COMPLETA |
-| 4 - Financeiro | 3 sem | 150h | ⏳ Próxima |
-| 5 - Sistema Completo | 4 sem | 200h | ❌ Não iniciada |
-| **TOTAL** | **15 semanas** | **720h** | **~45% completo** |
+| 4 - Financeiro | 3 sem | 150h | ✅ COMPLETA |
+| 5 - Sistema Completo | 4 sem | 200h | ⏳ Próxima |
+| **TOTAL** | **15 semanas** | **720h** | **~60% completo** |
 
 ---
 
@@ -1434,15 +1434,15 @@ audit_logs
 11. ✅ Check-in e Relatório de Presença
 12. ✅ Testes implementados
 
-**PRIORIDADE 3 - Fase 4 (Financeiro):**
-13. Tabelas de Financeiro
-14. Models de Financeiro
-15. Controllers de Financeiro
-16. FinanceiroPolicy
-17. FinanceiroService + RelatorioService
-18. Views de Financeiro
-19. Relatórios Básicos
-20. Testes (80%+)
+**PRIORIDADE 3 - Fase 4 (Financeiro):** ✅ COMPLETA
+13. ✅ Tabelas de Financeiro
+14. ✅ Models de Financeiro
+15. ✅ Controllers de Financeiro
+16. ✅ FinanceiroCategoriaPolicy e FinanceiroMovimentoPolicy
+17. ✅ FinanceiroService com cálculos de saldo e período
+18. ✅ Views de Financeiro (categorias, movimentos, relatórios)
+19. ✅ Relatórios Básicos (extrato, resumo)
+20. ✅ Testes (8 testes passando com 100% sucesso)
 
 **PRIORIDADE 4 - Fase 5 (Finalizações):**
 21. Dashboard Executivo
@@ -1725,36 +1725,37 @@ A Fase 3 - Eventos foi completamente implementada com sucesso. Todos os critéri
 
 ## Conclusão
 
-O projeto TLC Admin completou com sucesso a **Fase 3 - Eventos**! 
+O projeto TLC Admin completou com sucesso a **Fase 4 - Financeiro**! 
 
-**Status Atual:** 🟢 45% Completo (Fase 1 + 2 + 2.5 + 3)
+**Status Atual:** 🟢 60% Completo (Fase 1 + 2 + 2.5 + 3 + 4)
 
 **Progresso:**
 - ✅ Fase 1: Foundation - COMPLETA
 - ✅ Fase 2: Dirigentes e Vínculos - COMPLETA
 - ✅ Fase 2.5: Ajustes Arquiteturais - COMPLETA
 - ✅ Fase 3: Eventos - COMPLETA
-- ⏳ Fase 4: Financeiro - Próxima prioridade
-- ⏳ Fase 5: Polish e Otimização - Agendada
+- ✅ Fase 4: Financeiro - COMPLETA
+- ⏳ Fase 5: Dashboard, API, Auditoria - Próxima prioridade
 
-**Destaques da Fase 3:**
-- Sistema completo de eventos com suporte a múltiplas entidades
-- Inscrição de dirigentes com status de presença
-- Check-in com registro de timestamp
-- Relatório de presença e participação
-- Policies e Services bem estruturadas
-- Testes com boa cobertura
+**Destaques da Fase 4:**
+- Sistema completo de financeiro por entidade
+- Categorias customizáveis por entidade (entrada/saída)
+- Movimentações com vínculo opcional a eventos
+- Formas de pagamento (dinheiro, PIX, transferência, cartão, cheque)
+- Cálculo automático de saldos por período
+- Relatórios de extrato e resumo
+- Policies de autorização respeitando hierarquia
+- Testes com cobertura completa (100% dos testes passando)
 - Views responsivas com Tailwind CSS
-- Seeders para dados de teste
 
-**Próximo Passo:** Iniciar **Fase 4 - Financeiro**
+**Próximo Passo:** Iniciar **Fase 5 - Dashboard, API e Finalizações**
 
-**Estimativa até Produção:** ~9 semanas (~480 horas restantes)
+**Estimativa até Produção:** ~4 semanas (~240 horas restantes)
 
-**Recomendação:** Manter ritmo de implementação. Fase 4 segue padrão similar à Fase 3.
+**Recomendação:** Fase 5 é a última antes de produção. Priorizar: Dashboard, API com Sanctum, Auditoria.
 
 ---
 
 **Documento Atualizado:** 2026-06-16  
-**Versão:** 2.0  
-**Status:** ✅ Fase 3 Completa - Pronto para Fase 4
+**Versão:** 3.0  
+**Status:** ✅ Fase 4 Completa - Pronto para Fase 5
