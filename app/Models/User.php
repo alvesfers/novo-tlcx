@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'tipo_usuario',
+        'entidade_id',
         'ativo',
     ];
 
@@ -55,7 +56,7 @@ class User extends Authenticatable
 
     public function entidade()
     {
-        return $this->hasOne(Entidade::class);
+        return $this->belongsTo(Entidade::class);
     }
 
     // ===== MÉTODOS AUXILIARES =====

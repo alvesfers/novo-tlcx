@@ -49,9 +49,8 @@ Route::get('/financeiro/extrato', [FinanceiroMovimentoController::class, 'extrat
 Route::get('/financeiro/resumo', [FinanceiroMovimentoController::class, 'resumo'])->name('financeiro.resumo');
 
 // dashboard pages
-Route::get('/', function () {
-    return view('pages.dashboard.ecommerce', ['title' => 'E-commerce Dashboard']);
-})->name('dashboard');
+Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
 // calender pages
 Route::get('/calendar', function () {
