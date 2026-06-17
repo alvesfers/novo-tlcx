@@ -34,10 +34,10 @@
                         <td class="px-6 py-4 text-sm">{{ $secretaria->entidadePai?->nome ?? '-' }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2 py-1 rounded text-xs font-medium
-                                @if($secretaria->tipo_secretaria === 'aberta') bg-blue-100 text-blue-800
+                                @if($secretaria->tipo_secretaria->isAberta()) bg-blue-100 text-blue-800
                                 @else bg-purple-100 text-purple-800
                                 @endif">
-                                {{ ucfirst($secretaria->tipo_secretaria ?? '') }}
+                                {{ $secretaria->tipo_secretaria->label() }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $secretaria->email ?? '-' }}</td>
