@@ -47,22 +47,41 @@ class DirigenteController extends Controller
         }
 
         $dirigentes = $query->paginate(15);
-        return view('dirigentes.index', compact('dirigentes', 'filter'));
+        $nucleos = Entidade::where('tipo_entidade', 'nucleo')->where('ativo', true)->get();
+        return view('dirigentes.index', compact('dirigentes', 'filter', 'nucleos'));
     }
 
     public function create()
     {
-        $nucleos = Entidade::where('tipo_entidade', 'nucleo')->where('ativo', true)->get();
-        return view('dirigentes.create', compact('nucleos'));
+        return redirect()->route('dirigentes.index');
     }
 
     public function store(StoreDirigenteRequest $request)
     {
         $this->authorize('create', Dirigente::class);
 
-        $dirigente = $this->service->criarComVinculoPrincipal($request->validated());
+        try {
+            $dirigente = $this->service->criarComVinculoPrincipal($request->validated());
 
-        return redirect()->route('dirigentes.show', $dirigente)->with('success', 'Dirigente criado com sucesso.');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Dirigente criado com sucesso!',
+                    'dirigente' => $dirigente,
+                ]);
+            }
+
+            return redirect()->route('dirigentes.show', $dirigente)->with('success', 'Dirigente criado com sucesso.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function show(Dirigente $dirigente)
@@ -75,14 +94,35 @@ class DirigenteController extends Controller
     public function edit(Dirigente $dirigente)
     {
         $this->authorize('update', $dirigente);
-        return view('dirigentes.edit', compact('dirigente'));
+        return redirect()->route('dirigentes.index');
     }
 
     public function update(UpdateDirigenteRequest $request, Dirigente $dirigente)
     {
         $this->authorize('update', $dirigente);
-        $this->service->atualizar($dirigente, $request->validated());
-        return redirect()->route('dirigentes.show', $dirigente)->with('success', 'Dirigente atualizado com sucesso.');
+
+        try {
+            $this->service->atualizar($dirigente, $request->validated());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Dirigente atualizado com sucesso!',
+                    'dirigente' => $dirigente,
+                ]);
+            }
+
+            return redirect()->route('dirigentes.show', $dirigente)->with('success', 'Dirigente atualizado com sucesso.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function destroy(Dirigente $dirigente)
