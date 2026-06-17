@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div x-data="diocesesManager()" class="container mx-auto px-4 py-8">
+<div x-data="diocesesManager()" class="container mx-auto px-4 py-8" id="diocesesContainer">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Dioceses</h1>
     </div>
@@ -31,7 +31,7 @@
                     </button>
                 @endif
 
-                <button onclick="openDioceseCreateModal()"
+                <button onclick="openModal('dioceseModal', false)"
                         class="inline-flex items-center gap-2 rounded-lg bg-green-600 text-white px-4 py-3 text-theme-sm font-medium hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800">
                     <svg class="fill-current" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -104,7 +104,7 @@
                                         </svg>
                                     </a>
 
-                                    <button onclick="openDioceseEditModal({
+                                    <button onclick="openModal('dioceseModal', true, {
                                         id: {{ $diocese->id }},
                                         nome: '{{ addslashes($diocese->nome) }}',
                                         email: '{{ addslashes($diocese->email ?? '') }}',
@@ -243,6 +243,42 @@
     </script>
 
     <!-- Modal -->
-    <x-diocese-modal />
+    <x-modal-form
+        id="dioceseModal"
+        title="Criar Nova Diocese"
+        resource="dioceses"
+        size="md"
+    >
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Nome</label>
+            <input
+                type="text"
+                name="nome"
+                id="dioceseModalnome"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                required
+            >
+            <span class="text-red-500 text-sm" id="dioceseModalnomeError"></span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Email</label>
+            <input
+                type="email"
+                name="email"
+                id="dioceseModalemail"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+            <span class="text-red-500 text-sm" id="dioceseModalemailError"></span>
+        </div>
+
+        <div data-edit-only style="display: none;">
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Ativo</label>
+            <label class="flex items-center dark:text-gray-200">
+                <input type="checkbox" name="ativo" id="dioceseModalativo" value="1" class="rounded dark:bg-gray-700">
+                <span class="ml-2">Diocese ativa no sistema</span>
+            </label>
+        </div>
+    </x-modal-form>
 </div>
 @endsection

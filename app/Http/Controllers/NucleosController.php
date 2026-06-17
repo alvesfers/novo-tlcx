@@ -58,40 +58,78 @@ class NucleosController extends Controller
         return view('nucleos.edit', compact('nucleo', 'dioceses'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $this->authorize('create', Entidade::class);
 
-        $validated = $request->validate([
-            'entidade_pai_id' => 'required|exists:entidades,id',
-            'nome' => 'required|string|max:255',
-            'email' => 'nullable|email',
-        ]);
+        try {
+            $validated = $request->validate([
+                'entidade_pai_id' => 'required|exists:entidades,id',
+                'nome' => 'required|string|max:255',
+                'email' => 'nullable|email',
+            ]);
 
-        Entidade::create([
-            ...$validated,
-            'tipo_entidade' => 'nucleo',
-        ]);
+            $nucleo = Entidade::create([
+                ...$validated,
+                'tipo_entidade' => 'nucleo',
+            ]);
 
-        return redirect()->route('nucleos.index')
-            ->with('success', 'Núcleo criado com sucesso!');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Núcleo criado com sucesso!',
+                    'nucleo' => $nucleo,
+                ]);
+            }
+
+            return redirect()->route('nucleos.index')
+                ->with('success', 'Núcleo criado com sucesso!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
-    public function update(Request $request, Entidade $nucleo): RedirectResponse
+    public function update(Request $request, Entidade $nucleo)
     {
         $this->authorize('update', $nucleo);
 
-        $validated = $request->validate([
-            'entidade_pai_id' => 'required|exists:entidades,id',
-            'nome' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'ativo' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validate([
+                'entidade_pai_id' => 'required|exists:entidades,id',
+                'nome' => 'required|string|max:255',
+                'email' => 'nullable|email',
+                'ativo' => 'boolean',
+            ]);
 
-        $nucleo->update($validated);
+            $nucleo->update($validated);
 
-        return redirect()->route('nucleos.index')
-            ->with('success', 'Núcleo atualizado com sucesso!');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Núcleo atualizado com sucesso!',
+                    'nucleo' => $nucleo,
+                ]);
+            }
+
+            return redirect()->route('nucleos.index')
+                ->with('success', 'Núcleo atualizado com sucesso!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function destroy(Entidade $nucleo): RedirectResponse
