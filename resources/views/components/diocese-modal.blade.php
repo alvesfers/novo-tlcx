@@ -2,7 +2,7 @@
 
 <div class="fixed inset-0 z-50" id="dioceseModal" style="display: none;" x-cloak>
     <!-- Backdrop -->
-    <div class="absolute inset-0 bg-black bg-opacity-50" onclick="closeDioceseModal()"></div>
+    <div class="absolute inset-0 backdrop-blur-sm" onclick="closeDioceseModal()"></div>
 
     <!-- Modal -->
     <div class="fixed inset-0 z-50 flex items-center justify-center">
