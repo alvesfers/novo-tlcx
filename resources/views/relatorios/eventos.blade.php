@@ -61,8 +61,8 @@
                 @forelse($eventos as $evento)
                 <tr class="border-t hover:bg-gray-50">
                     <td class="px-6 py-4 text-sm text-gray-900">{{ $evento->nome }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ $evento->data_inicio->format('d/m/Y') }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ $evento->data_fim->format('d/m/Y') }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">{{ $evento->data_inicio?->format('d/m/Y') ?? '-' }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-900">{{ $evento->data_fim?->format('d/m/Y') ?? '-' }}</td>
                     <td class="px-6 py-4 text-sm text-right text-gray-900">{{ $evento->participantes->count() }}</td>
                 </tr>
                 @empty

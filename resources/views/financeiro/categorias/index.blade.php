@@ -87,7 +87,7 @@
                                 <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ $categoria->nome }}</p>
                             </td>
                             <td class="px-6 py-3.5">
-                                <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ ucfirst($categoria->tipo) }}</p>
+                                <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ ucfirst($categoria->tipo->value) }}</p>
                             </td>
                             <td class="px-6 py-3.5">
                                 <span class="inline-block px-3 py-1 rounded-full text-theme-xs font-medium

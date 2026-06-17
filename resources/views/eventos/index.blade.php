@@ -105,7 +105,7 @@
                                         @default
                                             bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400
                                     @endswitch">
-                                    {{ ucfirst($evento->status) }}
+                                    {{ ucfirst($evento->status->value) }}
                                 </span>
                             </td>
                             <td class="px-6 py-3.5">

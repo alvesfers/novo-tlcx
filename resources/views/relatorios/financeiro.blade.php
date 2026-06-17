@@ -66,8 +66,8 @@
                     <td class="px-6 py-4 text-sm text-gray-600">{{ $movimento->descricao }}</td>
                     <td class="px-6 py-4 text-sm">
                         <span class="px-2 py-1 rounded text-white text-xs font-medium
-                            {{ $movimento->tipo === 'entrada' ? 'bg-green-500' : 'bg-red-500' }}">
-                            {{ ucfirst($movimento->tipo) }}
+                            {{ $movimento->tipo->value === 'entrada' ? 'bg-green-500' : 'bg-red-500' }}">
+                            {{ ucfirst($movimento->tipo->value) }}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-sm font-semibold text-right text-gray-900">

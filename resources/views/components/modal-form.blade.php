@@ -19,12 +19,12 @@
     $sizeClass = $sizeClasses[$size] ?? $sizeClasses['md'];
 @endphp
 
-<div class="fixed inset-0 z-50" id="{{ $id }}" style="display: none;">
+<div class="fixed inset-0 z-[99999]" id="{{ $id }}" style="display: none;">
     <!-- Backdrop -->
     <div class="absolute inset-0 backdrop-blur-sm" onclick="closeModal('{{ $id }}')"></div>
 
     <!-- Modal -->
-    <div class="fixed inset-0 z-50 flex items-center justify-center">
+    <div class="fixed inset-0 z-[99999] flex items-center justify-center">
         <div class="relative bg-white rounded-lg shadow-lg p-6 w-full {{ $sizeClass }} max-h-[90vh] overflow-y-auto dark:bg-gray-800">
             <button onclick="closeModal('{{ $id }}')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -25,7 +25,10 @@ class MenuHelper
             [
                 'icon' => 'calendar-days',
                 'name' => 'Eventos',
-                'path' => '/eventos',
+                'subItems' => [
+                    ['name' => 'Lista de Eventos', 'path' => '/eventos'],
+                    ['name' => 'Calendário', 'path' => '/eventos/calendario'],
+                ],
             ],
             [
                 'icon' => 'tag',
@@ -44,6 +47,31 @@ class MenuHelper
                     ['name' => 'Resumo Financeiro', 'path' => '/financeiro/resumo'],
                     ['name' => 'Movimentações', 'path' => '/financeiro-movimentos'],
                     ['name' => 'Categorias', 'path' => '/financeiro-categorias'],
+                ],
+            ],
+            [
+                'icon' => 'inbox-stack',
+                'name' => 'Almoxarifado',
+                'subItems' => [
+                    ['name' => 'Itens', 'path' => '/almoxarifado-itens'],
+                    ['name' => 'Categorias', 'path' => '/almoxarifado-categorias'],
+                    ['name' => 'Movimentações', 'path' => '/almoxarifado-movimentos'],
+                ],
+            ],
+            [
+                'icon' => 'check-circle',
+                'name' => 'Tarefas',
+                'subItems' => [
+                    ['name' => 'Minhas Tarefas', 'path' => '/tarefas'],
+                    ['name' => 'Categorias', 'path' => '/tarefa-categorias'],
+                ],
+            ],
+            [
+                'icon' => 'folder',
+                'name' => 'Documentos',
+                'subItems' => [
+                    ['name' => 'Arquivos', 'path' => '/documentos'],
+                    ['name' => 'Categorias', 'path' => '/documento-categorias'],
                 ],
             ],
             [
@@ -152,6 +180,9 @@ class MenuHelper
             'qr-code' => 'heroicon-o-qr-code',
             'code-bracket-square' => 'heroicon-o-code-bracket-square',
             'square-3-stack-3d' => 'heroicon-o-square-3-stack-3d',
+            'inbox-stack' => 'heroicon-o-inbox-stack',
+            'check-circle' => 'heroicon-o-check-circle',
+            'folder' => 'heroicon-o-folder',
         ];
 
         return $iconMap[$iconName] ?? 'heroicon-o-circle-stack';

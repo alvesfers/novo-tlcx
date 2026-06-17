@@ -7,7 +7,12 @@ use App\Models\Entidade;
 use App\Models\Dirigente;
 use App\Models\Evento;
 use App\Models\FinanceiroMovimento;
+use App\Models\AlmoxarifadoItem;
+use App\Models\Tarefa;
+use App\Models\Documento;
 use App\Enums\TipoMovimentoFinanceiro;
+use App\Enums\StatusItemEstoque;
+use App\Enums\StatusTarefa;
 use Carbon\Carbon;
 
 class DashboardService
@@ -124,6 +129,10 @@ class DashboardService
             'total_usuarios' => User::count(),
             'total_eventos' => Evento::count(),
             'saldo_global' => FinanceiroMovimento::where('tipo', 'entrada')->sum('valor') - FinanceiroMovimento::where('tipo', 'saida')->sum('valor'),
+            'total_itens_estoque' => AlmoxarifadoItem::count(),
+            'total_tarefas' => Tarefa::count(),
+            'tarefas_vencidas' => Tarefa::whereDate('data_limite', '<', now())->where('status', '!=', StatusTarefa::Concluida)->count(),
+            'total_documentos' => Documento::count(),
         ];
     }
 
@@ -144,6 +153,14 @@ class DashboardService
                 ->where('tipo', 'entrada')->sum('valor') -
                 FinanceiroMovimento::whereIn('entidade_id', $filhos)
                 ->where('tipo', 'saida')->sum('valor'),
+            'total_itens_estoque' => AlmoxarifadoItem::whereIn('entidade_id', $filhos)->count(),
+            'itens_esgotados' => AlmoxarifadoItem::whereIn('entidade_id', $filhos)
+                ->where('status', StatusItemEstoque::Esgotado)->count(),
+            'total_tarefas' => Tarefa::whereIn('entidade_id', $filhos)->count(),
+            'tarefas_vencidas' => Tarefa::whereIn('entidade_id', $filhos)
+                ->whereDate('data_limite', '<', now())
+                ->where('status', '!=', StatusTarefa::Concluida)->count(),
+            'total_documentos' => Documento::whereIn('entidade_id', $filhos)->count(),
         ];
     }
 
@@ -162,6 +179,14 @@ class DashboardService
             'proximas_atividades' => Evento::where('entidade_criadora_id', $entidade->id)
                 ->where('data_inicio', '>=', now())
                 ->count(),
+            'total_itens_estoque' => AlmoxarifadoItem::where('entidade_id', $entidade->id)->count(),
+            'itens_esgotados' => AlmoxarifadoItem::where('entidade_id', $entidade->id)
+                ->where('status', StatusItemEstoque::Esgotado)->count(),
+            'total_tarefas' => Tarefa::where('entidade_id', $entidade->id)->count(),
+            'tarefas_vencidas' => Tarefa::where('entidade_id', $entidade->id)
+                ->whereDate('data_limite', '<', now())
+                ->where('status', '!=', StatusTarefa::Concluida)->count(),
+            'total_documentos' => Documento::where('entidade_id', $entidade->id)->count(),
         ];
     }
 
@@ -180,6 +205,14 @@ class DashboardService
             'proximas_atividades' => Evento::where('entidade_criadora_id', $entidade->id)
                 ->where('data_inicio', '>=', now())
                 ->count(),
+            'total_itens_estoque' => AlmoxarifadoItem::where('entidade_id', $entidade->id)->count(),
+            'itens_esgotados' => AlmoxarifadoItem::where('entidade_id', $entidade->id)
+                ->where('status', StatusItemEstoque::Esgotado)->count(),
+            'total_tarefas' => Tarefa::where('entidade_id', $entidade->id)->count(),
+            'tarefas_vencidas' => Tarefa::where('entidade_id', $entidade->id)
+                ->whereDate('data_limite', '<', now())
+                ->where('status', '!=', StatusTarefa::Concluida)->count(),
+            'total_documentos' => Documento::where('entidade_id', $entidade->id)->count(),
         ];
     }
 

@@ -86,7 +86,7 @@
                                 <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ $secretaria->nome }}</p>
                             </td>
                             <td class="px-6 py-3.5">
-                                <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ ucfirst($secretaria->tipo_secretaria) }}</p>
+                                <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ ucfirst($secretaria->tipo_secretaria->value) }}</p>
                             </td>
                             <td class="px-6 py-3.5">
                                 <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ $secretaria->email ?? '-' }}</p>

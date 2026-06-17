@@ -84,6 +84,11 @@ Route::delete('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeCo
 // eventos resources
 Route::resource('tipo-eventos', TipoEventoController::class);
 Route::post('/tipo-eventos/delete-multiple', [TipoEventoController::class, 'deleteMultiple'])->name('tipo-eventos.delete-multiple');
+
+// calendario de eventos (deve estar ANTES do resource para não conflitar)
+Route::get('/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'index'])->name('eventos.calendario');
+Route::get('/api/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'getEventos'])->name('eventos.calendario.get');
+
 Route::resource('eventos', EventoController::class);
 Route::post('/eventos/delete-multiple', [EventoController::class, 'deleteMultiple'])->name('eventos.delete-multiple');
 Route::resource('participante-externos', ParticipanteExternoController::class);
@@ -107,6 +112,22 @@ Route::post('/eventos/{evento}/participantes/{eventoParticipante}/presenca', [Ev
     Route::post('/financeiro-movimentos/delete-multiple', [FinanceiroMovimentoController::class, 'deleteMultiple'])->name('financeiro-movimentos.delete-multiple');
     Route::get('/financeiro/extrato', [FinanceiroMovimentoController::class, 'extrato'])->name('financeiro.extrato');
     Route::get('/financeiro/resumo', [FinanceiroMovimentoController::class, 'resumo'])->name('financeiro.resumo');
+
+    // almoxarifado resources
+    Route::resource('almoxarifado-categorias', \App\Http\Controllers\AlmoxarifadoCategoriaController::class);
+    Route::resource('almoxarifado-itens', \App\Http\Controllers\AlmoxarifadoItemController::class);
+    Route::resource('almoxarifado-movimentos', \App\Http\Controllers\AlmoxarifadoMovimentoController::class);
+
+    // tarefas resources
+    Route::resource('tarefa-categorias', \App\Http\Controllers\TarefaCategoriaController::class);
+    Route::resource('tarefas', \App\Http\Controllers\TarefaController::class);
+    Route::post('/tarefas/{tarefa}/concluir', [\App\Http\Controllers\TarefaController::class, 'concluir'])->name('tarefas.concluir');
+    Route::post('/tarefas/{tarefa}/cancelar', [\App\Http\Controllers\TarefaController::class, 'cancelar'])->name('tarefas.cancelar');
+
+    // documentos resources
+    Route::resource('documento-categorias', \App\Http\Controllers\DocumentoCategoriaController::class);
+    Route::resource('documentos', \App\Http\Controllers\DocumentoController::class);
+    Route::get('/documentos/{documento}/download', [\App\Http\Controllers\DocumentoController::class, 'download'])->name('documentos.download');
 
     // auditoria e logs
     Route::get('/auditoria', [AuditLogController::class, 'index'])->name('auditoria.index');

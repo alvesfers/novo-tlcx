@@ -433,7 +433,7 @@ class RelatorioController extends Controller
         $agrupado = [];
         foreach ($dirigentes as $dirigente) {
             foreach ($dirigente->vinculos as $vinculo) {
-                $cargo = $vinculo->cargo;
+                $cargo = $vinculo->cargo->value;
                 $agrupado[$cargo] = ($agrupado[$cargo] ?? 0) + 1;
             }
         }

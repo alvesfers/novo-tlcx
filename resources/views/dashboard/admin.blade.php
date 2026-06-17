@@ -174,6 +174,43 @@
     </div>
     @endif
 
+    <!-- KPIs dos Novos Módulos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Almoxarifado -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-semibold">Itens em Estoque</p>
+                    <p class="text-2xl font-bold text-teal-600">{{ $resumo['kpis']['total_itens_estoque'] ?? 0 }}</p>
+                </div>
+                <div class="text-4xl">📦</div>
+            </div>
+        </div>
+
+        <!-- Tarefas -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-semibold">Tarefas Totais</p>
+                    <p class="text-2xl font-bold text-cyan-600">{{ $resumo['kpis']['total_tarefas'] ?? 0 }}</p>
+                    <p class="text-gray-500 text-xs mt-1">{{ $resumo['kpis']['tarefas_vencidas'] ?? 0 }} vencidas</p>
+                </div>
+                <div class="text-4xl">✅</div>
+            </div>
+        </div>
+
+        <!-- Documentos -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-600 text-sm font-semibold">Documentos</p>
+                    <p class="text-2xl font-bold text-amber-600">{{ $resumo['kpis']['total_documentos'] ?? 0 }}</p>
+                </div>
+                <div class="text-4xl">📄</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Gráficos -->
     @if(isset($resumo['graficos_data']))
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">

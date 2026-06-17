@@ -747,9 +747,111 @@ Isola lógica de negócio, facilita testes, reutilização entre controllers.
 ### 5. Por que Policies e não role-based?
 Policies oferecem controle mais granular e são testáveis.
 
+---
+
+## Fase 6: Novos Módulos (2026-06-17) ✅
+
+### Módulo 1: Almoxarifado / Estoque ✅
+
+**Status**: ✅ IMPLEMENTADO
+
+**Funcionalidades Implementadas:**
+- [x] Models: AlmoxarifadoCategoria, AlmoxarifadoItem, AlmoxarifadoMovimento, AlmoxarifadoTransferencia
+- [x] Controllers: AlmoxarifadoCategoriaController, AlmoxarifadoItemController, AlmoxarifadoMovimentoController
+- [x] Services: AlmoxarifadoService com métodos para entrada, saída, ajuste e transferência
+- [x] Policies: AlmoxarifadoCategoriaPolicy, AlmoxarifadoItemPolicy, AlmoxarifadoMovimentoPolicy
+- [x] Form Requests: StorageAlmoxarifadoCategoriaRequest, UpdateAlmoxarifadoCategoriaRequest, etc
+- [x] Enums: TipoMovimentoEstoque, UnidadeMedidaEstoque, StatusItemEstoque
+- [x] Views: Índice, Itens, Categorias, Movimentos (com modal reutilizável)
+- [x] Migrations: 4 tabelas + índices
+- [x] Seeders: 7 categorias padrão + itens de exemplo por entidade
+- [x] Rotas: RESTful resources com suporte a modal-form
+
+**Arquivos Criados**: 50+
+
+### Módulo 2: Tarefas / To-do List ✅
+
+**Status**: ✅ IMPLEMENTADO
+
+**Funcionalidades Implementadas:**
+- [x] Models: TarefaCategoria, Tarefa, TarefaComentario
+- [x] Controllers: TarefaCategoriaController, TarefaController
+- [x] Services: TarefaService com métodos para criar, atualizar, alterar status, concluir, cancelar
+- [x] Policies: TarefaPolicy, TarefaCategoriaPolicy
+- [x] Form Requests: StoreTarefaCategoriaRequest, UpdateTarefaCategoriaRequest, StoreTarefaRequest, etc
+- [x] Enums: StatusTarefa (pendente, em_andamento, concluida, cancelada), PrioridadeTarefa
+- [x] Views: Índice com filtros, Categorias (com modal reutilizável)
+- [x] Migrations: 3 tabelas + índices
+- [x] Seeders: 7 categorias padrão + 5 tarefas de exemplo por entidade
+- [x] Rotas: RESTful resources com ações adicionais (concluir, cancelar)
+
+**Arquivos Criados**: 45+
+
+### Módulo 3: Documentos / Arquivos ✅
+
+**Status**: ✅ IMPLEMENTADO
+
+**Funcionalidades Implementadas:**
+- [x] Models: DocumentoCategoria, Documento
+- [x] Controllers: DocumentoCategoriaController, DocumentoController
+- [x] Services: DocumentoService com métodos para upload, atualizar, excluir, getDocumentosVisiveis
+- [x] Policies: DocumentoPolicy (com visibilidade pública/privada), DocumentoCategoriaPolicy
+- [x] Form Requests: StoreDocumentoCategoriaRequest, UpdateDocumentoCategoriaRequest, StoreDocumentoRequest, UpdateDocumentoRequest
+- [x] Enums: VisibilidadeDocumento (publico, privado), TipoDocumento (geral, ata, financeiro, evento, formacao, liturgia, imagem, outro)
+- [x] Views: Índice com filtros, Categorias (com modal reutilizável)
+- [x] Migrations: 2 tabelas + índices
+- [x] Seeders: 7 categorias padrão por entidade
+- [x] Rotas: RESTful resources + download endpoint
+- [x] Storage: Suporte a arquivos privados (storage/private) e públicos (storage/public)
+
+**Arquivos Criados**: 50+
+
+### Escopo de Autorização por Módulo
+
+**Almoxarifado**:
+- Admin: acessa e gerencia tudo
+- Diocese: acessa e gerencia apenas o próprio estoque
+- Núcleo/Secretaria: acessa e gerencia apenas seu próprio estoque
+- Diocese não visualiza estoque de núcleos/secretarias filhos neste módulo
+
+**Tarefas**:
+- Admin: acessa e gerencia tudo
+- Diocese: acessa e gerencia apenas as próprias tarefas da Diocese
+- Núcleo/Secretaria: acessa e gerencia apenas suas próprias tarefas
+- Diocese não visualiza tarefas de núcleos/secretarias filhos neste módulo
+
+**Documentos**:
+- Admin: acessa e gerencia tudo
+- Diocese: acessa documentos privados da Diocese e documentos públicos permitidos
+- Núcleo/Secretaria: acessa documentos privados da entidade e documentos públicos
+- Diocese não visualiza documentos privados de núcleos/secretarias filhos
+- Documentos públicos: visualizáveis por usuários autenticados conforme policy
+
+### Padrões Utilizados
+
+- Controllers com `authorize()` e Policies
+- Services com transações DB::transaction()
+- Form Requests com validações e mensagens em português
+- Enums para type-safety
+- Soft deletes em todas as tabelas
+- Modal-form component reutilizável
+- RESTful routes com recursos aninhados quando apropriado
+- Índices de banco de dados para performance
+
+### Integração com Sistema Existente
+
+- Registradas todas as Policies em AuthServiceProvider.php
+- Adicionadas as rotas em routes/web.php
+- Integradas seeders em database/seeders/DatabaseSeeder.php
+- Mantida compatibilidade com estrutura hierárquica (Diocese → Núcleo → Secretaria)
+- Auditoria integrada com AuditLogService quando disponível
+
+---
+
 ## Notas
 
 - **Não overengineer**: Começar simples, refatorar conforme necessário
 - **MVP mindset**: Fase 1-3 já entrega valor significativo
 - **Feedback loop**: Testar com usuários reais regularmente
 - **Tech debt**: Documentar itens de melhoria para depois de Phase 5
+- **Módulos Novos**: Fase 6 adiciona 3 módulos novos (Almoxarifado, Tarefas, Documentos) com 145+ arquivos criados/modificados
