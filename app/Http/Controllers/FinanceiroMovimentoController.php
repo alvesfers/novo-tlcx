@@ -47,7 +47,7 @@ class FinanceiroMovimentoController extends Controller
         return view('financeiro.movimentos.index', compact('movimentos', 'categorias'));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         $user = auth()->user();
         $categorias = FinanceiroCategoria::where('entidade_id', $user->entidade_id)
@@ -55,6 +55,12 @@ class FinanceiroMovimentoController extends Controller
             ->orderBy('tipo')
             ->orderBy('nome')
             ->get();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'categorias' => $categorias,
+            ]);
+        }
 
         return view('financeiro.movimentos.create', compact('categorias'));
     }
@@ -67,8 +73,23 @@ class FinanceiroMovimentoController extends Controller
         $data['entidade_id'] = $user->entidade_id;
 
         try {
-            $this->service->criarMovimento($data);
+            $movimento = $this->service->criarMovimento($data);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Movimento registrado com sucesso',
+                    'movimento' => $movimento,
+                ]);
+            }
         } catch (\InvalidArgumentException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['error' => $e->getMessage()],
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
             return redirect()->back()
                 ->withInput()
                 ->with('error', $e->getMessage());
@@ -78,7 +99,7 @@ class FinanceiroMovimentoController extends Controller
             ->with('success', 'Movimento registrado com sucesso');
     }
 
-    public function edit(FinanceiroMovimento $financeiro_movimento)
+    public function edit(Request $request, FinanceiroMovimento $financeiro_movimento)
     {
         $this->authorize('update', $financeiro_movimento);
         $user = auth()->user();
@@ -87,6 +108,13 @@ class FinanceiroMovimentoController extends Controller
             ->orderBy('tipo')
             ->orderBy('nome')
             ->get();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'movimento' => $financeiro_movimento,
+                'categorias' => $categorias,
+            ]);
+        }
 
         return view('financeiro.movimentos.edit', [
             'movimento' => $financeiro_movimento,
@@ -101,7 +129,22 @@ class FinanceiroMovimentoController extends Controller
 
         try {
             $this->service->atualizarMovimento($financeiro_movimento, $data);
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Movimento atualizado com sucesso',
+                    'movimento' => $financeiro_movimento,
+                ]);
+            }
         } catch (\InvalidArgumentException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['error' => $e->getMessage()],
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
             return redirect()->back()
                 ->withInput()
                 ->with('error', $e->getMessage());
