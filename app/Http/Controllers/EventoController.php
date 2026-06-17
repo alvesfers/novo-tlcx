@@ -45,12 +45,6 @@ class EventoController extends Controller
         }
 
         $eventos = $query->orderBy('data_inicio', 'desc')->paginate(15);
-        return view('eventos.index', compact('eventos'));
-    }
-
-    public function create()
-    {
-        $this->authorize('create', Evento::class);
 
         $tiposEvento = TipoEvento::ativos()->get();
         $entidades = auth()->user()->isAdmin()
@@ -62,17 +56,42 @@ class EventoController extends Controller
                 : Entidade::where('id', auth()->user()->entidade_id)->get()
             );
 
-        return view('eventos.create', compact('tiposEvento', 'entidades'));
+        return view('eventos.index', compact('eventos', 'tiposEvento', 'entidades'));
+    }
+
+    public function create()
+    {
+        $this->authorize('create', Evento::class);
+        return redirect()->route('eventos.index');
     }
 
     public function store(StoreEventoRequest $request)
     {
         $this->authorize('create', Evento::class);
 
-        $evento = $this->eventoService->criar($request->validated());
+        try {
+            $evento = $this->eventoService->criar($request->validated());
 
-        return redirect()->route('eventos.show', $evento)
-            ->with('success', 'Evento criado com sucesso');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Evento criado com sucesso!',
+                    'evento' => $evento,
+                ]);
+            }
+
+            return redirect()->route('eventos.show', $evento)
+                ->with('success', 'Evento criado com sucesso');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function show(Evento $evento)
@@ -93,28 +112,36 @@ class EventoController extends Controller
     public function edit(Evento $evento)
     {
         $this->authorize('update', $evento);
-
-        $tiposEvento = TipoEvento::ativos()->get();
-        $entidades = auth()->user()->isAdmin()
-            ? Entidade::ativas()->get()
-            : (auth()->user()->isDiocese()
-                ? Entidade::where('id', auth()->user()->entidade_id)
-                    ->orWhere('entidade_pai_id', auth()->user()->entidade_id)
-                    ->get()
-                : Entidade::where('id', auth()->user()->entidade_id)->get()
-            );
-
-        return view('eventos.edit', compact('evento', 'tiposEvento', 'entidades'));
+        return redirect()->route('eventos.index');
     }
 
     public function update(UpdateEventoRequest $request, Evento $evento)
     {
         $this->authorize('update', $evento);
 
-        $this->eventoService->atualizar($evento, $request->validated());
+        try {
+            $this->eventoService->atualizar($evento, $request->validated());
 
-        return redirect()->route('eventos.show', $evento)
-            ->with('success', 'Evento atualizado com sucesso');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Evento atualizado com sucesso!',
+                    'evento' => $evento,
+                ]);
+            }
+
+            return redirect()->route('eventos.show', $evento)
+                ->with('success', 'Evento atualizado com sucesso');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function destroy(Evento $evento)
