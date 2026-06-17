@@ -9,20 +9,20 @@ use App\Enums\CargoDirigente;
 use App\Enums\TipoVinculo;
 use App\Enums\EscopoEvento;
 use App\Enums\StatusEvento;
-use App\Enums\TipoParticipacaoEvento;
 use App\Models\User;
 use App\Models\Entidade;
 use App\Models\Dirigente;
 use App\Models\TipoEvento;
 use App\Models\Evento;
-use App\Models\ParticipanteExterno;
+use App\Models\FinanceiroCategoria;
+use App\Models\FinanceiroMovimento;
 use Illuminate\Database\Seeder;
 
 class InitialDataSeeder extends Seeder
 {
     public function run(): void
     {
-        // Criar Admin Principal
+        // Admin
         User::create([
             'name' => 'Administrador',
             'email' => 'admin@tlc.local',
@@ -31,149 +31,211 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
-        // Criar Diocese de Santo Amaro
-        $dioceseSantoAmaro = Entidade::create([
-            'user_id' => null,
-            'entidade_pai_id' => null,
+        // ===== DIOCESES =====
+        $dioceses = [];
+
+        $dioceses['santo_amaro'] = Entidade::create([
             'tipo_entidade' => TipoEntidade::Diocese,
             'nome' => 'Diocese de Santo Amaro',
-            'email' => 'diocesantoamaro@tlc.local',
-            'tipo_secretaria' => null,
+            'email' => 'diocese@santoamaro.com',
             'ativo' => true,
         ]);
 
-        // Criar usuário para Diocese
-        $userDiocese = User::create([
-            'name' => 'Liderança Diocese de Santo Amaro',
-            'email' => 'diocese@tlc.local',
-            'password' => bcrypt('password'),
-            'tipo_usuario' => TipoUsuario::Diocese,
+        $dioceses['campo_limpo'] = Entidade::create([
+            'tipo_entidade' => TipoEntidade::Diocese,
+            'nome' => 'Diocese de Campo Limpo',
+            'email' => 'diocese@campolimpo.com',
             'ativo' => true,
         ]);
 
-        // Vincular usuário à diocese
-        $dioceseSantoAmaro->update(['user_id' => $userDiocese->id]);
-        $userDiocese->update(['entidade_id' => $dioceseSantoAmaro->id]);
+        $dioceses['santos'] = Entidade::create([
+            'tipo_entidade' => TipoEntidade::Diocese,
+            'nome' => 'Diocese de Santos',
+            'email' => 'diocese@santos.com',
+            'ativo' => true,
+        ]);
 
-        // Criar Núcleo Igreja Verde (filho da Diocese)
-        $nucleoIgrejaVerde = Entidade::create([
-            'user_id' => null,
-            'entidade_pai_id' => $dioceseSantoAmaro->id,
+        // ===== NÚCLEOS =====
+        $nucleos = [];
+
+        $nucleos['santa_paulina'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['santo_amaro']->id,
+            'tipo_entidade' => TipoEntidade::Nucleo,
+            'nome' => 'Núcleo Santa Paulina',
+            'email' => 'nucleo@santapaulina.com',
+            'ativo' => true,
+        ]);
+
+        $nucleos['igreja_verde'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['santo_amaro']->id,
             'tipo_entidade' => TipoEntidade::Nucleo,
             'nome' => 'Núcleo Igreja Verde',
-            'email' => 'igrejaverde@tlc.local',
-            'tipo_secretaria' => null,
+            'email' => 'nucleo@igrejverde.com',
             'ativo' => true,
         ]);
 
-        // Criar usuário para Núcleo
-        $userNucleo = User::create([
-            'name' => 'Liderança Núcleo Igreja Verde',
-            'email' => 'nucleo@tlc.local',
-            'password' => bcrypt('password'),
-            'tipo_usuario' => TipoUsuario::Nucleo,
+        $nucleos['ideal'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['santo_amaro']->id,
+            'tipo_entidade' => TipoEntidade::Nucleo,
+            'nome' => 'Núcleo Ideal',
+            'email' => 'nucleo@ideal.com',
             'ativo' => true,
         ]);
 
-        // Vincular usuário ao núcleo
-        $nucleoIgrejaVerde->update(['user_id' => $userNucleo->id]);
-        $userNucleo->update(['entidade_id' => $nucleoIgrejaVerde->id]);
+        $nucleos['santuario_santa_terezinha'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['campo_limpo']->id,
+            'tipo_entidade' => TipoEntidade::Nucleo,
+            'nome' => 'Núcleo Santuário Santa Terezinha',
+            'email' => 'nucleo@santuariosantaterezinha.com',
+            'ativo' => true,
+        ]);
 
-        // Criar Secretaria de Jovens (filha da Diocese)
-        $secretariaJovens = Entidade::create([
-            'user_id' => null,
-            'entidade_pai_id' => $dioceseSantoAmaro->id,
+        // ===== SECRETARIAS =====
+        $secretarias = [];
+
+        $secretarias['musica'] = Entidade::create([
             'tipo_entidade' => TipoEntidade::Secretaria,
-            'nome' => 'Secretaria de Jovens',
-            'email' => 'jovens@tlc.local',
+            'nome' => 'Secretaria de Música',
             'tipo_secretaria' => TipoSecretaria::Aberta,
             'ativo' => true,
         ]);
 
-        // Criar usuário para Secretaria
-        $userSecretaria = User::create([
-            'name' => 'Liderança Secretaria de Jovens',
-            'email' => 'secretaria@tlc.local',
-            'password' => bcrypt('password'),
-            'tipo_usuario' => TipoUsuario::Secretaria,
+        $secretarias['apoio'] = Entidade::create([
+            'tipo_entidade' => TipoEntidade::Secretaria,
+            'nome' => 'Secretaria de Apoio',
+            'tipo_secretaria' => TipoSecretaria::Aberta,
             'ativo' => true,
         ]);
 
-        // Vincular usuário à secretaria
-        $secretariaJovens->update(['user_id' => $userSecretaria->id]);
-        $userSecretaria->update(['entidade_id' => $secretariaJovens->id]);
+        $secretarias['espiritualidade'] = Entidade::create([
+            'tipo_entidade' => TipoEntidade::Secretaria,
+            'nome' => 'Secretaria de Espiritualidade e Formação',
+            'tipo_secretaria' => TipoSecretaria::Fechada,
+            'ativo' => true,
+        ]);
 
-        // Criar Dirigentes
-        $dirigente1 = Dirigente::create([
-            'nome' => 'João Silva',
+        $secretarias['eventos'] = Entidade::create([
+            'tipo_entidade' => TipoEntidade::Secretaria,
+            'nome' => 'Secretaria de Eventos',
+            'tipo_secretaria' => TipoSecretaria::Aberta,
+            'ativo' => true,
+        ]);
+
+        // ===== DIRIGENTES =====
+        $dirigentes = [];
+
+        // Fernando: participa do núcleo santa Paulina, coordena a secretaria da música e participa da secretaria de Espiritualidade
+        $dirigentes['fernando'] = Dirigente::create([
+            'nome' => 'Fernando',
             'telefone' => '(11) 91234-5678',
             'genero' => 'm',
-            'data_nascimento' => '1985-05-15',
-            'foto_url' => null,
+            'data_nascimento' => '1980-03-15',
             'ativo' => true,
         ]);
 
-        // Vínculo principal de João com Núcleo Igreja Verde
-        $dirigente1->vinculos()->create([
-            'entidade_id' => $nucleoIgrejaVerde->id,
+        $dirigentes['fernando']->vinculos()->create([
+            'entidade_id' => $nucleos['santa_paulina']->id,
             'tipo_vinculo' => TipoVinculo::Principal,
             'cargo' => CargoDirigente::Dirigente,
-            'papel' => 'Líder',
             'data_inicio' => now()->toDateString(),
             'ativo' => true,
         ]);
 
-        $dirigente2 = Dirigente::create([
-            'nome' => 'Maria Santos',
-            'telefone' => '(11) 98765-4321',
-            'genero' => 'f',
-            'data_nascimento' => '1990-08-22',
-            'foto_url' => null,
-            'ativo' => true,
-        ]);
-
-        // Vínculo principal de Maria com Núcleo Igreja Verde
-        $dirigente2->vinculos()->create([
-            'entidade_id' => $nucleoIgrejaVerde->id,
-            'tipo_vinculo' => TipoVinculo::Principal,
+        $dirigentes['fernando']->vinculos()->create([
+            'entidade_id' => $secretarias['musica']->id,
+            'tipo_vinculo' => TipoVinculo::Coordenacao,
             'cargo' => CargoDirigente::Coordenador,
-            'papel' => 'Coordenadora',
+            'papel' => 'Coordenador',
             'data_inicio' => now()->toDateString(),
             'ativo' => true,
         ]);
 
-        // Vínculo adicional de Maria com Secretaria de Jovens
-        $dirigente2->vinculos()->create([
-            'entidade_id' => $secretariaJovens->id,
+        $dirigentes['fernando']->vinculos()->create([
+            'entidade_id' => $secretarias['espiritualidade']->id,
             'tipo_vinculo' => TipoVinculo::Adicional,
             'cargo' => CargoDirigente::Dirigente,
-            'papel' => 'Coordenadora de Eventos',
             'data_inicio' => now()->toDateString(),
             'ativo' => true,
         ]);
 
-        $dirigente3 = Dirigente::create([
-            'nome' => 'Pedro Oliveira',
-            'telefone' => '(11) 99876-5432',
-            'genero' => 'm',
-            'data_nascimento' => '1988-03-10',
-            'foto_url' => null,
+        // Julianne: participa do núcleo igreja Verde, secretaria de Eventos e Espiritualidade
+        $dirigentes['julianne'] = Dirigente::create([
+            'nome' => 'Julianne',
+            'telefone' => '(11) 98765-4321',
+            'genero' => 'f',
+            'data_nascimento' => '1985-07-22',
             'ativo' => true,
         ]);
 
-        // Vínculo principal de Pedro com Núcleo Igreja Verde
-        $dirigente3->vinculos()->create([
-            'entidade_id' => $nucleoIgrejaVerde->id,
+        $dirigentes['julianne']->vinculos()->create([
+            'entidade_id' => $nucleos['igreja_verde']->id,
             'tipo_vinculo' => TipoVinculo::Principal,
             'cargo' => CargoDirigente::Dirigente,
-            'papel' => 'Tesoureiro',
             'data_inicio' => now()->toDateString(),
             'ativo' => true,
         ]);
 
-        // Vínculo de coordenação de Pedro com Diocese
-        $dirigente3->vinculos()->create([
-            'entidade_id' => $dioceseSantoAmaro->id,
+        $dirigentes['julianne']->vinculos()->create([
+            'entidade_id' => $secretarias['eventos']->id,
+            'tipo_vinculo' => TipoVinculo::Adicional,
+            'cargo' => CargoDirigente::Dirigente,
+            'data_inicio' => now()->toDateString(),
+            'ativo' => true,
+        ]);
+
+        $dirigentes['julianne']->vinculos()->create([
+            'entidade_id' => $secretarias['espiritualidade']->id,
+            'tipo_vinculo' => TipoVinculo::Adicional,
+            'cargo' => CargoDirigente::Dirigente,
+            'data_inicio' => now()->toDateString(),
+            'ativo' => true,
+        ]);
+
+        // Ygor: coordena o núcleo santa Paulina, e participa da secretaria do Apoio
+        $dirigentes['ygor'] = Dirigente::create([
+            'nome' => 'Ygor',
+            'telefone' => '(11) 99876-5432',
+            'genero' => 'm',
+            'data_nascimento' => '1982-11-10',
+            'ativo' => true,
+        ]);
+
+        $dirigentes['ygor']->vinculos()->create([
+            'entidade_id' => $nucleos['santa_paulina']->id,
+            'tipo_vinculo' => TipoVinculo::Coordenacao,
+            'cargo' => CargoDirigente::Coordenador,
+            'papel' => 'Coordenador',
+            'data_inicio' => now()->toDateString(),
+            'ativo' => true,
+        ]);
+
+        $dirigentes['ygor']->vinculos()->create([
+            'entidade_id' => $secretarias['apoio']->id,
+            'tipo_vinculo' => TipoVinculo::Adicional,
+            'cargo' => CargoDirigente::Dirigente,
+            'data_inicio' => now()->toDateString(),
+            'ativo' => true,
+        ]);
+
+        // Bruno: participa do núcleo igreja Verde, coordena a diocese de santo Amaro, participa da secretaria do Eventos
+        $dirigentes['bruno'] = Dirigente::create([
+            'nome' => 'Bruno',
+            'telefone' => '(11) 94567-8901',
+            'genero' => 'm',
+            'data_nascimento' => '1987-09-05',
+            'ativo' => true,
+        ]);
+
+        $dirigentes['bruno']->vinculos()->create([
+            'entidade_id' => $nucleos['igreja_verde']->id,
+            'tipo_vinculo' => TipoVinculo::Principal,
+            'cargo' => CargoDirigente::Dirigente,
+            'data_inicio' => now()->toDateString(),
+            'ativo' => true,
+        ]);
+
+        $dirigentes['bruno']->vinculos()->create([
+            'entidade_id' => $dioceses['santo_amaro']->id,
             'tipo_vinculo' => TipoVinculo::Coordenacao,
             'cargo' => CargoDirigente::Coordenador,
             'papel' => 'Coordenador Diocesano',
@@ -181,16 +243,141 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
-        // Criar Tipos de Evento
+        $dirigentes['bruno']->vinculos()->create([
+            'entidade_id' => $secretarias['eventos']->id,
+            'tipo_vinculo' => TipoVinculo::Adicional,
+            'cargo' => CargoDirigente::Dirigente,
+            'data_inicio' => now()->toDateString(),
+            'ativo' => true,
+        ]);
+
+        // ===== CATEGORIAS FINANCEIRAS =====
+        $categorias = [];
+
+        $categorias['receita'] = FinanceiroCategoria::create([
+            'entidade_id' => $dioceses['santo_amaro']->id,
+            'nome' => 'Dízimos e Ofertas',
+            'tipo' => 'entrada',
+            'descricao' => 'Receitas de fiéis',
+        ]);
+
+        $categorias['despesa'] = FinanceiroCategoria::create([
+            'entidade_id' => $dioceses['santo_amaro']->id,
+            'nome' => 'Despesas Operacionais',
+            'tipo' => 'saida',
+            'descricao' => 'Gastos com funcionamento',
+        ]);
+
+        $categorias['eventos'] = FinanceiroCategoria::create([
+            'entidade_id' => $dioceses['santo_amaro']->id,
+            'nome' => 'Eventos',
+            'tipo' => 'saida',
+            'descricao' => 'Gastos com eventos e atividades',
+        ]);
+
+        // ===== MOVIMENTAÇÕES FINANCEIRAS =====
+        // Diocese Santo Amaro
+        FinanceiroMovimento::create([
+            'entidade_id' => $dioceses['santo_amaro']->id,
+            'categoria_id' => $categorias['receita']->id,
+            'tipo' => 'entrada',
+            'descricao' => 'Dízimos coletados - Domingo',
+            'valor' => 1500.00,
+            'data_movimento' => now()->toDateString(),
+        ]);
+
+        FinanceiroMovimento::create([
+            'entidade_id' => $dioceses['santo_amaro']->id,
+            'categoria_id' => $categorias['despesa']->id,
+            'tipo' => 'saida',
+            'descricao' => 'Aluguel do espaço',
+            'valor' => 800.00,
+            'data_movimento' => now()->toDateString(),
+        ]);
+
+        FinanceiroMovimento::create([
+            'entidade_id' => $dioceses['santo_amaro']->id,
+            'categoria_id' => $categorias['eventos']->id,
+            'tipo' => 'saida',
+            'descricao' => 'Material para retiro diocesano',
+            'valor' => 2200.00,
+            'data_movimento' => now()->subDays(5)->toDateString(),
+        ]);
+
+        // Núcleo Santa Paulina
+        $catMusica = FinanceiroCategoria::create([
+            'entidade_id' => $nucleos['santa_paulina']->id,
+            'nome' => 'Música e Instrumentos',
+            'tipo' => 'saida',
+        ]);
+
+        FinanceiroMovimento::create([
+            'entidade_id' => $nucleos['santa_paulina']->id,
+            'categoria_id' => $catMusica->id,
+            'tipo' => 'saida',
+            'descricao' => 'Compra de partituras',
+            'valor' => 450.00,
+            'data_movimento' => now()->subDays(3)->toDateString(),
+        ]);
+
+        FinanceiroMovimento::create([
+            'entidade_id' => $nucleos['santa_paulina']->id,
+            'categoria_id' => $categorias['receita']->id,
+            'tipo' => 'entrada',
+            'descricao' => 'Contribuições de membros',
+            'valor' => 600.00,
+            'data_movimento' => now()->toDateString(),
+        ]);
+
+        // Núcleo Igreja Verde
+        FinanceiroMovimento::create([
+            'entidade_id' => $nucleos['igreja_verde']->id,
+            'categoria_id' => $categorias['eventos']->id,
+            'tipo' => 'saida',
+            'descricao' => 'Lanche para reunião mensal',
+            'valor' => 320.00,
+            'data_movimento' => now()->subDays(1)->toDateString(),
+        ]);
+
+        FinanceiroMovimento::create([
+            'entidade_id' => $nucleos['igreja_verde']->id,
+            'categoria_id' => $categorias['receita']->id,
+            'tipo' => 'entrada',
+            'descricao' => 'Dízimos coletados',
+            'valor' => 1200.00,
+            'data_movimento' => now()->toDateString(),
+        ]);
+
+        // Núcleo Ideal
+        FinanceiroMovimento::create([
+            'entidade_id' => $nucleos['ideal']->id,
+            'categoria_id' => $categorias['receita']->id,
+            'tipo' => 'entrada',
+            'descricao' => 'Ofertas dos fiéis',
+            'valor' => 800.00,
+            'data_movimento' => now()->toDateString(),
+        ]);
+
+        // Núcleo Santuário Santa Terezinha
+        FinanceiroMovimento::create([
+            'entidade_id' => $nucleos['santuario_santa_terezinha']->id,
+            'categoria_id' => $categorias['receita']->id,
+            'tipo' => 'entrada',
+            'descricao' => 'Doações para manutenção',
+            'valor' => 950.00,
+            'data_movimento' => now()->toDateString(),
+        ]);
+
+        // ===== TIPOS DE EVENTO =====
         $tipos = [];
         foreach ([
             'Retiro' => 'Encontro de reflexão espiritual',
-            'Luau' => 'Confraternização informal',
-            'Formação' => 'Atividade de capacitação',
-            'Missa' => 'Celebração eucarística',
             'Reunião' => 'Encontro de alinhamento',
+            'Missa' => 'Celebração eucarística',
             'Festa' => 'Celebração festiva',
-            'Ação Social' => 'Atividade de caridade e solidariedade',
+            'Ação Social' => 'Atividade de caridade',
+            'Formação' => 'Atividade de capacitação',
+            'Luau' => 'Confraternização informal',
         ] as $nome => $descricao) {
             $tipos[$nome] = TipoEvento::create([
                 'nome' => $nome,
@@ -199,122 +386,146 @@ class InitialDataSeeder extends Seeder
             ])->id;
         }
 
-        // Criar Participante Externo
-        $participanteExterno = ParticipanteExterno::create([
-            'nome' => 'João da Silva (Visitante)',
-            'telefone' => '(11) 94567-8901',
-            'email' => 'joao.visitante@example.com',
-            'documento' => '12345678900',
-            'genero' => 'm',
-            'data_nascimento' => '1995-06-20',
-        ]);
+        // ===== EVENTOS =====
 
-        // Criar Evento da Diocese (multi-entidade: Diocese como organizadora, Núcleo como participante)
-        $eventoDidocese = Evento::create([
+        // Retiro Diocesano
+        $retiroDiocesano = Evento::create([
             'tipo_evento_id' => $tipos['Retiro'],
-            'entidade_criadora_id' => $dioceseSantoAmaro->id,
+            'entidade_criadora_id' => $dioceses['santo_amaro']->id,
             'nome' => 'Retiro Diocesano Anual',
             'descricao' => 'Encontro de reflexão espiritual para toda a diocese',
-            'data_inicio' => now()->addDays(15)->format('Y-m-d H:i:s'),
-            'data_fim' => now()->addDays(16)->format('Y-m-d H:i:s'),
+            'data_inicio' => now()->addDays(15)->format('Y-m-d 08:00:00'),
+            'data_fim' => now()->addDays(16)->format('Y-m-d 17:00:00'),
             'local' => 'Centro de Retiros São José',
             'escopo' => EscopoEvento::Dirigentes->value,
             'status' => StatusEvento::Publicado->value,
             'ativo' => true,
         ]);
 
-        // Adicionar Núcleo como participante ao evento da Diocese
-        $eventoDidocese->eventoEntidades()->create([
-            'entidade_id' => $nucleoIgrejaVerde->id,
-            'tipo_participacao' => TipoParticipacaoEvento::Participante->value,
-        ]);
+        $retiroDiocesano->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['fernando']->id]);
+        $retiroDiocesano->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['julianne']->id]);
+        $retiroDiocesano->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['ygor']->id]);
+        $retiroDiocesano->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['bruno']->id]);
 
-        // Adicionar Secretaria de Jovens como participante
-        $eventoDidocese->eventoEntidades()->create([
-            'entidade_id' => $secretariaJovens->id,
-            'tipo_participacao' => TipoParticipacaoEvento::Participante->value,
-        ]);
-
-        // Inscrever dirigentes no evento da Diocese
-        $eventoDidocese->participantes()->create([
-            'tipo_participante' => 'dirigente',
-            'dirigente_id' => $dirigente1->id,
-        ]);
-
-        $eventoDidocese->participantes()->create([
-            'tipo_participante' => 'dirigente',
-            'dirigente_id' => $dirigente2->id,
-        ]);
-
-        // Criar Evento do Núcleo Igreja Verde (local)
-        $eventoNucleo = Evento::create([
+        // Reunião Núcleo Santa Paulina
+        $reuniaoSantaPaulina = Evento::create([
             'tipo_evento_id' => $tipos['Reunião'],
-            'entidade_criadora_id' => $nucleoIgrejaVerde->id,
-            'nome' => 'Reunião do Núcleo Igreja Verde',
-            'descricao' => 'Encontro mensal do núcleo',
-            'data_inicio' => now()->addDays(7)->format('Y-m-d H:i:s'),
-            'data_fim' => null,
+            'entidade_criadora_id' => $nucleos['santa_paulina']->id,
+            'nome' => 'Reunião Mensal - Núcleo Santa Paulina',
+            'descricao' => 'Encontro para alinhamento e planejamento',
+            'data_inicio' => now()->addDays(7)->format('Y-m-d 19:30:00'),
+            'local' => 'Salão da Igreja Santa Paulina',
+            'escopo' => EscopoEvento::Dirigentes->value,
+            'status' => StatusEvento::Publicado->value,
+            'ativo' => true,
+        ]);
+
+        $reuniaoSantaPaulina->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['fernando']->id]);
+        $reuniaoSantaPaulina->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['ygor']->id]);
+
+        // Reunião Núcleo Igreja Verde
+        $reuniaoIgrejaVerde = Evento::create([
+            'tipo_evento_id' => $tipos['Reunião'],
+            'entidade_criadora_id' => $nucleos['igreja_verde']->id,
+            'nome' => 'Reunião Mensal - Núcleo Igreja Verde',
+            'descricao' => 'Encontro para alinhamento e planejamento',
+            'data_inicio' => now()->addDays(10)->format('Y-m-d 19:30:00'),
             'local' => 'Igreja Verde - Sala de Encontros',
             'escopo' => EscopoEvento::Dirigentes->value,
             'status' => StatusEvento::Publicado->value,
             'ativo' => true,
         ]);
 
-        // Inscrever dirigentes no evento do núcleo
-        $eventoNucleo->participantes()->create([
-            'tipo_participante' => 'dirigente',
-            'dirigente_id' => $dirigente1->id,
+        $reuniaoIgrejaVerde->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['julianne']->id]);
+        $reuniaoIgrejaVerde->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['bruno']->id]);
+
+        // Ensaio de Música
+        $ensaioMusica = Evento::create([
+            'tipo_evento_id' => $tipos['Formação'],
+            'entidade_criadora_id' => $secretarias['musica']->id,
+            'nome' => 'Ensaio de Música Litúrgica',
+            'descricao' => 'Preparação de músicas para celebrações',
+            'data_inicio' => now()->addDays(3)->format('Y-m-d 20:00:00'),
+            'local' => 'Sala de Música',
+            'escopo' => EscopoEvento::Dirigentes->value,
+            'status' => StatusEvento::Publicado->value,
+            'ativo' => true,
         ]);
 
-        $eventoNucleo->participantes()->create([
-            'tipo_participante' => 'dirigente',
-            'dirigente_id' => $dirigente3->id,
-        ]);
+        $ensaioMusica->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['fernando']->id]);
 
-        // Criar Evento da Secretaria (com participante externo)
-        $eventoSecretaria = Evento::create([
+        // Ação Social
+        $acaoSocial = Evento::create([
             'tipo_evento_id' => $tipos['Ação Social'],
-            'entidade_criadora_id' => $secretariaJovens->id,
-            'nome' => 'Ação Social - Distribuição de Alimentos',
-            'descricao' => 'Atividade de caridade junto à comunidade',
-            'data_inicio' => now()->addDays(10)->format('Y-m-d H:i:s'),
-            'data_fim' => null,
+            'entidade_criadora_id' => $secretarias['apoio']->id,
+            'nome' => 'Distribuição de Alimentos à Comunidade',
+            'descricao' => 'Atividade de caridade e solidariedade',
+            'data_inicio' => now()->addDays(8)->format('Y-m-d 09:00:00'),
             'local' => 'Comunidade do Bairro Central',
             'escopo' => EscopoEvento::Externos->value,
             'status' => StatusEvento::Publicado->value,
             'ativo' => true,
         ]);
 
-        // Inscrever dirigente e participante externo
-        $eventoSecretaria->participantes()->create([
-            'tipo_participante' => 'dirigente',
-            'dirigente_id' => $dirigente2->id,
+        $acaoSocial->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['ygor']->id]);
+
+        // Formação em Espiritualidade
+        $formacao = Evento::create([
+            'tipo_evento_id' => $tipos['Formação'],
+            'entidade_criadora_id' => $secretarias['espiritualidade']->id,
+            'nome' => 'Formação em Espiritualidade',
+            'descricao' => 'Aprofundamento na vida espiritual',
+            'data_inicio' => now()->addDays(20)->format('Y-m-d 19:00:00'),
+            'data_fim' => now()->addDays(20)->format('Y-m-d 21:00:00'),
+            'local' => 'Sala de Formação',
+            'escopo' => EscopoEvento::Dirigentes->value,
+            'status' => StatusEvento::Publicado->value,
+            'ativo' => true,
         ]);
 
-        $eventoSecretaria->participantes()->create([
-            'tipo_participante' => 'externo',
-            'participante_externo_id' => $participanteExterno->id,
+        $formacao->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['fernando']->id]);
+        $formacao->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['julianne']->id]);
+
+        // Festa de Confraternização
+        $festa = Evento::create([
+            'tipo_evento_id' => $tipos['Festa'],
+            'entidade_criadora_id' => $secretarias['eventos']->id,
+            'nome' => 'Festa de Confraternização',
+            'descricao' => 'Celebração festiva com toda a comunidade',
+            'data_inicio' => now()->addDays(30)->format('Y-m-d 18:00:00'),
+            'local' => 'Salão Principal',
+            'escopo' => EscopoEvento::Externos->value,
+            'status' => StatusEvento::Publicado->value,
+            'ativo' => true,
         ]);
 
-        // Marcar presença de um participante
-        $eventoNucleo->participantes()->first()->marcarPresenca();
+        $festa->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['julianne']->id]);
+        $festa->participantes()->create(['tipo_participante' => 'dirigente', 'dirigente_id' => $dirigentes['bruno']->id]);
 
-        $this->command->info('Dados iniciais criados com sucesso!');
+        // Log
+        $this->command->info('✅ Dados iniciais criados com sucesso!');
         $this->command->info('');
-        $this->command->info('Usuários criados:');
-        $this->command->info('  Admin: admin@tlc.local / password');
-        $this->command->info('  Diocese: diocese@tlc.local / password');
-        $this->command->info('  Núcleo: nucleo@tlc.local / password');
-        $this->command->info('  Secretaria: secretaria@tlc.local / password');
+        $this->command->info('📍 Dioceses:');
+        $this->command->info('  • Diocese de Santo Amaro');
+        $this->command->info('  • Diocese de Campo Limpo');
+        $this->command->info('  • Diocese de Santos');
         $this->command->info('');
-        $this->command->info('Dirigentes criados:');
-        $this->command->info('  João Silva - Vínculo principal em Núcleo Igreja Verde');
-        $this->command->info('  Maria Santos - Vínculo principal em Núcleo Igreja Verde + Vínculo adicional em Secretaria de Jovens');
-        $this->command->info('  Pedro Oliveira - Vínculo principal em Núcleo Igreja Verde + Vínculo de coordenação na Diocese');
+        $this->command->info('🏛️ Núcleos:');
+        $this->command->info('  • Santa Paulina (Santo Amaro)');
+        $this->command->info('  • Igreja Verde (Santo Amaro)');
+        $this->command->info('  • Ideal (Santo Amaro)');
+        $this->command->info('  • Santuário Santa Terezinha (Campo Limpo)');
         $this->command->info('');
-        $this->command->info('Eventos criados:');
-        $this->command->info('  Retiro Diocesano Anual - Diocese como organizadora');
-        $this->command->info('  Reunião do Núcleo Igreja Verde - Evento local');
-        $this->command->info('  Ação Social - Secretaria de Jovens com participante externo');
+        $this->command->info('📚 Secretarias:');
+        $this->command->info('  • Música, Apoio, Espiritualidade e Formação, Eventos');
+        $this->command->info('');
+        $this->command->info('👥 Dirigentes:');
+        $this->command->info('  • Fernando (Coord. Música, part. Espiritualidade)');
+        $this->command->info('  • Julianne (part. Igreja Verde, Eventos, Espiritualidade)');
+        $this->command->info('  • Ygor (Coord. Santa Paulina, part. Apoio)');
+        $this->command->info('  • Bruno (part. Igreja Verde, Coord. Diocese Santo Amaro, part. Eventos)');
+        $this->command->info('');
+        $this->command->info('📊 Dados Financeiros: Movimentações em todas as dioceses e núcleos');
+        $this->command->info('📅 Eventos: 7 eventos distribuídos entre dioceses, núcleos e secretarias');
     }
 }
