@@ -19,6 +19,7 @@ use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\DiocesesController;
 use App\Http\Controllers\NucleosController;
 use App\Http\Controllers\SecretariasController;
+use App\Http\Controllers\Api\SearchController;
 
 // autenticação
 Route::middleware('guest')->group(function () {
@@ -30,31 +31,42 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 
 // rotas protegidas por autenticação
 Route::middleware('auth')->group(function () {
+    // busca
+    Route::get('/api/search', [SearchController::class, 'search'])->name('search');
+
     // dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
 
     // entidades resource
     Route::resource('entidades', EntidadeController::class);
+    Route::post('/entidades/delete-multiple', [EntidadeController::class, 'deleteMultiple'])->name('entidades.delete-multiple');
 
     // dioceses, nucleos e secretarias
     Route::get('/dioceses', [DiocesesController::class, 'index'])->name('dioceses.index');
+    Route::get('/dioceses/{diocese}', [DiocesesController::class, 'show'])->name('dioceses.show');
     Route::post('/dioceses', [DiocesesController::class, 'store'])->name('dioceses.store');
     Route::put('/dioceses/{diocese}', [DiocesesController::class, 'update'])->name('dioceses.update');
     Route::delete('/dioceses/{diocese}', [DiocesesController::class, 'destroy'])->name('dioceses.destroy');
+    Route::post('/dioceses/delete-multiple', [DiocesesController::class, 'deleteMultiple'])->name('dioceses.delete-multiple');
 
     Route::get('/nucleos', [NucleosController::class, 'index'])->name('nucleos.index');
+    Route::get('/nucleos/{nucleo}', [NucleosController::class, 'show'])->name('nucleos.show');
     Route::post('/nucleos', [NucleosController::class, 'store'])->name('nucleos.store');
     Route::put('/nucleos/{nucleo}', [NucleosController::class, 'update'])->name('nucleos.update');
     Route::delete('/nucleos/{nucleo}', [NucleosController::class, 'destroy'])->name('nucleos.destroy');
+    Route::post('/nucleos/delete-multiple', [NucleosController::class, 'deleteMultiple'])->name('nucleos.delete-multiple');
 
     Route::get('/secretarias', [SecretariasController::class, 'index'])->name('secretarias.index');
+    Route::get('/secretarias/{secretaria}', [SecretariasController::class, 'show'])->name('secretarias.show');
     Route::post('/secretarias', [SecretariasController::class, 'store'])->name('secretarias.store');
     Route::put('/secretarias/{secretaria}', [SecretariasController::class, 'update'])->name('secretarias.update');
     Route::delete('/secretarias/{secretaria}', [SecretariasController::class, 'destroy'])->name('secretarias.destroy');
+    Route::post('/secretarias/delete-multiple', [SecretariasController::class, 'deleteMultiple'])->name('secretarias.delete-multiple');
 
 // dirigentes resource
 Route::resource('dirigentes', DirigenteController::class);
+Route::post('/dirigentes/delete-multiple', [DirigenteController::class, 'deleteMultiple'])->name('dirigentes.delete-multiple');
 
 // dirigentes vinculos routes
 Route::get('/dirigentes/{dirigente}/vinculos/create', [DirigenteEntidadeController::class, 'create'])->name('dirigentes.vinculos.create');
@@ -65,8 +77,11 @@ Route::delete('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeCo
 
 // eventos resources
 Route::resource('tipo-eventos', TipoEventoController::class);
+Route::post('/tipo-eventos/delete-multiple', [TipoEventoController::class, 'deleteMultiple'])->name('tipo-eventos.delete-multiple');
 Route::resource('eventos', EventoController::class);
+Route::post('/eventos/delete-multiple', [EventoController::class, 'deleteMultiple'])->name('eventos.delete-multiple');
 Route::resource('participante-externos', ParticipanteExternoController::class);
+Route::post('/participante-externos/delete-multiple', [ParticipanteExternoController::class, 'deleteMultiple'])->name('participante-externos.delete-multiple');
 
 // evento entidades routes
 Route::get('/eventos/{evento}/entidades/create', [EventoEntidadeController::class, 'create'])->name('eventos.entidades.create');
@@ -81,7 +96,9 @@ Route::post('/eventos/{evento}/participantes/{eventoParticipante}/presenca', [Ev
 
     // financeiro resources
     Route::resource('financeiro-categorias', FinanceiroCategoriaController::class);
+    Route::post('/financeiro-categorias/delete-multiple', [FinanceiroCategoriaController::class, 'deleteMultiple'])->name('financeiro-categorias.delete-multiple');
     Route::resource('financeiro-movimentos', FinanceiroMovimentoController::class);
+    Route::post('/financeiro-movimentos/delete-multiple', [FinanceiroMovimentoController::class, 'deleteMultiple'])->name('financeiro-movimentos.delete-multiple');
     Route::get('/financeiro/extrato', [FinanceiroMovimentoController::class, 'extrato'])->name('financeiro.extrato');
     Route::get('/financeiro/resumo', [FinanceiroMovimentoController::class, 'resumo'])->name('financeiro.resumo');
 

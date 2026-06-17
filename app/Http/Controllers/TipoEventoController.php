@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTipoEventoRequest;
 use App\Http\Requests\UpdateTipoEventoRequest;
 use App\Models\TipoEvento;
+use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
 
 class TipoEventoController extends Controller
 {
+    use BulkDeleteable;
     public function index()
     {
         $tiposEvento = TipoEvento::paginate(15);
@@ -64,5 +66,10 @@ class TipoEventoController extends Controller
 
         return redirect()->route('tipo-eventos.index')
             ->with('success', 'Tipo de evento deletado com sucesso');
+    }
+
+    protected function getModel()
+    {
+        return TipoEvento::class;
     }
 }

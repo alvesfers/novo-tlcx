@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entidade;
+use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class SecretariasController extends Controller
 {
+    use BulkDeleteable;
     public function index(): View
     {
         $secretarias = Entidade::where('tipo_entidade', 'secretaria')
@@ -24,6 +26,14 @@ class SecretariasController extends Controller
             'secretarias' => $secretarias,
             'nucleos' => $nucleos,
         ]);
+    }
+
+    public function show(Entidade $secretaria): View
+    {
+        $this->authorize('view', $secretaria);
+        $secretaria->load('entidadePai', 'dirigenteVinculos.dirigente');
+
+        return view('secretarias.show', compact('secretaria'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -71,5 +81,10 @@ class SecretariasController extends Controller
 
         return redirect()->route('secretarias.index')
             ->with('success', 'Secretaria deletada com sucesso!');
+    }
+
+    protected function getModel()
+    {
+        return Entidade::class;
     }
 }

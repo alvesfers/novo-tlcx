@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreParticipanteExternoRequest;
 use App\Http\Requests\UpdateParticipanteExternoRequest;
 use App\Models\ParticipanteExterno;
+use App\Traits\BulkDeleteable;
 
 class ParticipanteExternoController extends Controller
 {
+    use BulkDeleteable;
     public function index()
     {
         $participantes = ParticipanteExterno::paginate(15);
@@ -52,5 +54,10 @@ class ParticipanteExternoController extends Controller
 
         return redirect()->route('participante-externos.index')
             ->with('success', 'Participante externo deletado com sucesso');
+    }
+
+    protected function getModel()
+    {
+        return ParticipanteExterno::class;
     }
 }

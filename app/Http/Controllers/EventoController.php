@@ -8,10 +8,12 @@ use App\Models\Evento;
 use App\Models\TipoEvento;
 use App\Models\Entidade;
 use App\Services\EventoService;
+use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
 
 class EventoController extends Controller
 {
+    use BulkDeleteable;
     public function __construct(private EventoService $eventoService) {}
 
     public function index()
@@ -123,5 +125,10 @@ class EventoController extends Controller
 
         return redirect()->route('eventos.index')
             ->with('success', 'Evento deletado com sucesso');
+    }
+
+    protected function getModel()
+    {
+        return Evento::class;
     }
 }

@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entidade;
+use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class EntidadeController extends Controller
 {
+    use BulkDeleteable;
     public function index(): View
     {
         // TODO: Implementar autorização via policy
@@ -91,5 +93,10 @@ class EntidadeController extends Controller
 
         return redirect()->route('entidades.index')
             ->with('success', 'Entidade deletada com sucesso!');
+    }
+
+    protected function getModel()
+    {
+        return Entidade::class;
     }
 }

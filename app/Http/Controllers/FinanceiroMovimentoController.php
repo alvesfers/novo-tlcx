@@ -7,10 +7,12 @@ use App\Http\Requests\UpdateFinanceiroMovimentoRequest;
 use App\Models\FinanceiroCategoria;
 use App\Models\FinanceiroMovimento;
 use App\Services\FinanceiroService;
+use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
 
 class FinanceiroMovimentoController extends Controller
 {
+    use BulkDeleteable;
     public function __construct(
         private FinanceiroService $service
     ) {
@@ -20,14 +22,6 @@ class FinanceiroMovimentoController extends Controller
     {
         $user = auth()->user();
         $query = FinanceiroMovimento::where('entidade_id', $user->entidade_id);
-
-        // Diocese vê movimentos de filhos também
-        if ($user->isDiocese()) {
-            $filhasIds = \App\Models\Entidade::where('entidade_pai_id', $user->entidade_id)
-                ->pluck('id')
-                ->toArray();
-            $query = FinanceiroMovimento::whereIn('entidade_id', array_merge([$user->entidade_id], $filhasIds));
-        }
 
         // Filtros
         if ($request->filled('data_inicio')) {
@@ -133,16 +127,8 @@ class FinanceiroMovimentoController extends Controller
         $dataInicio = $request->data_inicio ? \Carbon\Carbon::parse($request->data_inicio) : now()->startOfMonth();
         $dataFim = $request->data_fim ? \Carbon\Carbon::parse($request->data_fim) : now();
 
-        $query = FinanceiroMovimento::where('entidade_id', $user->entidade_id);
-
-        if ($user->isDiocese()) {
-            $filhasIds = \App\Models\Entidade::where('entidade_pai_id', $user->entidade_id)
-                ->pluck('id')
-                ->toArray();
-            $query = FinanceiroMovimento::whereIn('entidade_id', array_merge([$user->entidade_id], $filhasIds));
-        }
-
-        $movimentos = $query->porPeriodo($dataInicio, $dataFim)
+        $movimentos = FinanceiroMovimento::where('entidade_id', $user->entidade_id)
+            ->porPeriodo($dataInicio, $dataFim)
             ->with('categoria', 'entidade', 'evento')
             ->orderBy('data_movimento', 'desc')
             ->get();
@@ -190,5 +176,10 @@ class FinanceiroMovimentoController extends Controller
             'periodoAtual',
             'categorias'
         ));
+    }
+
+    protected function getModel()
+    {
+        return FinanceiroMovimento::class;
     }
 }

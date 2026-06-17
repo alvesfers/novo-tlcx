@@ -5,10 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFinanceiroCategoriaRequest;
 use App\Http\Requests\UpdateFinanceiroCategoriaRequest;
 use App\Models\FinanceiroCategoria;
-use Illuminate\Http\Request;
+use App\Traits\BulkDeleteable;
 
 class FinanceiroCategoriaController extends Controller
 {
+    use BulkDeleteable;
     public function __construct()
     {
     }
@@ -16,17 +17,11 @@ class FinanceiroCategoriaController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $query = FinanceiroCategoria::where('entidade_id', $user->entidade_id);
+        $categorias = FinanceiroCategoria::where('entidade_id', $user->entidade_id)
+            ->orderBy('tipo')
+            ->orderBy('nome')
+            ->paginate(15);
 
-        // Diocese vê categorias de filhos também
-        if ($user->isDiocese()) {
-            $filhasIds = \App\Models\Entidade::where('entidade_pai_id', $user->entidade_id)
-                ->pluck('id')
-                ->toArray();
-            $query = FinanceiroCategoria::whereIn('entidade_id', array_merge([$user->entidade_id], $filhasIds));
-        }
-
-        $categorias = $query->orderBy('tipo')->orderBy('nome')->paginate(15);
         return view('financeiro.categorias.index', compact('categorias'));
     }
 
@@ -70,5 +65,10 @@ class FinanceiroCategoriaController extends Controller
 
         return redirect()->route('financeiro-categorias.index')
             ->with('success', 'Categoria deletada com sucesso');
+    }
+
+    protected function getModel()
+    {
+        return FinanceiroCategoria::class;
     }
 }

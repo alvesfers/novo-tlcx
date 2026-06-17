@@ -19,12 +19,8 @@ class MenuHelper
                     ['name' => 'Dioceses', 'path' => '/dioceses'],
                     ['name' => 'Núcleos', 'path' => '/nucleos'],
                     ['name' => 'Secretarias', 'path' => '/secretarias'],
+                    ['name' => 'Dirigentes', 'path' => '/dirigentes'],
                 ],
-            ],
-            [
-                'icon' => 'users',
-                'name' => 'Dirigentes',
-                'path' => '/dirigentes',
             ],
             [
                 'icon' => 'calendar-days',

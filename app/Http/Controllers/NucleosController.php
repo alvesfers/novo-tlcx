@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Entidade;
+use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 
 class NucleosController extends Controller
 {
+    use BulkDeleteable;
     public function index(): View
     {
         $nucleos = Entidade::where('tipo_entidade', 'nucleo')
@@ -24,6 +26,14 @@ class NucleosController extends Controller
             'nucleos' => $nucleos,
             'dioceses' => $dioceses,
         ]);
+    }
+
+    public function show(Entidade $nucleo): View
+    {
+        $this->authorize('view', $nucleo);
+        $nucleo->load('entidadePai', 'entidadesFilhas', 'dirigenteVinculos.dirigente');
+
+        return view('nucleos.show', compact('nucleo'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -69,5 +79,10 @@ class NucleosController extends Controller
 
         return redirect()->route('nucleos.index')
             ->with('success', 'Núcleo deletado com sucesso!');
+    }
+
+    protected function getModel()
+    {
+        return Entidade::class;
     }
 }

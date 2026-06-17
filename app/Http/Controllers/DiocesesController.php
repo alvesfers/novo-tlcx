@@ -6,9 +6,11 @@ use App\Models\Entidade;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use App\Traits\BulkDeleteable;
 
 class DiocesesController extends Controller
 {
+    use BulkDeleteable;
     public function index(): View
     {
         $dioceses = Entidade::where('tipo_entidade', 'diocese')
@@ -19,6 +21,14 @@ class DiocesesController extends Controller
             'title' => 'Dioceses',
             'dioceses' => $dioceses,
         ]);
+    }
+
+    public function show(Entidade $diocese): View
+    {
+        $this->authorize('view', $diocese);
+        $diocese->load('entidadesFilhas', 'dirigenteVinculos.dirigente');
+
+        return view('dioceses.show', compact('diocese'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -62,5 +72,10 @@ class DiocesesController extends Controller
 
         return redirect()->route('dioceses.index')
             ->with('success', 'Diocese deletada com sucesso!');
+    }
+
+    protected function getModel()
+    {
+        return Entidade::class;
     }
 }
