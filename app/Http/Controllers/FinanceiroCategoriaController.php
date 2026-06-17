@@ -27,35 +27,74 @@ class FinanceiroCategoriaController extends Controller
 
     public function create()
     {
-        return view('financeiro.categorias.create');
+        return redirect()->route('financeiro-categorias.index');
     }
 
     public function store(StoreFinanceiroCategoriaRequest $request)
     {
-        $user = auth()->user();
+        try {
+            $user = auth()->user();
 
-        $data = $request->validated();
-        $data['entidade_id'] = $user->entidade_id;
+            $data = $request->validated();
+            $data['entidade_id'] = $user->entidade_id;
 
-        FinanceiroCategoria::create($data);
+            $categoria = FinanceiroCategoria::create($data);
 
-        return redirect()->route('financeiro-categorias.index')
-            ->with('success', 'Categoria criada com sucesso');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Categoria criada com sucesso!',
+                    'categoria' => $categoria,
+                ]);
+            }
+
+            return redirect()->route('financeiro-categorias.index')
+                ->with('success', 'Categoria criada com sucesso');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function edit(FinanceiroCategoria $financeiro_categoria)
     {
         $this->authorize('update', $financeiro_categoria);
-        return view('financeiro.categorias.edit', ['categoria' => $financeiro_categoria]);
+        return redirect()->route('financeiro-categorias.index');
     }
 
     public function update(UpdateFinanceiroCategoriaRequest $request, FinanceiroCategoria $financeiro_categoria)
     {
         $this->authorize('update', $financeiro_categoria);
-        $financeiro_categoria->update($request->validated());
 
-        return redirect()->route('financeiro-categorias.index')
-            ->with('success', 'Categoria atualizada com sucesso');
+        try {
+            $financeiro_categoria->update($request->validated());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Categoria atualizada com sucesso!',
+                    'categoria' => $financeiro_categoria,
+                ]);
+            }
+
+            return redirect()->route('financeiro-categorias.index')
+                ->with('success', 'Categoria atualizada com sucesso');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function destroy(FinanceiroCategoria $financeiro_categoria)
