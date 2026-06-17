@@ -258,50 +258,50 @@ class InitialDataSeeder extends Seeder
             'entidade_id' => $dioceses['santo_amaro']->id,
             'nome' => 'Dízimos e Ofertas',
             'tipo' => 'entrada',
-            'descricao' => 'Receitas de fiéis',
         ]);
 
         $categorias['despesa'] = FinanceiroCategoria::create([
             'entidade_id' => $dioceses['santo_amaro']->id,
             'nome' => 'Despesas Operacionais',
             'tipo' => 'saida',
-            'descricao' => 'Gastos com funcionamento',
         ]);
 
         $categorias['eventos'] = FinanceiroCategoria::create([
             'entidade_id' => $dioceses['santo_amaro']->id,
             'nome' => 'Eventos',
             'tipo' => 'saida',
-            'descricao' => 'Gastos com eventos e atividades',
         ]);
 
         // ===== MOVIMENTAÇÕES FINANCEIRAS =====
         // Diocese Santo Amaro
         FinanceiroMovimento::create([
             'entidade_id' => $dioceses['santo_amaro']->id,
-            'categoria_id' => $categorias['receita']->id,
+            'financeiro_categoria_id' => $categorias['receita']->id,
             'tipo' => 'entrada',
             'descricao' => 'Dízimos coletados - Domingo',
             'valor' => 1500.00,
             'data_movimento' => now()->toDateString(),
+            'forma_pagamento' => 'dinheiro',
         ]);
 
         FinanceiroMovimento::create([
             'entidade_id' => $dioceses['santo_amaro']->id,
-            'categoria_id' => $categorias['despesa']->id,
+            'financeiro_categoria_id' => $categorias['despesa']->id,
             'tipo' => 'saida',
             'descricao' => 'Aluguel do espaço',
             'valor' => 800.00,
             'data_movimento' => now()->toDateString(),
+            'forma_pagamento' => 'transferencia',
         ]);
 
         FinanceiroMovimento::create([
             'entidade_id' => $dioceses['santo_amaro']->id,
-            'categoria_id' => $categorias['eventos']->id,
+            'financeiro_categoria_id' => $categorias['eventos']->id,
             'tipo' => 'saida',
             'descricao' => 'Material para retiro diocesano',
             'valor' => 2200.00,
             'data_movimento' => now()->subDays(5)->toDateString(),
+            'forma_pagamento' => 'cartao',
         ]);
 
         // Núcleo Santa Paulina
@@ -313,59 +313,65 @@ class InitialDataSeeder extends Seeder
 
         FinanceiroMovimento::create([
             'entidade_id' => $nucleos['santa_paulina']->id,
-            'categoria_id' => $catMusica->id,
+            'financeiro_categoria_id' => $catMusica->id,
             'tipo' => 'saida',
             'descricao' => 'Compra de partituras',
             'valor' => 450.00,
             'data_movimento' => now()->subDays(3)->toDateString(),
+            'forma_pagamento' => 'pix',
         ]);
 
         FinanceiroMovimento::create([
             'entidade_id' => $nucleos['santa_paulina']->id,
-            'categoria_id' => $categorias['receita']->id,
+            'financeiro_categoria_id' => $categorias['receita']->id,
             'tipo' => 'entrada',
             'descricao' => 'Contribuições de membros',
             'valor' => 600.00,
             'data_movimento' => now()->toDateString(),
+            'forma_pagamento' => 'dinheiro',
         ]);
 
         // Núcleo Igreja Verde
         FinanceiroMovimento::create([
             'entidade_id' => $nucleos['igreja_verde']->id,
-            'categoria_id' => $categorias['eventos']->id,
+            'financeiro_categoria_id' => $categorias['eventos']->id,
             'tipo' => 'saida',
             'descricao' => 'Lanche para reunião mensal',
             'valor' => 320.00,
             'data_movimento' => now()->subDays(1)->toDateString(),
+            'forma_pagamento' => 'dinheiro',
         ]);
 
         FinanceiroMovimento::create([
             'entidade_id' => $nucleos['igreja_verde']->id,
-            'categoria_id' => $categorias['receita']->id,
+            'financeiro_categoria_id' => $categorias['receita']->id,
             'tipo' => 'entrada',
             'descricao' => 'Dízimos coletados',
             'valor' => 1200.00,
             'data_movimento' => now()->toDateString(),
+            'forma_pagamento' => 'dinheiro',
         ]);
 
         // Núcleo Ideal
         FinanceiroMovimento::create([
             'entidade_id' => $nucleos['ideal']->id,
-            'categoria_id' => $categorias['receita']->id,
+            'financeiro_categoria_id' => $categorias['receita']->id,
             'tipo' => 'entrada',
             'descricao' => 'Ofertas dos fiéis',
             'valor' => 800.00,
             'data_movimento' => now()->toDateString(),
+            'forma_pagamento' => 'dinheiro',
         ]);
 
         // Núcleo Santuário Santa Terezinha
         FinanceiroMovimento::create([
             'entidade_id' => $nucleos['santuario_santa_terezinha']->id,
-            'categoria_id' => $categorias['receita']->id,
+            'financeiro_categoria_id' => $categorias['receita']->id,
             'tipo' => 'entrada',
             'descricao' => 'Doações para manutenção',
             'valor' => 950.00,
             'data_movimento' => now()->toDateString(),
+            'forma_pagamento' => 'pix',
         ]);
 
         // ===== TIPOS DE EVENTO =====
