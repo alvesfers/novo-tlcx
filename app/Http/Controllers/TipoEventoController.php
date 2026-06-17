@@ -19,7 +19,7 @@ class TipoEventoController extends Controller
 
     public function create()
     {
-        return view('tipo-eventos.create');
+        return redirect()->route('tipo-eventos.index');
     }
 
     public function store(StoreTipoEventoRequest $request)
@@ -28,10 +28,29 @@ class TipoEventoController extends Controller
             abort(403, 'Apenas administradores podem criar tipos de eventos');
         }
 
-        TipoEvento::create($request->validated());
+        try {
+            $tipoEvento = TipoEvento::create($request->validated());
 
-        return redirect()->route('tipo-eventos.index')
-            ->with('success', 'Tipo de evento criado com sucesso');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Tipo de evento criado com sucesso!',
+                    'tipoEvento' => $tipoEvento,
+                ]);
+            }
+
+            return redirect()->route('tipo-eventos.index')
+                ->with('success', 'Tipo de evento criado com sucesso');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function show(TipoEvento $tipoEvento)
@@ -41,7 +60,7 @@ class TipoEventoController extends Controller
 
     public function edit(TipoEvento $tipoEvento)
     {
-        return view('tipo-eventos.edit', compact('tipoEvento'));
+        return redirect()->route('tipo-eventos.index');
     }
 
     public function update(UpdateTipoEventoRequest $request, TipoEvento $tipoEvento)
@@ -50,10 +69,29 @@ class TipoEventoController extends Controller
             abort(403, 'Apenas administradores podem editar tipos de eventos');
         }
 
-        $tipoEvento->update($request->validated());
+        try {
+            $tipoEvento->update($request->validated());
 
-        return redirect()->route('tipo-eventos.show', $tipoEvento)
-            ->with('success', 'Tipo de evento atualizado com sucesso');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Tipo de evento atualizado com sucesso!',
+                    'tipoEvento' => $tipoEvento,
+                ]);
+            }
+
+            return redirect()->route('tipo-eventos.show', $tipoEvento)
+                ->with('success', 'Tipo de evento atualizado com sucesso');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function destroy(TipoEvento $tipoEvento)
