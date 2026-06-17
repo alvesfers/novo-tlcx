@@ -23,6 +23,12 @@ class EventoEntidadeController extends Controller
             ->whereNotIn('id', $entidadeJaParticipa)
             ->get();
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'entidades' => $entidades,
+            ]);
+        }
+
         return view('eventos.entidades.create', compact('evento', 'entidades'));
     }
 
@@ -40,9 +46,23 @@ class EventoEntidadeController extends Controller
                 $request->tipo_participacao
             );
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Entidade adicionada com sucesso',
+                ]);
+            }
+
             return redirect()->route('eventos.show', $evento)
                 ->with('success', 'Entidade adicionada com sucesso');
         } catch (\InvalidArgumentException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['entidade_id' => $e->getMessage()],
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['entidade_id' => $e->getMessage()]);

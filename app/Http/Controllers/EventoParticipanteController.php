@@ -28,6 +28,13 @@ class EventoParticipanteController extends Controller
 
         $externos = ParticipanteExterno::all();
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'dirigentes' => $dirigentes,
+                'externos' => $externos,
+            ]);
+        }
+
         return view('eventos.participantes.create', compact('evento', 'dirigentes', 'externos'));
     }
 
@@ -45,9 +52,23 @@ class EventoParticipanteController extends Controller
                 $this->eventoService->adicionarExterno($evento, $externo, $request->observacao);
             }
 
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Participante adicionado com sucesso',
+                ]);
+            }
+
             return redirect()->route('eventos.show', $evento)
                 ->with('success', 'Participante adicionado com sucesso');
         } catch (\InvalidArgumentException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['error' => $e->getMessage()],
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['error' => $e->getMessage()]);
