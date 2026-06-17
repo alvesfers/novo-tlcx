@@ -25,6 +25,17 @@ use App\Http\Controllers\Api\SearchController;
 Route::middleware('guest')->group(function () {
     Route::get('/signin', [LoginController::class, 'show'])->name('signin');
     Route::post('/signin', [LoginController::class, 'store'])->name('login');
+    Route::get('/signup', [\App\Http\Controllers\Auth\RegisterController::class, 'show'])->name('signup');
+    Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'store'])->name('register');
+
+    // OAuth routes (placeholders for now)
+    Route::get('/auth/google', function () {
+        return redirect('/signin')->with('warning', 'Google authentication not yet configured');
+    })->name('auth.google');
+
+    Route::get('/auth/twitter', function () {
+        return redirect('/signin')->with('warning', 'Twitter authentication not yet configured');
+    })->name('auth.twitter');
 });
 
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
