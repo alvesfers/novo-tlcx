@@ -70,8 +70,8 @@
                 </h3>
             </div>
             <div class="flex items-center gap-3">
-                @if(count($selectedRows = []) > 0 || count($items) > 0)
-                    <button @if(count($items) > 0) @click="deleteSelected()" @else disabled @endif
+                @if(count($items) > 0)
+                    <button @click="deleteSelected()"
                             class="inline-flex items-center gap-2 rounded-lg border border-red-300 bg-white px-4 py-3 text-theme-sm font-medium
                                    @if(count($items) > 0) text-red-600 hover:bg-red-50 cursor-pointer dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950
                                    @else text-gray-400 cursor-not-allowed dark:text-gray-600 @endif">
