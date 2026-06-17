@@ -170,8 +170,20 @@
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', function() {
+            function initializeCalendar() {
+                // Verificar se FullCalendar está disponível
+                if (typeof FullCalendar === 'undefined') {
+                    console.error('FullCalendar não foi carregado');
+                    setTimeout(initializeCalendar, 100);
+                    return;
+                }
+
                 const calendarEl = document.getElementById('calendar');
+                if (!calendarEl) {
+                    console.error('Elemento calendar não encontrado');
+                    return;
+                }
+
                 const meusEventos = document.getElementById('meusEventos');
                 const btnLimpar = document.getElementById('btnLimpar');
                 const eventModal = document.getElementById('eventModal');
@@ -317,7 +329,14 @@
                     filtroCheckboxes.forEach(cb => cb.checked = false);
                     calendar.refetchEvents();
                 });
-            });
+            }
+
+            // Inicializar quando o DOM estiver pronto
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initializeCalendar);
+            } else {
+                initializeCalendar();
+            }
         </script>
     @endpush
 @endsection
