@@ -12,9 +12,46 @@ use App\Http\Controllers\EventoParticipanteController;
 use App\Http\Controllers\ParticipanteExternoController;
 use App\Http\Controllers\FinanceiroCategoriaController;
 use App\Http\Controllers\FinanceiroMovimentoController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AuditLogController;
+use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\CheckInController;
+use App\Http\Controllers\DiocesesController;
+use App\Http\Controllers\NucleosController;
+use App\Http\Controllers\SecretariasController;
 
-// entidades resource
-Route::resource('entidades', EntidadeController::class);
+// autenticação
+Route::middleware('guest')->group(function () {
+    Route::get('/signin', [LoginController::class, 'show'])->name('signin');
+    Route::post('/signin', [LoginController::class, 'store'])->name('login');
+});
+
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
+// rotas protegidas por autenticação
+Route::middleware('auth')->group(function () {
+    // dashboard
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+
+    // entidades resource
+    Route::resource('entidades', EntidadeController::class);
+
+    // dioceses, nucleos e secretarias
+    Route::get('/dioceses', [DiocesesController::class, 'index'])->name('dioceses.index');
+    Route::post('/dioceses', [DiocesesController::class, 'store'])->name('dioceses.store');
+    Route::put('/dioceses/{diocese}', [DiocesesController::class, 'update'])->name('dioceses.update');
+    Route::delete('/dioceses/{diocese}', [DiocesesController::class, 'destroy'])->name('dioceses.destroy');
+
+    Route::get('/nucleos', [NucleosController::class, 'index'])->name('nucleos.index');
+    Route::post('/nucleos', [NucleosController::class, 'store'])->name('nucleos.store');
+    Route::put('/nucleos/{nucleo}', [NucleosController::class, 'update'])->name('nucleos.update');
+    Route::delete('/nucleos/{nucleo}', [NucleosController::class, 'destroy'])->name('nucleos.destroy');
+
+    Route::get('/secretarias', [SecretariasController::class, 'index'])->name('secretarias.index');
+    Route::post('/secretarias', [SecretariasController::class, 'store'])->name('secretarias.store');
+    Route::put('/secretarias/{secretaria}', [SecretariasController::class, 'update'])->name('secretarias.update');
+    Route::delete('/secretarias/{secretaria}', [SecretariasController::class, 'destroy'])->name('secretarias.destroy');
 
 // dirigentes resource
 Route::resource('dirigentes', DirigenteController::class);
@@ -42,90 +79,101 @@ Route::post('/eventos/{evento}/participantes', [EventoParticipanteController::cl
 Route::delete('/eventos/{evento}/participantes/{eventoParticipante}', [EventoParticipanteController::class, 'destroy'])->name('eventos.participantes.destroy');
 Route::post('/eventos/{evento}/participantes/{eventoParticipante}/presenca', [EventoParticipanteController::class, 'marcarPresenca'])->name('eventos.participantes.presenca');
 
-// financeiro resources
-Route::resource('financeiro-categorias', FinanceiroCategoriaController::class);
-Route::resource('financeiro-movimentos', FinanceiroMovimentoController::class);
-Route::get('/financeiro/extrato', [FinanceiroMovimentoController::class, 'extrato'])->name('financeiro.extrato');
-Route::get('/financeiro/resumo', [FinanceiroMovimentoController::class, 'resumo'])->name('financeiro.resumo');
+    // financeiro resources
+    Route::resource('financeiro-categorias', FinanceiroCategoriaController::class);
+    Route::resource('financeiro-movimentos', FinanceiroMovimentoController::class);
+    Route::get('/financeiro/extrato', [FinanceiroMovimentoController::class, 'extrato'])->name('financeiro.extrato');
+    Route::get('/financeiro/resumo', [FinanceiroMovimentoController::class, 'resumo'])->name('financeiro.resumo');
 
-// dashboard pages
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard.index');
+    // auditoria e logs
+    Route::get('/auditoria', [AuditLogController::class, 'index'])->name('auditoria.index');
+    Route::get('/auditoria/{id}', [AuditLogController::class, 'show'])->name('auditoria.show');
 
-// calender pages
-Route::get('/calendar', function () {
-    return view('pages.calender', ['title' => 'Calendar']);
-})->name('calendar');
+    // relatórios avançados
+    Route::get('/relatorios/financeiro', [RelatorioController::class, 'financeiro'])->name('relatorios.financeiro');
+    Route::get('/relatorios/eventos', [RelatorioController::class, 'eventos'])->name('relatorios.eventos');
+    Route::get('/relatorios/dirigentes', [RelatorioController::class, 'dirigentes'])->name('relatorios.dirigentes');
+    Route::get('/relatorios/export', [RelatorioController::class, 'export'])->name('relatorios.export');
 
-// profile pages
-Route::get('/profile', function () {
-    return view('pages.profile', ['title' => 'Profile']);
-})->name('profile');
+    // exportação PDF
+    Route::get('/relatorios/financeiro/pdf', [RelatorioController::class, 'financeiroPdf'])->name('relatorios.financeiro.pdf');
+    Route::get('/relatorios/eventos/pdf', [RelatorioController::class, 'eventosPdf'])->name('relatorios.eventos.pdf');
+    Route::get('/relatorios/dirigentes/pdf', [RelatorioController::class, 'dirigentesPdf'])->name('relatorios.dirigentes.pdf');
 
-// form pages
-Route::get('/form-elements', function () {
-    return view('pages.form.form-elements', ['title' => 'Form Elements']);
-})->name('form-elements');
+    // exportação Excel
+    Route::get('/relatorios/financeiro/excel', [RelatorioController::class, 'financeiroExcel'])->name('relatorios.financeiro.excel');
+    Route::get('/relatorios/eventos/excel', [RelatorioController::class, 'eventosExcel'])->name('relatorios.eventos.excel');
+    Route::get('/relatorios/dirigentes/excel', [RelatorioController::class, 'dirigenteExcel'])->name('relatorios.dirigentes.excel');
 
-// tables pages
-Route::get('/basic-tables', function () {
-    return view('pages.tables.basic-tables', ['title' => 'Basic Tables']);
-})->name('basic-tables');
+    // check-in
+    Route::get('/eventos/{evento}/checkin', [CheckInController::class, 'show'])->name('check-in.show');
+    Route::post('/eventos/{evento}/checkin', [CheckInController::class, 'processar'])->name('check-in.processar');
+    Route::get('/dirigentes/{dirigente}/qrcode', [CheckInController::class, 'qrcodeParticipante'])->name('dirigente.qrcode');
 
-// pages
+    // calender pages
+    Route::get('/calendar', function () {
+        return view('pages.calender', ['title' => 'Calendar']);
+    })->name('calendar');
 
-Route::get('/blank', function () {
-    return view('pages.blank', ['title' => 'Blank']);
-})->name('blank');
+    // profile pages
+    Route::get('/profile', function () {
+        return view('pages.profile', ['title' => 'Profile']);
+    })->name('profile');
 
-// error pages
-Route::get('/error-404', function () {
-    return view('pages.errors.error-404', ['title' => 'Error 404']);
-})->name('error-404');
+    // form pages
+    Route::get('/form-elements', function () {
+        return view('pages.form.form-elements', ['title' => 'Form Elements']);
+    })->name('form-elements');
 
-// chart pages
-Route::get('/line-chart', function () {
-    return view('pages.chart.line-chart', ['title' => 'Line Chart']);
-})->name('line-chart');
+    // tables pages
+    Route::get('/basic-tables', function () {
+        return view('pages.tables.basic-tables', ['title' => 'Basic Tables']);
+    })->name('basic-tables');
 
-Route::get('/bar-chart', function () {
-    return view('pages.chart.bar-chart', ['title' => 'Bar Chart']);
-})->name('bar-chart');
+    // pages
+    Route::get('/blank', function () {
+        return view('pages.blank', ['title' => 'Blank']);
+    })->name('blank');
 
+    // error pages
+    Route::get('/error-404', function () {
+        return view('pages.errors.error-404', ['title' => 'Error 404']);
+    })->name('error-404');
 
-// authentication pages
-Route::get('/signin', function () {
-    return view('pages.auth.signin', ['title' => 'Sign In']);
-})->name('signin');
+    // chart pages
+    Route::get('/line-chart', function () {
+        return view('pages.chart.line-chart', ['title' => 'Line Chart']);
+    })->name('line-chart');
 
-Route::get('/signup', function () {
-    return view('pages.auth.signup', ['title' => 'Sign Up']);
-})->name('signup');
+    Route::get('/bar-chart', function () {
+        return view('pages.chart.bar-chart', ['title' => 'Bar Chart']);
+    })->name('bar-chart');
 
-// ui elements pages
-Route::get('/alerts', function () {
-    return view('pages.ui-elements.alerts', ['title' => 'Alerts']);
-})->name('alerts');
+    // ui elements pages
+    Route::get('/alerts', function () {
+        return view('pages.ui-elements.alerts', ['title' => 'Alerts']);
+    })->name('alerts');
 
-Route::get('/avatars', function () {
-    return view('pages.ui-elements.avatars', ['title' => 'Avatars']);
-})->name('avatars');
+    Route::get('/avatars', function () {
+        return view('pages.ui-elements.avatars', ['title' => 'Avatars']);
+    })->name('avatars');
 
-Route::get('/badge', function () {
-    return view('pages.ui-elements.badges', ['title' => 'Badges']);
-})->name('badges');
+    Route::get('/badge', function () {
+        return view('pages.ui-elements.badges', ['title' => 'Badges']);
+    })->name('badges');
 
-Route::get('/buttons', function () {
-    return view('pages.ui-elements.buttons', ['title' => 'Buttons']);
-})->name('buttons');
+    Route::get('/buttons', function () {
+        return view('pages.ui-elements.buttons', ['title' => 'Buttons']);
+    })->name('buttons');
 
-Route::get('/image', function () {
-    return view('pages.ui-elements.images', ['title' => 'Images']);
-})->name('images');
+    Route::get('/image', function () {
+        return view('pages.ui-elements.images', ['title' => 'Images']);
+    })->name('images');
 
-Route::get('/videos', function () {
-    return view('pages.ui-elements.videos', ['title' => 'Videos']);
-})->name('videos');
+    Route::get('/videos', function () {
+        return view('pages.ui-elements.videos', ['title' => 'Videos']);
+    })->name('videos');
+});
 
 
 

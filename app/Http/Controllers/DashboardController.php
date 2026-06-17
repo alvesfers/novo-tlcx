@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\DashboardService;
+use App\Enums\TipoUsuario;
 
 class DashboardController extends Controller
 {
@@ -20,6 +21,13 @@ class DashboardController extends Controller
         $user = auth()->user();
         $resumo = $this->service->getResumo($user);
 
-        return view('dashboard', compact('resumo'));
+        // Retorna view específica por tipo de usuário
+        return match($user->tipo_usuario) {
+            TipoUsuario::Admin => view('dashboard.admin', compact('resumo')),
+            TipoUsuario::Diocese => view('dashboard.diocese', compact('resumo')),
+            TipoUsuario::Nucleo => view('dashboard.nucleo', compact('resumo')),
+            TipoUsuario::Secretaria => view('dashboard.secretaria', compact('resumo')),
+            default => view('dashboard.generico', compact('resumo')),
+        };
     }
 }

@@ -162,7 +162,7 @@
                                     @if($vinculo->isCoordenacao()) bg-purple-100 text-purple-800
                                     @else bg-blue-100 text-blue-800
                                     @endif">
-                                    {{ ucfirst($vinculo->tipo_vinculo) }}
+                                    {{ $vinculo->tipo_vinculo->label() }}
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-sm capitalize">{{ $vinculo->cargo }}</td>

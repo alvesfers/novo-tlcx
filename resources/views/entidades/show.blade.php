@@ -31,7 +31,7 @@
                         @elseif($entidade->isNucleo()) bg-blue-100 text-blue-800
                         @else bg-green-100 text-green-800
                         @endif">
-                        {{ ucfirst($entidade->tipo_entidade) }}
+                        {{ $entidade->tipo_entidade->label() }}
                     </span>
                 </div>
                 <div>
@@ -63,7 +63,7 @@
                         <a href="{{ route('entidades.show', $filha) }}" class="text-blue-600 hover:underline">
                             {{ $filha->nome }}
                         </a>
-                        <span class="ml-2 text-sm text-gray-600">({{ ucfirst($filha->tipo_entidade) }})</span>
+                        <span class="ml-2 text-sm text-gray-600">({{ $filha->tipo_entidade->label() }})</span>
                     </li>
                 @endforeach
             </ul>
@@ -76,7 +76,7 @@
             <a href="{{ route('entidades.show', $entidade->entidadePai) }}" class="text-blue-600 hover:underline">
                 {{ $entidade->entidadePai->nome }}
             </a>
-            <p class="text-sm text-gray-600">{{ ucfirst($entidade->entidadePai->tipo_entidade) }}</p>
+            <p class="text-sm text-gray-600">{{ $entidade->entidadePai->tipo_entidade->label() }}</p>
         </div>
         @endif
 

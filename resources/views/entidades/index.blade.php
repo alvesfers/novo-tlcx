@@ -40,7 +40,7 @@
                                 @elseif($entidade->isNucleo()) bg-blue-100 text-blue-800
                                 @else bg-green-100 text-green-800
                                 @endif">
-                                {{ ucfirst($entidade->tipo_entidade) }}
+                                {{ $entidade->tipo_entidade->label() }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-sm">{{ $entidade->email ?? '-' }}</td>

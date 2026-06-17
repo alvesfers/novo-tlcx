@@ -11,7 +11,7 @@
         <div>
             <label class="block text-sm font-medium mb-2">Tipo</label>
             <p class="px-4 py-2 bg-gray-100 rounded-lg">
-                <strong>{{ ucfirst($entidade->tipo_entidade) }}</strong>
+                <strong>{{ $entidade->tipo_entidade->label() }}</strong>
                 <small class="text-gray-600">(não pode ser alterado)</small>
             </p>
         </div>

@@ -53,6 +53,7 @@ class InitialDataSeeder extends Seeder
 
         // Vincular usuário à diocese
         $dioceseSantoAmaro->update(['user_id' => $userDiocese->id]);
+        $userDiocese->update(['entidade_id' => $dioceseSantoAmaro->id]);
 
         // Criar Núcleo Igreja Verde (filho da Diocese)
         $nucleoIgrejaVerde = Entidade::create([
@@ -76,6 +77,7 @@ class InitialDataSeeder extends Seeder
 
         // Vincular usuário ao núcleo
         $nucleoIgrejaVerde->update(['user_id' => $userNucleo->id]);
+        $userNucleo->update(['entidade_id' => $nucleoIgrejaVerde->id]);
 
         // Criar Secretaria de Jovens (filha da Diocese)
         $secretariaJovens = Entidade::create([
@@ -99,6 +101,7 @@ class InitialDataSeeder extends Seeder
 
         // Vincular usuário à secretaria
         $secretariaJovens->update(['user_id' => $userSecretaria->id]);
+        $userSecretaria->update(['entidade_id' => $secretariaJovens->id]);
 
         // Criar Dirigentes
         $dirigente1 = Dirigente::create([
