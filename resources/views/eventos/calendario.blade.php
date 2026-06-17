@@ -5,52 +5,91 @@
 
     <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] p-6">
         <!-- Filtros -->
-        <div class="mb-8">
-            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Filtros</h3>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Meus Eventos -->
-                <div>
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" id="meusEventos" class="w-4 h-4 rounded border-gray-300 text-blue-600">
-                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Mostrar apenas meus eventos</span>
-                    </label>
-                </div>
-
-                <!-- Filtro por Entidades -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Filtrar por Entidades
-                    </label>
-                    <div class="relative">
-                        <select id="filtroEntidades" multiple class="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-900 dark:border-gray-700 dark:text-white" size="5">
-                            @forelse($entidades->groupBy('tipo_entidade') as $tipo => $grupo)
-                                <optgroup label="@php
-                                    $tipoLabels = ['diocese' => 'Dioceses', 'nucleo' => 'Núcleos', 'secretaria' => 'Secretarias'];
-                                    echo $tipoLabels[$tipo] ?? $tipo;
-                                @endphp">
-                                    @foreach($grupo as $entidade)
-                                        <option value="{{ $entidade->id }}">
-                                            {{ $entidade->nome }}
-                                        </option>
-                                    @endforeach
-                                </optgroup>
-                            @empty
-                                <option disabled>Nenhuma entidade disponível</option>
-                            @endforelse
-                        </select>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                            Segure Ctrl/Cmd para selecionar múltiplas entidades
-                        </p>
-                    </div>
-                </div>
+        <div class="mb-8 pb-6 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Filtros</h3>
+                <button type="button" id="btnLimpar" class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline">
+                    Limpar todos
+                </button>
             </div>
 
-            <!-- Botões de Ação -->
-            <div class="flex gap-2 mt-4">
-                <button type="button" id="btnLimpar" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700">
-                    Limpar Filtros
-                </button>
+            <div class="space-y-3">
+                <!-- Meus Eventos -->
+                <div class="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
+                    <input type="checkbox" id="meusEventos" class="w-4 h-4 rounded border-gray-300 text-blue-600 cursor-pointer">
+                    <label for="meusEventos" class="text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                        Apenas meus eventos
+                    </label>
+                </div>
+
+                <!-- Dioceses -->
+                @php
+                    $dioceses = $entidades->where('tipo_entidade', 'diocese');
+                @endphp
+                @if($dioceses->isNotEmpty())
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                        <button type="button" class="filtro-toggle flex w-full items-center justify-between" data-target="dioceses">
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Dioceses</span>
+                            <svg class="filtro-icon w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </button>
+                        <div id="dioceses" class="filtro-content hidden mt-3 space-y-2">
+                            @foreach($dioceses as $entidade)
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" value="{{ $entidade->id }}" class="filtro-checkbox w-4 h-4 rounded border-gray-300 text-blue-600">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $entidade->nome }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Núcleos -->
+                @php
+                    $nucleos = $entidades->where('tipo_entidade', 'nucleo');
+                @endphp
+                @if($nucleos->isNotEmpty())
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                        <button type="button" class="filtro-toggle flex w-full items-center justify-between" data-target="nucleos">
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Núcleos</span>
+                            <svg class="filtro-icon w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </button>
+                        <div id="nucleos" class="filtro-content hidden mt-3 space-y-2">
+                            @foreach($nucleos as $entidade)
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" value="{{ $entidade->id }}" class="filtro-checkbox w-4 h-4 rounded border-gray-300 text-blue-600">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $entidade->nome }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Secretarias -->
+                @php
+                    $secretarias = $entidades->where('tipo_entidade', 'secretaria');
+                @endphp
+                @if($secretarias->isNotEmpty())
+                    <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                        <button type="button" class="filtro-toggle flex w-full items-center justify-between" data-target="secretarias">
+                            <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">Secretarias</span>
+                            <svg class="filtro-icon w-4 h-4 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </button>
+                        <div id="secretarias" class="filtro-content hidden mt-3 space-y-2">
+                            @foreach($secretarias as $entidade)
+                                <label class="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" value="{{ $entidade->id }}" class="filtro-checkbox w-4 h-4 rounded border-gray-300 text-blue-600">
+                                    <span class="text-sm text-gray-700 dark:text-gray-300">{{ $entidade->nome }}</span>
+                                </label>
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -84,33 +123,33 @@
                 <div class="mt-6 modal-body">
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase">Tipo</label>
-                            <p id="eventType" class="text-gray-900 dark:text-white/90 mt-1"></p>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Tipo de Evento</label>
+                            <p id="eventType" class="text-gray-900 dark:text-white/90 mt-1 text-sm"></p>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase">Entidade Criadora</label>
-                            <p id="eventEntidade" class="text-gray-900 dark:text-white/90 mt-1"></p>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Responsável</label>
+                            <p id="eventEntidade" class="text-gray-900 dark:text-white/90 mt-1 text-sm"></p>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase">Data e Hora</label>
-                            <p id="eventDateTime" class="text-gray-900 dark:text-white/90 mt-1"></p>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Data e Hora</label>
+                            <p id="eventDateTime" class="text-gray-900 dark:text-white/90 mt-1 text-sm"></p>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase">Local</label>
-                            <p id="eventLocal" class="text-gray-900 dark:text-white/90 mt-1"></p>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Local</label>
+                            <p id="eventLocal" class="text-gray-900 dark:text-white/90 mt-1 text-sm"></p>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase">Status</label>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Status</label>
                             <div id="eventStatus" class="mt-1"></div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-semibold text-gray-700 dark:text-gray-400 uppercase">Descrição</label>
-                            <p id="eventDescricao" class="text-gray-900 dark:text-white/90 mt-1 whitespace-pre-wrap"></p>
+                            <label class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">Descrição</label>
+                            <p id="eventDescricao" class="text-gray-900 dark:text-white/90 mt-1 text-sm whitespace-pre-wrap"></p>
                         </div>
                     </div>
                 </div>
@@ -133,11 +172,30 @@
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const calendarEl = document.getElementById('calendar');
-                const filtroEntidades = document.getElementById('filtroEntidades');
                 const meusEventos = document.getElementById('meusEventos');
                 const btnLimpar = document.getElementById('btnLimpar');
                 const eventModal = document.getElementById('eventModal');
                 const modalCloseButtons = document.querySelectorAll('.modal-close-btn');
+                const filtroToggles = document.querySelectorAll('.filtro-toggle');
+                const filtroCheckboxes = document.querySelectorAll('.filtro-checkbox');
+
+                // Configurar toggles dos filtros (abrir/fechar)
+                filtroToggles.forEach(toggle => {
+                    toggle.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('data-target');
+                        const content = document.getElementById(targetId);
+                        const icon = this.querySelector('.filtro-icon');
+
+                        content.classList.toggle('hidden');
+                        icon.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+                    });
+                });
+
+                // Event listeners para checkboxes de filtro
+                filtroCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', () => calendar.refetchEvents());
+                });
 
                 // Configurar modal
                 modalCloseButtons.forEach(btn => {
@@ -177,12 +235,13 @@
                 function loadEventos(callback) {
                     const params = new URLSearchParams();
 
-                    // Adicionar filtros
+                    // Adicionar filtro "meus eventos"
                     if (meusEventos.checked) {
                         params.append('meus_eventos', '1');
                     }
 
-                    const selectedEntidades = Array.from(filtroEntidades.selectedOptions).map(opt => opt.value);
+                    // Adicionar entidades selecionadas
+                    const selectedEntidades = Array.from(document.querySelectorAll('.filtro-checkbox:checked')).map(cb => cb.value);
                     if (selectedEntidades.length > 0) {
                         selectedEntidades.forEach(id => params.append('entidades[]', id));
                     }
@@ -249,14 +308,13 @@
                     eventModal.classList.remove('hidden');
                 }
 
-                // Event listeners para filtros
-                filtroEntidades.addEventListener('change', () => calendar.refetchEvents());
+                // Event listener para "meus eventos"
                 meusEventos.addEventListener('change', () => calendar.refetchEvents());
 
-                // Limpar filtros
+                // Limpar todos os filtros
                 btnLimpar.addEventListener('click', () => {
-                    filtroEntidades.selectedIndex = -1;
                     meusEventos.checked = false;
+                    filtroCheckboxes.forEach(cb => cb.checked = false);
                     calendar.refetchEvents();
                 });
             });
