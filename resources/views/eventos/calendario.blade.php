@@ -392,5 +392,4 @@
             setTimeout(initializeCalendar, 500);
         }
     </script>
-    @endpush
 @endsection
