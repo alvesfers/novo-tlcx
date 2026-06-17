@@ -28,12 +28,34 @@ class SecretariasController extends Controller
         ]);
     }
 
+    public function create(): View
+    {
+        $this->authorize('create', Entidade::class);
+
+        $nucleos = Entidade::where('tipo_entidade', 'nucleo')
+            ->ativas()
+            ->get();
+
+        return view('secretarias.create', compact('nucleos'));
+    }
+
     public function show(Entidade $secretaria): View
     {
         $this->authorize('view', $secretaria);
         $secretaria->load('entidadePai', 'dirigenteVinculos.dirigente');
 
         return view('secretarias.show', compact('secretaria'));
+    }
+
+    public function edit(Entidade $secretaria): View
+    {
+        $this->authorize('update', $secretaria);
+
+        $nucleos = Entidade::where('tipo_entidade', 'nucleo')
+            ->ativas()
+            ->get();
+
+        return view('secretarias.edit', compact('secretaria', 'nucleos'));
     }
 
     public function store(Request $request): RedirectResponse

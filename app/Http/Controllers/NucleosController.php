@@ -28,12 +28,34 @@ class NucleosController extends Controller
         ]);
     }
 
+    public function create(): View
+    {
+        $this->authorize('create', Entidade::class);
+
+        $dioceses = Entidade::where('tipo_entidade', 'diocese')
+            ->ativas()
+            ->get();
+
+        return view('nucleos.create', compact('dioceses'));
+    }
+
     public function show(Entidade $nucleo): View
     {
         $this->authorize('view', $nucleo);
         $nucleo->load('entidadePai', 'entidadesFilhas', 'dirigenteVinculos.dirigente');
 
         return view('nucleos.show', compact('nucleo'));
+    }
+
+    public function edit(Entidade $nucleo): View
+    {
+        $this->authorize('update', $nucleo);
+
+        $dioceses = Entidade::where('tipo_entidade', 'diocese')
+            ->ativas()
+            ->get();
+
+        return view('nucleos.edit', compact('nucleo', 'dioceses'));
     }
 
     public function store(Request $request): RedirectResponse

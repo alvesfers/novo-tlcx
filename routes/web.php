@@ -44,21 +44,27 @@ Route::middleware('auth')->group(function () {
 
     // dioceses, nucleos e secretarias
     Route::get('/dioceses', [DiocesesController::class, 'index'])->name('dioceses.index');
+    Route::get('/dioceses/create', [DiocesesController::class, 'create'])->name('dioceses.create');
     Route::get('/dioceses/{diocese}', [DiocesesController::class, 'show'])->name('dioceses.show');
+    Route::get('/dioceses/{diocese}/edit', [DiocesesController::class, 'edit'])->name('dioceses.edit');
     Route::post('/dioceses', [DiocesesController::class, 'store'])->name('dioceses.store');
     Route::put('/dioceses/{diocese}', [DiocesesController::class, 'update'])->name('dioceses.update');
     Route::delete('/dioceses/{diocese}', [DiocesesController::class, 'destroy'])->name('dioceses.destroy');
     Route::post('/dioceses/delete-multiple', [DiocesesController::class, 'deleteMultiple'])->name('dioceses.delete-multiple');
 
     Route::get('/nucleos', [NucleosController::class, 'index'])->name('nucleos.index');
+    Route::get('/nucleos/create', [NucleosController::class, 'create'])->name('nucleos.create');
     Route::get('/nucleos/{nucleo}', [NucleosController::class, 'show'])->name('nucleos.show');
+    Route::get('/nucleos/{nucleo}/edit', [NucleosController::class, 'edit'])->name('nucleos.edit');
     Route::post('/nucleos', [NucleosController::class, 'store'])->name('nucleos.store');
     Route::put('/nucleos/{nucleo}', [NucleosController::class, 'update'])->name('nucleos.update');
     Route::delete('/nucleos/{nucleo}', [NucleosController::class, 'destroy'])->name('nucleos.destroy');
     Route::post('/nucleos/delete-multiple', [NucleosController::class, 'deleteMultiple'])->name('nucleos.delete-multiple');
 
     Route::get('/secretarias', [SecretariasController::class, 'index'])->name('secretarias.index');
+    Route::get('/secretarias/create', [SecretariasController::class, 'create'])->name('secretarias.create');
     Route::get('/secretarias/{secretaria}', [SecretariasController::class, 'show'])->name('secretarias.show');
+    Route::get('/secretarias/{secretaria}/edit', [SecretariasController::class, 'edit'])->name('secretarias.edit');
     Route::post('/secretarias', [SecretariasController::class, 'store'])->name('secretarias.store');
     Route::put('/secretarias/{secretaria}', [SecretariasController::class, 'update'])->name('secretarias.update');
     Route::delete('/secretarias/{secretaria}', [SecretariasController::class, 'destroy'])->name('secretarias.destroy');

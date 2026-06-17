@@ -10,57 +10,7 @@
     'createLabel' => 'Novo',
 ])
 
-<div x-data="{
-    selectedRows: [],
-    selectAll: false,
-    tableData: @json($items->map(fn($item) => [
-        'id' => $item->id,
-        'data' => $item
-    ])->toArray()),
-    handleSelectAll() {
-        this.selectAll = !this.selectAll;
-        if (this.selectAll) {
-            this.selectedRows = this.tableData.map(row => row.id);
-        } else {
-            this.selectedRows = [];
-        }
-    },
-    handleRowSelect(id) {
-        if (this.selectedRows.includes(id)) {
-            this.selectedRows = this.selectedRows.filter(rowId => rowId !== id);
-        } else {
-            this.selectedRows.push(id);
-        }
-    },
-    deleteSelected() {
-        if (this.selectedRows.length === 0) {
-            alert('Selecione pelo menos um item');
-            return;
-        }
-        if (!confirm('Tem certeza que deseja deletar os itens selecionados?')) {
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('ids', JSON.stringify(this.selectedRows));
-        formData.append('_token', document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content'));
-
-        fetch(`/{{ $resourceName }}/delete-multiple`, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name=\"csrf-token\"]').getAttribute('content'),
-            }
-        }).then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  window.location.reload();
-              } else {
-                  alert('Erro ao deletar itens: ' + (data.message || 'Erro desconhecido'));
-              }
-          });
-    }
-}">
+<div x-data="initTable('{{ $resourceName }}')" data-resource="{{ $resourceName }}">
     <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <!-- Header -->
         <div class="flex flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 dark:border-white/[0.05]">
@@ -98,19 +48,17 @@
             <table class="w-full">
                 <thead class="border-b border-gray-100 dark:border-white/[0.05] bg-gray-50 dark:bg-gray-900">
                     <tr>
-                        @if(in_array('select', $actions) || count($actions) === 0)
-                            <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">
-                                <div class="flex items-center gap-3">
-                                    <div @click="handleSelectAll()"
-                                        class="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-[1.25px]"
-                                        :class="selectAll ? 'border-blue-500 dark:border-blue-500 bg-blue-500' : 'bg-white dark:bg-white/0 border-gray-300 dark:border-gray-700'">
-                                        <svg :class="selectAll ? 'block' : 'hidden'" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M11.6668 3.5L5.25016 9.91667L2.3335 7" stroke="white" stroke-width="1.94437" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
+                        <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">
+                            <div class="flex items-center gap-3">
+                                <div @click="handleSelectAll()"
+                                    class="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-[1.25px]"
+                                    :class="selectAll ? 'border-blue-500 dark:border-blue-500 bg-blue-500' : 'bg-white dark:bg-white/0 border-gray-300 dark:border-gray-700'">
+                                    <svg :class="selectAll ? 'block' : 'hidden'" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M11.6668 3.5L5.25016 9.91667L2.3335 7" stroke="white" stroke-width="1.94437" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                 </div>
-                            </th>
-                        @endif
+                            </div>
+                        </th>
 
                         @foreach($columns as $column)
                             <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">
@@ -127,20 +75,18 @@
                 </thead>
                 <tbody>
                     @forelse($items as $item)
-                        <tr class="border-b border-gray-100 dark:border-white/[0.05] hover:bg-gray-50 dark:hover:bg-white/[0.02]">
-                            @if(in_array('select', $actions) || count($actions) === 0)
-                                <td class="px-6 py-3.5">
-                                    <div class="flex items-center gap-3">
-                                        <div @click="handleRowSelect({{ $item->id }})"
-                                            class="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-[1.25px]"
-                                            :class="selectedRows.includes({{ $item->id }}) ? 'border-blue-500 dark:border-blue-500 bg-blue-500' : 'bg-white dark:bg-white/0 border-gray-300 dark:border-gray-700'">
-                                            <svg :class="selectedRows.includes({{ $item->id }}) ? 'block' : 'hidden'" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M11.6668 3.5L5.25016 9.91667L2.3335 7" stroke="white" stroke-width="1.94437" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
-                                        </div>
+                        <tr class="border-b border-gray-100 dark:border-white/[0.05] hover:bg-gray-50 dark:hover:bg-white/[0.02]" data-row-id="{{ $item->id }}">
+                            <td class="px-6 py-3.5">
+                                <div class="flex items-center gap-3">
+                                    <div @click="handleRowSelect({{ $item->id }})"
+                                        class="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md border-[1.25px]"
+                                        :class="selectedRows.includes({{ $item->id }}) ? 'border-blue-500 dark:border-blue-500 bg-blue-500' : 'bg-white dark:bg-white/0 border-gray-300 dark:border-gray-700'">
+                                        <svg :class="selectedRows.includes({{ $item->id }}) ? 'block' : 'hidden'" width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M11.6668 3.5L5.25016 9.91667L2.3335 7" stroke="white" stroke-width="1.94437" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
                                     </div>
-                                </td>
-                            @endif
+                                </div>
+                            </td>
 
                             @foreach($columns as $column)
                                 <td class="px-6 py-3.5">
@@ -222,7 +168,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ count($columns) + (in_array('select', $actions) ? 2 : 1) }}" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="{{ count($columns) + 2 }}" class="px-6 py-12 text-center text-gray-500">
                                 {{ $emptyMessage }}
                             </td>
                         </tr>
