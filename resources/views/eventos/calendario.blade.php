@@ -167,21 +167,21 @@
         </div>
     </div>
 
-    @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
-        <script>
-            let calendarInstance = null;
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+    <script>
+        let calendarInstance = null;
+        let initRetries = 0;
+        const maxRetries = 50;
 
-            function loadEventos(callback) {
+        function loadEventos(successCallback) {
+            try {
                 const meusEventos = document.getElementById('meusEventos');
                 const params = new URLSearchParams();
 
-                // Adicionar filtro "meus eventos"
                 if (meusEventos && meusEventos.checked) {
                     params.append('meus_eventos', '1');
                 }
 
-                // Adicionar entidades selecionadas
                 const selectedEntidades = Array.from(document.querySelectorAll('.filtro-checkbox:checked')).map(cb => cb.value);
                 if (selectedEntidades.length > 0) {
                     selectedEntidades.forEach(id => params.append('entidades[]', id));
@@ -189,119 +189,101 @@
 
                 fetch(`{{ route('eventos.calendario.get') }}?${params.toString()}`)
                     .then(response => response.json())
-                    .then(data => callback(data))
+                    .then(data => {
+                        if (typeof successCallback === 'function') {
+                            successCallback(data);
+                        }
+                    })
                     .catch(error => {
                         console.error('Erro ao carregar eventos:', error);
-                        if (typeof callback === 'function') callback([]);
+                        if (typeof successCallback === 'function') {
+                            successCallback([]);
+                        }
                     });
+            } catch (error) {
+                console.error('Erro em loadEventos:', error);
+                if (typeof successCallback === 'function') {
+                    successCallback([]);
+                }
             }
+        }
 
-            function showEventDetails(event) {
-                const eventModal = document.getElementById('eventModal');
-                if (!eventModal) return;
+        function showEventDetails(event) {
+            const eventModal = document.getElementById('eventModal');
+            if (!eventModal) return;
 
-                const extendedProps = event.extendedProps;
+            try {
+                const extendedProps = event.extendedProps || {};
 
-                const titleEl = document.getElementById('eventModalTitle');
-                const typeEl = document.getElementById('eventType');
-                const entityEl = document.getElementById('eventEntidade');
-                const dateEl = document.getElementById('eventDateTime');
-                const localEl = document.getElementById('eventLocal');
-                const statusEl = document.getElementById('eventStatus');
-                const descEl = document.getElementById('eventDescricao');
-                const linkEl = document.getElementById('btnVerDetalhes');
-
-                if (titleEl) titleEl.textContent = event.title;
-                if (typeEl) typeEl.textContent = extendedProps.tipo || 'N/A';
-                if (entityEl) entityEl.textContent = extendedProps.criadora || 'N/A';
-
-                const startDate = new Date(event.start);
-                const endDate = new Date(event.end);
-                const dateTimeStr = `${startDate.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })} até ${endDate.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })}`;
-
-                if (dateEl) dateEl.textContent = dateTimeStr;
-                if (localEl) localEl.textContent = extendedProps.local || 'Não informado';
-
-                const statusLabels = {
-                    'rascunho': 'Rascunho',
-                    'publicado': 'Publicado',
-                    'encerrado': 'Encerrado',
-                    'cancelado': 'Cancelado'
-                };
-                const statusColors = {
-                    'rascunho': 'bg-gray-100 text-gray-800',
-                    'publicado': 'bg-blue-100 text-blue-800',
-                    'encerrado': 'bg-gray-100 text-gray-800',
-                    'cancelado': 'bg-red-100 text-red-800'
+                const elements = {
+                    title: document.getElementById('eventModalTitle'),
+                    type: document.getElementById('eventType'),
+                    entity: document.getElementById('eventEntidade'),
+                    date: document.getElementById('eventDateTime'),
+                    local: document.getElementById('eventLocal'),
+                    status: document.getElementById('eventStatus'),
+                    desc: document.getElementById('eventDescricao'),
+                    link: document.getElementById('btnVerDetalhes')
                 };
 
-                if (statusEl) {
-                    statusEl.innerHTML = `<span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${statusColors[extendedProps.status] || 'bg-gray-100 text-gray-800'}">
-                        ${statusLabels[extendedProps.status] || 'N/A'}
+                if (elements.title) elements.title.textContent = event.title || '';
+                if (elements.type) elements.type.textContent = extendedProps.tipo || 'N/A';
+                if (elements.entity) elements.entity.textContent = extendedProps.criadora || 'N/A';
+
+                if (elements.date) {
+                    const startDate = new Date(event.start);
+                    const endDate = new Date(event.end || event.start);
+                    const dateTimeStr = `${startDate.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })} até ${endDate.toLocaleDateString('pt-BR', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}`;
+                    elements.date.textContent = dateTimeStr;
+                }
+
+                if (elements.local) elements.local.textContent = extendedProps.local || 'Não informado';
+
+                if (elements.status) {
+                    const statusLabels = {
+                        'rascunho': 'Rascunho',
+                        'publicado': 'Publicado',
+                        'encerrado': 'Encerrado',
+                        'cancelado': 'Cancelado'
+                    };
+                    const statusColors = {
+                        'rascunho': 'bg-gray-100 text-gray-800',
+                        'publicado': 'bg-blue-100 text-blue-800',
+                        'encerrado': 'bg-gray-100 text-gray-800',
+                        'cancelado': 'bg-red-100 text-red-800'
+                    };
+
+                    const status = extendedProps.status || 'publicado';
+                    elements.status.innerHTML = `<span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${statusColors[status] || 'bg-gray-100 text-gray-800'}">
+                        ${statusLabels[status] || 'N/A'}
                     </span>`;
                 }
 
-                if (descEl) descEl.textContent = extendedProps.description || 'Sem descrição';
-                if (linkEl) linkEl.href = `/eventos/${event.id}`;
+                if (elements.desc) elements.desc.textContent = extendedProps.description || 'Sem descrição';
+                if (elements.link) elements.link.href = `/eventos/${event.id}`;
 
                 eventModal.classList.remove('hidden');
+            } catch (error) {
+                console.error('Erro ao mostrar detalhes do evento:', error);
             }
+        }
 
-            function initializeCalendar() {
-                // Verificar se FullCalendar está disponível
-                if (typeof FullCalendar === 'undefined') {
-                    console.warn('FullCalendar não foi carregado ainda, tentando novamente...');
-                    setTimeout(initializeCalendar, 100);
-                    return;
-                }
-
-                const calendarEl = document.getElementById('calendar');
-                if (!calendarEl) {
-                    console.error('Elemento calendar não encontrado');
-                    return;
-                }
-
-                try {
-                    // Inicializar FullCalendar
-                    calendarInstance = new FullCalendar.Calendar(calendarEl, {
-                        initialView: 'dayGridMonth',
-                        headerToolbar: {
-                            left: 'prev,next today',
-                            center: 'title',
-                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                        },
-                        locale: 'pt-br',
-                        height: 'auto',
-                        events: function(info, successCallback, failureCallback) {
-                            loadEventos(successCallback);
-                        },
-                        eventClick: function(info) {
-                            showEventDetails(info.event);
-                        }
-                    });
-
-                    calendarInstance.render();
-                    console.log('Calendário inicializado com sucesso');
-                } catch (error) {
-                    console.error('Erro ao inicializar calendário:', error);
-                    return;
-                }
-
-                // Configurar toggles dos filtros (abrir/fechar)
-                const filtroToggles = document.querySelectorAll('.filtro-toggle');
-                filtroToggles.forEach(toggle => {
+        function setupFilters() {
+            try {
+                // Configurar toggles dos filtros
+                document.querySelectorAll('.filtro-toggle').forEach(toggle => {
                     toggle.addEventListener('click', function(e) {
                         e.preventDefault();
                         const targetId = this.getAttribute('data-target');
@@ -317,19 +299,19 @@
                     });
                 });
 
-                // Event listeners para checkboxes de filtro
-                const filtroCheckboxes = document.querySelectorAll('.filtro-checkbox');
-                filtroCheckboxes.forEach(checkbox => {
+                // Event listeners para checkboxes
+                document.querySelectorAll('.filtro-checkbox').forEach(checkbox => {
                     checkbox.addEventListener('change', () => {
-                        if (calendarInstance) calendarInstance.refetchEvents();
+                        if (calendarInstance) {
+                            calendarInstance.refetchEvents();
+                        }
                     });
                 });
 
                 // Configurar modal
                 const eventModal = document.getElementById('eventModal');
                 if (eventModal) {
-                    const modalCloseButtons = document.querySelectorAll('.modal-close-btn');
-                    modalCloseButtons.forEach(btn => {
+                    document.querySelectorAll('.modal-close-btn').forEach(btn => {
                         btn.addEventListener('click', function(e) {
                             e.stopPropagation();
                             eventModal.classList.add('hidden');
@@ -343,24 +325,72 @@
                     });
                 }
 
-                // Configurar botão limpar filtros
+                // Botão limpar filtros
                 const btnLimpar = document.getElementById('btnLimpar');
                 const meusEventos = document.getElementById('meusEventos');
                 if (btnLimpar) {
                     btnLimpar.addEventListener('click', () => {
                         if (meusEventos) meusEventos.checked = false;
-                        filtroCheckboxes.forEach(cb => cb.checked = false);
+                        document.querySelectorAll('.filtro-checkbox').forEach(cb => cb.checked = false);
                         if (calendarInstance) calendarInstance.refetchEvents();
                     });
                 }
+            } catch (error) {
+                console.error('Erro ao configurar filtros:', error);
+            }
+        }
+
+        function initializeCalendar() {
+            // Verificar se FullCalendar está disponível
+            if (typeof FullCalendar === 'undefined' || !FullCalendar.Calendar) {
+                initRetries++;
+                if (initRetries < maxRetries) {
+                    setTimeout(initializeCalendar, 100);
+                } else {
+                    console.error('Falha ao carregar FullCalendar após múltiplas tentativas');
+                }
+                return;
             }
 
-            // Inicializar quando o DOM estiver pronto
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initializeCalendar);
-            } else {
-                setTimeout(initializeCalendar, 0);
+            const calendarEl = document.getElementById('calendar');
+            if (!calendarEl) {
+                console.error('Elemento #calendar não encontrado');
+                return;
             }
-        </script>
+
+            try {
+                calendarInstance = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    locale: 'pt-br',
+                    height: 'auto',
+                    events: loadEventos,
+                    eventClick: function(info) {
+                        showEventDetails(info.event);
+                    }
+                });
+
+                calendarInstance.render();
+                setupFilters();
+                console.log('✓ Calendário inicializado com sucesso');
+            } catch (error) {
+                console.error('Erro fatal ao inicializar calendário:', error);
+            }
+        }
+
+        // Inicializar quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initializeCalendar, 500);
+        });
+
+        // Fallback para quando DOM já está carregado
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            setTimeout(initializeCalendar, 500);
+        }
+    </script>
     @endpush
 @endsection
