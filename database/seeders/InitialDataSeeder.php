@@ -41,6 +41,17 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
+        // Usuário para Diocese Santo Amaro
+        $userDioceseSantoAmaro = User::create([
+            'name' => 'Liderança Diocese de Santo Amaro',
+            'email' => 'diocese@santoamaro.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Diocese,
+            'entidade_id' => $dioceses['santo_amaro']->id,
+            'ativo' => true,
+        ]);
+        $dioceses['santo_amaro']->update(['user_id' => $userDioceseSantoAmaro->id]);
+
         $dioceses['campo_limpo'] = Entidade::create([
             'tipo_entidade' => TipoEntidade::Diocese,
             'nome' => 'Diocese de Campo Limpo',
@@ -48,12 +59,34 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
+        // Usuário para Diocese Campo Limpo
+        $userDioceseCampoLimpo = User::create([
+            'name' => 'Liderança Diocese de Campo Limpo',
+            'email' => 'diocese@campolimpo.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Diocese,
+            'entidade_id' => $dioceses['campo_limpo']->id,
+            'ativo' => true,
+        ]);
+        $dioceses['campo_limpo']->update(['user_id' => $userDioceseCampoLimpo->id]);
+
         $dioceses['santos'] = Entidade::create([
             'tipo_entidade' => TipoEntidade::Diocese,
             'nome' => 'Diocese de Santos',
             'email' => 'diocese@santos.com',
             'ativo' => true,
         ]);
+
+        // Usuário para Diocese Santos
+        $userDioceseSantos = User::create([
+            'name' => 'Liderança Diocese de Santos',
+            'email' => 'diocese@santos.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Diocese,
+            'entidade_id' => $dioceses['santos']->id,
+            'ativo' => true,
+        ]);
+        $dioceses['santos']->update(['user_id' => $userDioceseSantos->id]);
 
         // ===== NÚCLEOS =====
         $nucleos = [];
@@ -66,6 +99,16 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
+        $userNucleoSantaPaulina = User::create([
+            'name' => 'Liderança Núcleo Santa Paulina',
+            'email' => 'nucleo@santapaulina.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['santa_paulina']->id,
+            'ativo' => true,
+        ]);
+        $nucleos['santa_paulina']->update(['user_id' => $userNucleoSantaPaulina->id]);
+
         $nucleos['igreja_verde'] = Entidade::create([
             'entidade_pai_id' => $dioceses['santo_amaro']->id,
             'tipo_entidade' => TipoEntidade::Nucleo,
@@ -73,6 +116,16 @@ class InitialDataSeeder extends Seeder
             'email' => 'nucleo@igrejverde.com',
             'ativo' => true,
         ]);
+
+        $userNucleoIgrejaVerde = User::create([
+            'name' => 'Liderança Núcleo Igreja Verde',
+            'email' => 'nucleo@igrejverde.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['igreja_verde']->id,
+            'ativo' => true,
+        ]);
+        $nucleos['igreja_verde']->update(['user_id' => $userNucleoIgrejaVerde->id]);
 
         $nucleos['ideal'] = Entidade::create([
             'entidade_pai_id' => $dioceses['santo_amaro']->id,
@@ -82,6 +135,16 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
+        $userNucleoIdeal = User::create([
+            'name' => 'Liderança Núcleo Ideal',
+            'email' => 'nucleo@ideal.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['ideal']->id,
+            'ativo' => true,
+        ]);
+        $nucleos['ideal']->update(['user_id' => $userNucleoIdeal->id]);
+
         $nucleos['santuario_santa_terezinha'] = Entidade::create([
             'entidade_pai_id' => $dioceses['campo_limpo']->id,
             'tipo_entidade' => TipoEntidade::Nucleo,
@@ -89,6 +152,16 @@ class InitialDataSeeder extends Seeder
             'email' => 'nucleo@santuariosantaterezinha.com',
             'ativo' => true,
         ]);
+
+        $userNucleoSantuario = User::create([
+            'name' => 'Liderança Núcleo Santuário Santa Terezinha',
+            'email' => 'nucleo@santuariosantaterezinha.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['santuario_santa_terezinha']->id,
+            'ativo' => true,
+        ]);
+        $nucleos['santuario_santa_terezinha']->update(['user_id' => $userNucleoSantuario->id]);
 
         // ===== SECRETARIAS =====
         $secretarias = [];
@@ -100,12 +173,32 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
+        $userSecretariaMusica = User::create([
+            'name' => 'Liderança Secretaria de Música',
+            'email' => 'secretaria.musica@tlc.local',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Secretaria,
+            'entidade_id' => $secretarias['musica']->id,
+            'ativo' => true,
+        ]);
+        $secretarias['musica']->update(['user_id' => $userSecretariaMusica->id]);
+
         $secretarias['apoio'] = Entidade::create([
             'tipo_entidade' => TipoEntidade::Secretaria,
             'nome' => 'Secretaria de Apoio',
             'tipo_secretaria' => TipoSecretaria::Aberta,
             'ativo' => true,
         ]);
+
+        $userSecretariaApoio = User::create([
+            'name' => 'Liderança Secretaria de Apoio',
+            'email' => 'secretaria.apoio@tlc.local',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Secretaria,
+            'entidade_id' => $secretarias['apoio']->id,
+            'ativo' => true,
+        ]);
+        $secretarias['apoio']->update(['user_id' => $userSecretariaApoio->id]);
 
         $secretarias['espiritualidade'] = Entidade::create([
             'tipo_entidade' => TipoEntidade::Secretaria,
@@ -114,12 +207,32 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
 
+        $userSecretariaEspiritualidade = User::create([
+            'name' => 'Liderança Secretaria de Espiritualidade',
+            'email' => 'secretaria.espiritualidade@tlc.local',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Secretaria,
+            'entidade_id' => $secretarias['espiritualidade']->id,
+            'ativo' => true,
+        ]);
+        $secretarias['espiritualidade']->update(['user_id' => $userSecretariaEspiritualidade->id]);
+
         $secretarias['eventos'] = Entidade::create([
             'tipo_entidade' => TipoEntidade::Secretaria,
             'nome' => 'Secretaria de Eventos',
             'tipo_secretaria' => TipoSecretaria::Aberta,
             'ativo' => true,
         ]);
+
+        $userSecretariaEventos = User::create([
+            'name' => 'Liderança Secretaria de Eventos',
+            'email' => 'secretaria.eventos@tlc.local',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Secretaria,
+            'entidade_id' => $secretarias['eventos']->id,
+            'ativo' => true,
+        ]);
+        $secretarias['eventos']->update(['user_id' => $userSecretariaEventos->id]);
 
         // ===== DIRIGENTES =====
         $dirigentes = [];
@@ -510,6 +623,16 @@ class InitialDataSeeder extends Seeder
 
         // Log
         $this->command->info('✅ Dados iniciais criados com sucesso!');
+        $this->command->info('');
+        $this->command->info('👤 Usuários de Acesso (senha: password):');
+        $this->command->info('  Admin: admin@tlc.local');
+        $this->command->info('  Diocese Santo Amaro: diocese@santoamaro.com');
+        $this->command->info('  Diocese Campo Limpo: diocese@campolimpo.com');
+        $this->command->info('  Diocese Santos: diocese@santos.com');
+        $this->command->info('  Núcleo Santa Paulina: nucleo@santapaulina.com');
+        $this->command->info('  Núcleo Igreja Verde: nucleo@igrejverde.com');
+        $this->command->info('  Núcleo Ideal: nucleo@ideal.com');
+        $this->command->info('  Núcleo Santuário: nucleo@santuariosantaterezinha.com');
         $this->command->info('');
         $this->command->info('📍 Dioceses:');
         $this->command->info('  • Diocese de Santo Amaro');
