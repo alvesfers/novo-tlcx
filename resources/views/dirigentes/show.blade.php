@@ -119,13 +119,13 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow p-6">
+    <div x-data="vinculosManager()" class="bg-white rounded-lg shadow p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">Vínculos Adicionais</h2>
-            <a href="{{ route('dirigentes.vinculos.create', $dirigente) }}"
+            <button onclick="openModal('vinculoModal', false, { dirigente_id: {{ $dirigente->id }} })"
                 class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 text-sm">
                 Adicionar Vínculo
-            </a>
+            </button>
         </div>
 
         @php
@@ -176,10 +176,20 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3 text-sm space-x-2">
-                                <a href="{{ route('dirigentes.vinculos.edit', [$dirigente, $vinculo]) }}"
-                                    class="text-blue-600 hover:underline">Editar</a>
+                                <button onclick="openModal('vinculoModal', true, {
+                                    id: {{ $vinculo->id }},
+                                    dirigente_id: {{ $dirigente->id }},
+                                    tipo_vinculo: '{{ $vinculo->tipo_vinculo->value }}',
+                                    entidade_id: {{ $vinculo->entidade_id }},
+                                    cargo: '{{ $vinculo->cargo }}',
+                                    papel: '{{ addslashes($vinculo->papel ?? '') }}',
+                                    data_inicio: '{{ $vinculo->data_inicio?->format('Y-m-d') ?? '' }}',
+                                    data_fim: '{{ $vinculo->data_fim?->format('Y-m-d') ?? '' }}',
+                                    ativo: {{ $vinculo->ativo ? 'true' : 'false' }}
+                                })"
+                                    class="text-blue-600 hover:underline">Editar</button>
                                 <form action="{{ route('dirigentes.vinculos.destroy', [$dirigente, $vinculo]) }}"
-                                    method="POST" class="inline" onsubmit="return confirm('Tem certeza?');">
+                                    method="POST" class="inline" @submit.prevent="deleteItem($event)">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-600 hover:underline">Deletar</button>
@@ -193,5 +203,146 @@
             <p class="text-gray-500">Nenhum vínculo adicional</p>
         @endif
     </div>
+
+    <!-- Modal -->
+    <x-modal-form
+        id="vinculoModal"
+        title="Criar Novo Vínculo"
+        :resource="'dirigentes.vinculos'"
+        size="md"
+        :nested="true"
+        :nestedPath="'dirigente'"
+    >
+        <input type="hidden" name="dirigente_id" id="vinculoModaldirigente_id">
+
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Tipo de Vínculo *</label>
+            <select
+                name="tipo_vinculo"
+                id="vinculoModaltipo_vinculo"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                required
+                data-edit-only
+            >
+                <option value="">Selecione</option>
+                <option value="adicional">Adicional</option>
+                <option value="coordenacao">Coordenação</option>
+            </select>
+            <span class="text-red-500 text-sm" id="vinculoModaltipo_vinculoError"></span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Entidade *</label>
+            <select
+                name="entidade_id"
+                id="vinculoModalentidade_id"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                required
+                data-edit-only
+            >
+                <option value="">Selecione uma entidade</option>
+            </select>
+            <span class="text-red-500 text-sm" id="vinculoModalentidade_idError"></span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Cargo *</label>
+            <select
+                name="cargo"
+                id="vinculoModalcargo"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                required
+            >
+                <option value="">Selecione</option>
+                <option value="dirigente">Dirigente</option>
+                <option value="coordenador">Coordenador</option>
+            </select>
+            <span class="text-red-500 text-sm" id="vinculoModalcargoError"></span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Papel</label>
+            <input
+                type="text"
+                name="papel"
+                id="vinculoModalpapel"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                placeholder="Ex: Líder de Jovens, Tesoureiro"
+            >
+            <span class="text-red-500 text-sm" id="vinculoModalpapelError"></span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Data de Início</label>
+            <input
+                type="date"
+                name="data_inicio"
+                id="vinculoModaldata_inicio"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+            <span class="text-red-500 text-sm" id="vinculoModaldata_inicioError"></span>
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Data de Fim</label>
+            <input
+                type="date"
+                name="data_fim"
+                id="vinculoModaldata_fim"
+                class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+            >
+            <span class="text-red-500 text-sm" id="vinculoModaldata_fimError"></span>
+        </div>
+
+        <div data-edit-only style="display: none;">
+            <label class="block text-sm font-medium mb-2 dark:text-gray-200">Ativo</label>
+            <label class="flex items-center dark:text-gray-200">
+                <input type="checkbox" name="ativo" id="vinculoModalativo" value="1" class="rounded dark:bg-gray-700">
+                <span class="ml-2">Vínculo ativo no sistema</span>
+            </label>
+        </div>
+    </x-modal-form>
+
+    <script>
+        function vinculosManager() {
+            let entidadesData = { nucleos: [], secretarias: [], dioceses: [] };
+
+            // Load entidades data on page load
+            async function loadEntidades() {
+                try {
+                    const response = await fetch('{{ route("dirigentes.vinculos.create", $dirigente) }}', {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        }
+                    });
+                    const data = await response.json();
+                    entidadesData = data;
+                } catch (error) {
+                    console.error('Error loading entidades:', error);
+                }
+            }
+
+            loadEntidades();
+
+            return {
+                deleteItem(event) {
+                    event.preventDefault();
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Confirmar exclusão',
+                        text: 'Tem certeza que deseja deletar este vínculo?',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Deletar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            event.target.closest('form').submit();
+                        }
+                    });
+                }
+            };
+        }
+    </script>
 </div>
 @endsection

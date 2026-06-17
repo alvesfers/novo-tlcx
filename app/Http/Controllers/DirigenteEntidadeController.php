@@ -21,6 +21,15 @@ class DirigenteEntidadeController extends Controller
         $secretarias = Entidade::where('tipo_entidade', 'secretaria')->where('ativo', true)->get();
         $dioceses = Entidade::where('tipo_entidade', 'diocese')->where('ativo', true)->get();
 
+        // Return JSON if requested (for modal)
+        if (request()->expectsJson()) {
+            return response()->json([
+                'nucleos' => $nucleos,
+                'secretarias' => $secretarias,
+                'dioceses' => $dioceses,
+            ]);
+        }
+
         return view('dirigentes.vinculos.create', compact('dirigente', 'nucleos', 'secretarias', 'dioceses'));
     }
 
@@ -29,7 +38,26 @@ class DirigenteEntidadeController extends Controller
         $dirigente = Dirigente::findOrFail($request->dirigente_id);
         $this->authorize('manageVinculos', $dirigente);
 
-        $vinculo = $this->service->adicionarVinculo($dirigente, $request->validated());
+        try {
+            $vinculo = $this->service->adicionarVinculo($dirigente, $request->validated());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Vínculo criado com sucesso.',
+                    'vinculo' => $vinculo,
+                ]);
+            }
+        } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['error' => $e->getMessage()],
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
+            throw $e;
+        }
 
         return redirect()->route('dirigentes.show', $vinculo->dirigente_id)
             ->with('success', 'Vínculo criado com sucesso.');
@@ -43,6 +71,12 @@ class DirigenteEntidadeController extends Controller
 
         $this->authorize('manageVinculos', $dirigente);
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'vinculo' => $vinculo->load('entidade'),
+            ]);
+        }
+
         return view('dirigentes.vinculos.edit', compact('dirigente', 'vinculo'));
     }
 
@@ -54,7 +88,26 @@ class DirigenteEntidadeController extends Controller
 
         $this->authorize('manageVinculos', $dirigente);
 
-        $this->service->atualizarVinculo($vinculo, $request->validated());
+        try {
+            $this->service->atualizarVinculo($vinculo, $request->validated());
+
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Vínculo atualizado com sucesso.',
+                    'vinculo' => $vinculo,
+                ]);
+            }
+        } catch (\Exception $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['error' => $e->getMessage()],
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
+            throw $e;
+        }
 
         return redirect()->route('dirigentes.show', $dirigente)
             ->with('success', 'Vínculo atualizado com sucesso.');
