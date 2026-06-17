@@ -23,31 +23,47 @@ class EntidadeController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create()
     {
         $this->authorize('create', Entidade::class);
-        return view('entidades.create', [
-            'title' => 'Nova Entidade',
-        ]);
+        return redirect()->route('entidades.index');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $this->authorize('create', Entidade::class);
 
-        // TODO: Validação via Form Request
-        $validated = $request->validate([
-            'entidade_pai_id' => 'nullable|exists:entidades,id',
-            'tipo_entidade' => 'required|in:diocese,nucleo,secretaria',
-            'nome' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'tipo_secretaria' => 'nullable|in:aberta,fechada',
-        ]);
+        try {
+            $validated = $request->validate([
+                'entidade_pai_id' => 'nullable|exists:entidades,id',
+                'tipo_entidade' => 'required|in:diocese,nucleo,secretaria',
+                'nome' => 'required|string|max:255',
+                'email' => 'nullable|email',
+                'tipo_secretaria' => 'nullable|in:aberta,fechada',
+            ]);
 
-        Entidade::create($validated);
+            $entidade = Entidade::create($validated);
 
-        return redirect()->route('entidades.index')
-            ->with('success', 'Entidade criada com sucesso!');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Entidade criada com sucesso!',
+                    'entidade' => $entidade,
+                ]);
+            }
+
+            return redirect()->route('entidades.index')
+                ->with('success', 'Entidade criada com sucesso!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function show(Entidade $entidade): View
@@ -59,31 +75,46 @@ class EntidadeController extends Controller
         ]);
     }
 
-    public function edit(Entidade $entidade): View
+    public function edit(Entidade $entidade)
     {
         $this->authorize('update', $entidade);
-        return view('entidades.edit', [
-            'title' => 'Editar ' . $entidade->nome,
-            'entidade' => $entidade,
-        ]);
+        return redirect()->route('entidades.index');
     }
 
-    public function update(Request $request, Entidade $entidade): RedirectResponse
+    public function update(Request $request, Entidade $entidade)
     {
         $this->authorize('update', $entidade);
 
-        // TODO: Validação via Form Request
-        $validated = $request->validate([
-            'nome' => 'required|string|max:255',
-            'email' => 'nullable|email',
-            'tipo_secretaria' => 'nullable|in:aberta,fechada',
-            'ativo' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validate([
+                'nome' => 'required|string|max:255',
+                'email' => 'nullable|email',
+                'tipo_secretaria' => 'nullable|in:aberta,fechada',
+                'ativo' => 'boolean',
+            ]);
 
-        $entidade->update($validated);
+            $entidade->update($validated);
 
-        return redirect()->route('entidades.show', $entidade)
-            ->with('success', 'Entidade atualizada com sucesso!');
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Entidade atualizada com sucesso!',
+                    'entidade' => $entidade,
+                ]);
+            }
+
+            return redirect()->route('entidades.show', $entidade)
+                ->with('success', 'Entidade atualizada com sucesso!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'errors' => $e->errors(),
+                    'message' => 'Erro na validação dos dados',
+                ], 422);
+            }
+            throw $e;
+        }
     }
 
     public function destroy(Entidade $entidade): RedirectResponse
