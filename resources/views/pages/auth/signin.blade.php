@@ -91,6 +91,7 @@
                                 </div>
                             </form>
                     </div>
+                </div>
             </div>
 
             <div class="bg-brand-950 relative hidden h-full w-full items-center lg:grid lg:w-1/2 dark:bg-white/5">
