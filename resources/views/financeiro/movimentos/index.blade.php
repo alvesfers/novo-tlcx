@@ -4,9 +4,6 @@
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold">Movimentações Financeiras</h1>
-        <a href="{{ route('financeiro-movimentos.create') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-            Novo Movimento
-        </a>
     </div>
 
     @if (session('success'))
@@ -21,6 +18,7 @@
     </div>
     @endif
 
+    <!-- Filtros -->
     <div class="bg-white rounded-lg shadow p-6 mb-6">
         <form method="GET" action="{{ route('financeiro-movimentos.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
@@ -59,59 +57,21 @@
         </form>
     </div>
 
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Data</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Descrição</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Categoria</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Tipo</th>
-                    <th class="px-6 py-3 text-right text-sm font-semibold">Valor</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($movimentos as $movimento)
-                <tr class="border-t hover:bg-gray-50">
-                    <td class="px-6 py-4">{{ $movimento->data_movimento->format('d/m/Y') }}</td>
-                    <td class="px-6 py-4">{{ $movimento->descricao }}</td>
-                    <td class="px-6 py-4">{{ $movimento->categoria->nome }}</td>
-                    <td class="px-6 py-4">
-                        <span class="px-2 py-1 rounded text-sm font-semibold @if($movimento->tipo->value === 'entrada') bg-green-100 text-green-800 @else bg-red-100 text-red-800 @endif">
-                            {{ $movimento->tipo->label() }}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 text-right font-semibold @if($movimento->tipo->value === 'entrada') text-green-700 @else text-red-700 @endif">
-                        @if($movimento->tipo->value === 'entrada')
-                        +
-                        @else
-                        -
-                        @endif
-                        R$ {{ number_format($movimento->valor, 2, ',', '.') }}
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="{{ route('financeiro-movimentos.edit', $movimento) }}" class="text-blue-600 hover:text-blue-800 mr-4">Editar</a>
-                        <form method="POST" action="{{ route('financeiro-movimentos.destroy', $movimento) }}" class="inline" onsubmit="return confirm('Tem certeza?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-800">Deletar</button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                        Nenhuma movimentação encontrada
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mt-6">
-        {{ $movimentos->links() }}
-    </div>
+    <x-table-enhanced
+        title="Movimentações Financeiras"
+        :items="$movimentos"
+        :columns="[
+            ['name' => 'descricao', 'label' => 'Descrição'],
+            ['name' => 'tipo', 'label' => 'Tipo', 'badge' => 'tipo'],
+            ['name' => 'valor', 'label' => 'Valor'],
+            ['name' => 'data_movimento', 'label' => 'Data'],
+        ]"
+        :actions="['edit', 'delete']"
+        resourceName="financeiro-movimentos"
+        :createRoute="route('financeiro-movimentos.create')"
+        createLabel="Novo Movimento"
+        emptyMessage="Nenhuma movimentação encontrada"
+        :pagination="true"
+    />
 </div>
 @endsection
