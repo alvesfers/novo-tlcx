@@ -170,10 +170,99 @@
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
         <script>
+            let calendarInstance = null;
+
+            function loadEventos(callback) {
+                const meusEventos = document.getElementById('meusEventos');
+                const params = new URLSearchParams();
+
+                // Adicionar filtro "meus eventos"
+                if (meusEventos && meusEventos.checked) {
+                    params.append('meus_eventos', '1');
+                }
+
+                // Adicionar entidades selecionadas
+                const selectedEntidades = Array.from(document.querySelectorAll('.filtro-checkbox:checked')).map(cb => cb.value);
+                if (selectedEntidades.length > 0) {
+                    selectedEntidades.forEach(id => params.append('entidades[]', id));
+                }
+
+                fetch(`{{ route('eventos.calendario.get') }}?${params.toString()}`)
+                    .then(response => response.json())
+                    .then(data => callback(data))
+                    .catch(error => {
+                        console.error('Erro ao carregar eventos:', error);
+                        if (typeof callback === 'function') callback([]);
+                    });
+            }
+
+            function showEventDetails(event) {
+                const eventModal = document.getElementById('eventModal');
+                if (!eventModal) return;
+
+                const extendedProps = event.extendedProps;
+
+                const titleEl = document.getElementById('eventModalTitle');
+                const typeEl = document.getElementById('eventType');
+                const entityEl = document.getElementById('eventEntidade');
+                const dateEl = document.getElementById('eventDateTime');
+                const localEl = document.getElementById('eventLocal');
+                const statusEl = document.getElementById('eventStatus');
+                const descEl = document.getElementById('eventDescricao');
+                const linkEl = document.getElementById('btnVerDetalhes');
+
+                if (titleEl) titleEl.textContent = event.title;
+                if (typeEl) typeEl.textContent = extendedProps.tipo || 'N/A';
+                if (entityEl) entityEl.textContent = extendedProps.criadora || 'N/A';
+
+                const startDate = new Date(event.start);
+                const endDate = new Date(event.end);
+                const dateTimeStr = `${startDate.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })} até ${endDate.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })}`;
+
+                if (dateEl) dateEl.textContent = dateTimeStr;
+                if (localEl) localEl.textContent = extendedProps.local || 'Não informado';
+
+                const statusLabels = {
+                    'rascunho': 'Rascunho',
+                    'publicado': 'Publicado',
+                    'encerrado': 'Encerrado',
+                    'cancelado': 'Cancelado'
+                };
+                const statusColors = {
+                    'rascunho': 'bg-gray-100 text-gray-800',
+                    'publicado': 'bg-blue-100 text-blue-800',
+                    'encerrado': 'bg-gray-100 text-gray-800',
+                    'cancelado': 'bg-red-100 text-red-800'
+                };
+
+                if (statusEl) {
+                    statusEl.innerHTML = `<span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${statusColors[extendedProps.status] || 'bg-gray-100 text-gray-800'}">
+                        ${statusLabels[extendedProps.status] || 'N/A'}
+                    </span>`;
+                }
+
+                if (descEl) descEl.textContent = extendedProps.description || 'Sem descrição';
+                if (linkEl) linkEl.href = `/eventos/${event.id}`;
+
+                eventModal.classList.remove('hidden');
+            }
+
             function initializeCalendar() {
                 // Verificar se FullCalendar está disponível
                 if (typeof FullCalendar === 'undefined') {
-                    console.error('FullCalendar não foi carregado');
+                    console.warn('FullCalendar não foi carregado ainda, tentando novamente...');
                     setTimeout(initializeCalendar, 100);
                     return;
                 }
@@ -184,14 +273,34 @@
                     return;
                 }
 
-                const meusEventos = document.getElementById('meusEventos');
-                const btnLimpar = document.getElementById('btnLimpar');
-                const eventModal = document.getElementById('eventModal');
-                const modalCloseButtons = document.querySelectorAll('.modal-close-btn');
-                const filtroToggles = document.querySelectorAll('.filtro-toggle');
-                const filtroCheckboxes = document.querySelectorAll('.filtro-checkbox');
+                try {
+                    // Inicializar FullCalendar
+                    calendarInstance = new FullCalendar.Calendar(calendarEl, {
+                        initialView: 'dayGridMonth',
+                        headerToolbar: {
+                            left: 'prev,next today',
+                            center: 'title',
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                        },
+                        locale: 'pt-br',
+                        height: 'auto',
+                        events: function(info, successCallback, failureCallback) {
+                            loadEventos(successCallback);
+                        },
+                        eventClick: function(info) {
+                            showEventDetails(info.event);
+                        }
+                    });
+
+                    calendarInstance.render();
+                    console.log('Calendário inicializado com sucesso');
+                } catch (error) {
+                    console.error('Erro ao inicializar calendário:', error);
+                    return;
+                }
 
                 // Configurar toggles dos filtros (abrir/fechar)
+                const filtroToggles = document.querySelectorAll('.filtro-toggle');
                 filtroToggles.forEach(toggle => {
                     toggle.addEventListener('click', function(e) {
                         e.preventDefault();
@@ -199,143 +308,58 @@
                         const content = document.getElementById(targetId);
                         const icon = this.querySelector('.filtro-icon');
 
-                        content.classList.toggle('hidden');
-                        icon.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+                        if (content) {
+                            content.classList.toggle('hidden');
+                            if (icon) {
+                                icon.style.transform = content.classList.contains('hidden') ? '' : 'rotate(180deg)';
+                            }
+                        }
                     });
                 });
 
                 // Event listeners para checkboxes de filtro
+                const filtroCheckboxes = document.querySelectorAll('.filtro-checkbox');
                 filtroCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', () => calendar.refetchEvents());
-                });
-
-                // Configurar modal
-                modalCloseButtons.forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        eventModal.classList.add('hidden');
+                    checkbox.addEventListener('change', () => {
+                        if (calendarInstance) calendarInstance.refetchEvents();
                     });
                 });
 
-                eventModal.addEventListener('click', function(e) {
-                    if (e.target === eventModal) {
-                        eventModal.classList.add('hidden');
-                    }
-                });
-
-                // Inicializar FullCalendar
-                const calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    headerToolbar: {
-                        left: 'prev,next today',
-                        center: 'title',
-                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                    },
-                    locale: 'pt-br',
-                    height: 'auto',
-                    events: function(info, successCallback, failureCallback) {
-                        loadEventos(successCallback);
-                    },
-                    eventClick: function(info) {
-                        showEventDetails(info.event);
-                    }
-                });
-
-                calendar.render();
-
-                // Função para carregar eventos
-                function loadEventos(callback) {
-                    const params = new URLSearchParams();
-
-                    // Adicionar filtro "meus eventos"
-                    if (meusEventos.checked) {
-                        params.append('meus_eventos', '1');
-                    }
-
-                    // Adicionar entidades selecionadas
-                    const selectedEntidades = Array.from(document.querySelectorAll('.filtro-checkbox:checked')).map(cb => cb.value);
-                    if (selectedEntidades.length > 0) {
-                        selectedEntidades.forEach(id => params.append('entidades[]', id));
-                    }
-
-                    fetch(`{{ route('eventos.calendario.get') }}?${params.toString()}`)
-                        .then(response => response.json())
-                        .then(data => callback(data))
-                        .catch(error => {
-                            console.error('Erro ao carregar eventos:', error);
-                            failureCallback(error);
+                // Configurar modal
+                const eventModal = document.getElementById('eventModal');
+                if (eventModal) {
+                    const modalCloseButtons = document.querySelectorAll('.modal-close-btn');
+                    modalCloseButtons.forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            eventModal.classList.add('hidden');
                         });
+                    });
+
+                    eventModal.addEventListener('click', function(e) {
+                        if (e.target === eventModal) {
+                            eventModal.classList.add('hidden');
+                        }
+                    });
                 }
 
-                // Função para mostrar detalhes do evento
-                function showEventDetails(event) {
-                    const extendedProps = event.extendedProps;
-
-                    document.getElementById('eventModalTitle').textContent = event.title;
-                    document.getElementById('eventType').textContent = extendedProps.tipo || 'N/A';
-                    document.getElementById('eventEntidade').textContent = extendedProps.criadora || 'N/A';
-
-                    const startDate = new Date(event.start);
-                    const endDate = new Date(event.end);
-                    const dateTimeStr = `${startDate.toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })} até ${endDate.toLocaleDateString('pt-BR', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}`;
-
-                    document.getElementById('eventDateTime').textContent = dateTimeStr;
-                    document.getElementById('eventLocal').textContent = extendedProps.local || 'Não informado';
-
-                    const statusLabels = {
-                        'rascunho': 'Rascunho',
-                        'publicado': 'Publicado',
-                        'encerrado': 'Encerrado',
-                        'cancelado': 'Cancelado'
-                    };
-                    const statusColors = {
-                        'rascunho': 'bg-gray-100 text-gray-800',
-                        'publicado': 'bg-blue-100 text-blue-800',
-                        'encerrado': 'bg-gray-100 text-gray-800',
-                        'cancelado': 'bg-red-100 text-red-800'
-                    };
-
-                    const statusBadge = document.getElementById('eventStatus');
-                    statusBadge.innerHTML = `<span class="inline-block px-3 py-1 rounded-full text-sm font-medium ${statusColors[extendedProps.status] || 'bg-gray-100 text-gray-800'}">
-                        ${statusLabels[extendedProps.status] || 'N/A'}
-                    </span>`;
-
-                    document.getElementById('eventDescricao').textContent = extendedProps.description || 'Sem descrição';
-
-                    const btnVerDetalhes = document.getElementById('btnVerDetalhes');
-                    btnVerDetalhes.href = `/eventos/${event.id}`;
-
-                    eventModal.classList.remove('hidden');
+                // Configurar botão limpar filtros
+                const btnLimpar = document.getElementById('btnLimpar');
+                const meusEventos = document.getElementById('meusEventos');
+                if (btnLimpar) {
+                    btnLimpar.addEventListener('click', () => {
+                        if (meusEventos) meusEventos.checked = false;
+                        filtroCheckboxes.forEach(cb => cb.checked = false);
+                        if (calendarInstance) calendarInstance.refetchEvents();
+                    });
                 }
-
-                // Event listener para "meus eventos"
-                meusEventos.addEventListener('change', () => calendar.refetchEvents());
-
-                // Limpar todos os filtros
-                btnLimpar.addEventListener('click', () => {
-                    meusEventos.checked = false;
-                    filtroCheckboxes.forEach(cb => cb.checked = false);
-                    calendar.refetchEvents();
-                });
             }
 
             // Inicializar quando o DOM estiver pronto
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', initializeCalendar);
             } else {
-                initializeCalendar();
+                setTimeout(initializeCalendar, 0);
             }
         </script>
     @endpush
