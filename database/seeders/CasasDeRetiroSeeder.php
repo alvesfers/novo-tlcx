@@ -167,5 +167,60 @@ class CasasDeRetiroSeeder extends Seeder
                 'acessibilidade' => false,
             ]);
         }
+
+        // 3. CAJULÁ
+        $cajula = CasasDeRetiro::create([
+            'nome_casa' => 'Cajulá',
+            'endereco' => 'Local de Retiro Cajulá',
+            'valor_estimado' => 6500.00,
+            'acessibilidade' => true,
+            'ativa' => true,
+            'capacidade' => 200,
+        ]);
+
+        // ALA - CASA 1
+        $ala_casa1 = AlasRetiro::create([
+            'id_casa' => $cajula->id_casa,
+            'nome_ala' => 'CASA 1',
+            'descricao' => null,
+        ]);
+
+        $quartos_casa1 = [
+            ['numero' => '1A', 'vagas' => 16],
+            ['numero' => '1B', 'vagas' => 18],
+            ['numero' => '2A', 'vagas' => 6],
+            ['numero' => '2B', 'vagas' => 10],
+            ['numero' => '14A', 'vagas' => 16],
+            ['numero' => '14B', 'vagas' => 18],
+            ['numero' => '13A', 'vagas' => 6],
+            ['numero' => '13B', 'vagas' => 10],
+        ];
+
+        foreach ($quartos_casa1 as $quarto) {
+            QuartosCasasDeRetiro::create([
+                'id_casa' => $cajula->id_casa,
+                'id_ala' => $ala_casa1->id_ala,
+                'numero_quarto' => $quarto['numero'],
+                'vagas' => $quarto['vagas'],
+                'banheiros' => null,
+                'acessibilidade' => false,
+            ]);
+        }
+
+        // ALA - CASA 2 (Paga a parte)
+        $ala_casa2 = AlasRetiro::create([
+            'id_casa' => $cajula->id_casa,
+            'nome_ala' => 'CASA 2',
+            'descricao' => 'Paga a parte',
+        ]);
+
+        QuartosCasasDeRetiro::create([
+            'id_casa' => $cajula->id_casa,
+            'id_ala' => $ala_casa2->id_ala,
+            'numero_quarto' => '23',
+            'vagas' => 20,
+            'banheiros' => null,
+            'acessibilidade' => false,
+        ]);
     }
 }
