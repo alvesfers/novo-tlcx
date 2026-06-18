@@ -103,6 +103,7 @@
                         <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">Núcleo</th>
                         <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">Nome</th>
                         <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">Tipo</th>
+                        <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">Habilidades</th>
                         <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">Email</th>
                         <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">Status</th>
                         <th class="px-6 py-3 font-medium text-gray-500 text-theme-xs dark:text-gray-400 text-start">Ações</th>
@@ -130,6 +131,11 @@
                             </td>
                             <td class="px-6 py-3.5">
                                 <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ ucfirst($secretaria->tipo_secretaria->value) }}</p>
+                            </td>
+                            <td class="px-6 py-3.5">
+                                <span class="inline-block px-3 py-1 rounded-full text-theme-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-500/15 dark:text-blue-400">
+                                    {{ $secretaria->habilidades()->count() }}
+                                </span>
                             </td>
                             <td class="px-6 py-3.5">
                                 <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ $secretaria->email ?? '-' }}</p>
