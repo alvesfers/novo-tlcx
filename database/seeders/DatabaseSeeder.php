@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             AlmoxarifadoSeeder::class,
             TarefaSeeder::class,
             DocumentoSeeder::class,
+            CasasDeRetiroSeeder::class,
         ]);
     }
 }
