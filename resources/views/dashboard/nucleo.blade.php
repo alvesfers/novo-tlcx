@@ -14,7 +14,9 @@
                     <p class="text-gray-600 text-sm font-semibold">Dirigentes</p>
                     <p class="text-3xl font-bold text-blue-600">{{ $resumo['kpis']['total_dirigentes'] }}</p>
                 </div>
-                <div class="text-4xl">👥</div>
+                <div class="text-blue-600 opacity-20">
+                    <x-heroicon-o-users class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -25,7 +27,9 @@
                     <p class="text-gray-600 text-sm font-semibold">Eventos</p>
                     <p class="text-3xl font-bold text-green-600">{{ $resumo['kpis']['total_eventos'] }}</p>
                 </div>
-                <div class="text-4xl">📅</div>
+                <div class="text-green-600 opacity-20">
+                    <x-heroicon-o-calendar-days class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -38,7 +42,9 @@
                         R$ {{ number_format($resumo['kpis']['saldo_nucleo'], 0, ',', '.') }}
                     </p>
                 </div>
-                <div class="text-4xl">💰</div>
+                <div class="@if($resumo['kpis']['saldo_nucleo'] >= 0) text-green-600 @else text-red-600 @endif opacity-20">
+                    <x-heroicon-o-banknotes class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -49,7 +55,9 @@
                     <p class="text-gray-600 text-sm font-semibold">Próximas Atividades</p>
                     <p class="text-3xl font-bold text-purple-600">{{ $resumo['kpis']['proximas_atividades'] }}</p>
                 </div>
-                <div class="text-4xl">⏱️</div>
+                <div class="text-purple-600 opacity-20">
+                    <x-heroicon-o-clock class="w-16 h-16" />
+                </div>
             </div>
         </div>
     </div>
@@ -64,7 +72,9 @@
                     <p class="text-2xl font-bold text-teal-600">{{ $resumo['kpis']['total_itens_estoque'] ?? 0 }}</p>
                     <p class="text-gray-500 text-xs mt-1">{{ $resumo['kpis']['itens_esgotados'] ?? 0 }} esgotados</p>
                 </div>
-                <div class="text-4xl">📦</div>
+                <div class="text-teal-600 opacity-20">
+                    <x-heroicon-o-square-3-stack-3d class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -76,7 +86,9 @@
                     <p class="text-2xl font-bold text-cyan-600">{{ $resumo['kpis']['total_tarefas'] ?? 0 }}</p>
                     <p class="text-gray-500 text-xs mt-1">{{ $resumo['kpis']['tarefas_vencidas'] ?? 0 }} vencidas</p>
                 </div>
-                <div class="text-4xl">✅</div>
+                <div class="text-cyan-600 opacity-20">
+                    <x-heroicon-o-clipboard-document-check class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -87,7 +99,9 @@
                     <p class="text-gray-600 text-sm font-semibold">Documentos</p>
                     <p class="text-2xl font-bold text-amber-600">{{ $resumo['kpis']['total_documentos'] ?? 0 }}</p>
                 </div>
-                <div class="text-4xl">📄</div>
+                <div class="text-amber-600 opacity-20">
+                    <x-heroicon-o-document-text class="w-16 h-16" />
+                </div>
             </div>
         </div>
     </div>

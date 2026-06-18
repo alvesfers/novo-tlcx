@@ -39,7 +39,12 @@ class EventoPolicy
                 return false;
             }
 
-            // Pode visualizar se a entidade do usuário participa do evento
+            // Pode visualizar se criou o evento
+            if ($evento->entidade_criadora_id === $entidadeUsuario->id) {
+                return true;
+            }
+
+            // Ou se a entidade do usuário participa do evento
             return $evento->entidades()->where('entidade_id', $entidadeUsuario->id)->exists();
         }
 

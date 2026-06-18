@@ -13,7 +13,9 @@
                     <p class="text-gray-600 text-sm font-semibold">Entidades</p>
                     <p class="text-3xl font-bold text-blue-600">{{ $resumo['indicadores']['total_entidades'] }}</p>
                 </div>
-                <div class="text-blue-100 text-4xl">📊</div>
+                <div class="text-blue-600 opacity-20">
+                    <x-heroicon-o-chart-bar class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -25,7 +27,9 @@
                     <p class="text-3xl font-bold text-green-600">{{ $resumo['dirigentes']['total'] }}</p>
                     <p class="text-gray-500 text-xs mt-1">{{ $resumo['dirigentes']['ativos'] }} ativos</p>
                 </div>
-                <div class="text-green-100 text-4xl">👥</div>
+                <div class="text-green-600 opacity-20">
+                    <x-heroicon-o-users class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -37,7 +41,9 @@
                     <p class="text-3xl font-bold text-purple-600">{{ $resumo['indicadores']['total_eventos'] }}</p>
                     <p class="text-gray-500 text-xs mt-1">{{ $resumo['indicadores']['eventos_proximos'] }} próximos</p>
                 </div>
-                <div class="text-purple-100 text-4xl">📅</div>
+                <div class="text-purple-600 opacity-20">
+                    <x-heroicon-o-calendar-days class="w-16 h-16" />
+                </div>
             </div>
         </div>
 
@@ -50,7 +56,9 @@
                         R$ {{ number_format($resumo['financeiro']['saldo'], 2, ',', '.') }}
                     </p>
                 </div>
-                <div class="text-yellow-100 text-4xl">💰</div>
+                <div class="@if($resumo['financeiro']['saldo'] >= 0) text-green-600 @else text-red-600 @endif opacity-20">
+                    <x-heroicon-o-banknotes class="w-16 h-16" />
+                </div>
             </div>
         </div>
     </div>

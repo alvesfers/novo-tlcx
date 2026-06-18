@@ -87,12 +87,14 @@ class RelatorioController extends Controller
         $porEntidade = $this->agruparDiigentesPorEntidade($dirigentes);
         $porCargo = $this->agruparDirigentesPorCargo($dirigentes);
         $resumo = $this->calcularResumoDirigentes($dirigentes);
+        $presencaPorTipoEvento = $this->calcularPresencaPorTipoEvento($dirigentes);
 
         return view('relatorios.dirigentes', compact(
             'dirigentes',
             'porEntidade',
             'porCargo',
-            'resumo'
+            'resumo',
+            'presencaPorTipoEvento'
         ));
     }
 
@@ -447,5 +449,44 @@ class RelatorioController extends Controller
             'ativos' => $dirigentes->where('ativo', true)->count(),
             'inativos' => $dirigentes->where('ativo', false)->count(),
         ];
+    }
+
+    private function calcularPresencaPorTipoEvento($dirigentes)
+    {
+        $resultado = [];
+
+        foreach ($dirigentes as $dirigente) {
+            // Busca todos os eventos em que o dirigente participou, agrupado por tipo
+            $presencaPorTipo = DB::table('evento_participantes')
+                ->join('eventos', 'evento_participantes.evento_id', '=', 'eventos.id')
+                ->join('tipo_eventos', 'eventos.tipo_evento_id', '=', 'tipo_eventos.id')
+                ->where('evento_participantes.dirigente_id', $dirigente->id)
+                ->where('evento_participantes.tipo_participante', 'dirigente')
+                ->select(
+                    'tipo_eventos.nome as tipo_evento',
+                    DB::raw('COUNT(DISTINCT eventos.id) as total_eventos'),
+                    DB::raw('SUM(CASE WHEN evento_participantes.presenca = "confirmado" THEN 1 ELSE 0 END) as confirmados'),
+                    DB::raw('SUM(CASE WHEN evento_participantes.checkin_em IS NOT NULL THEN 1 ELSE 0 END) as presentes')
+                )
+                ->groupBy('tipo_eventos.id', 'tipo_eventos.nome')
+                ->orderBy('tipo_eventos.nome')
+                ->get();
+
+            if ($presencaPorTipo->isNotEmpty()) {
+                $resultado[$dirigente->nome] = $presencaPorTipo->map(function ($p) {
+                    $taxa = $p->total_eventos > 0 ? round(($p->presentes / $p->total_eventos) * 100, 1) : 0;
+
+                    return [
+                        'tipo_evento' => $p->tipo_evento,
+                        'total_eventos' => $p->total_eventos,
+                        'confirmados' => $p->confirmados,
+                        'presentes' => $p->presentes,
+                        'taxa_presenca' => $taxa,
+                    ];
+                })->toArray();
+            }
+        }
+
+        return $resultado;
     }
 }

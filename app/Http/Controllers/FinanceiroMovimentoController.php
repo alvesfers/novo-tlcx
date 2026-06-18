@@ -207,7 +207,7 @@ class FinanceiroMovimentoController extends Controller
             ->map(function ($cat) use ($dataInicio, $dataFim) {
                 return [
                     'nome' => $cat->nome,
-                    'tipo' => $cat->tipo,
+                    'tipo' => $cat->tipo->value,
                     'total' => $cat->movimentos()
                         ->whereBetween('data_movimento', [$dataInicio, $dataFim])
                         ->sum('valor'),

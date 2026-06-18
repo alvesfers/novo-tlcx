@@ -9,6 +9,7 @@ use App\Models\Dirigente;
 use App\Models\ParticipanteExterno;
 use App\Services\EventoService;
 use App\Enums\TipoParticipanteEvento;
+use Illuminate\Http\Request;
 
 class EventoParticipanteController extends Controller
 {
@@ -18,7 +19,7 @@ class EventoParticipanteController extends Controller
     {
         $this->authorize('manageParticipantes', $evento);
 
-        $entidadesEvento = $evento->entidades()->pluck('id');
+        $entidadesEvento = $evento->entidades()->pluck('entidades.id');
         $dirigentes = Dirigente::ativos()
             ->whereHas('vinculos', function ($q) use ($entidadesEvento) {
                 $q->whereIn('entidade_id', $entidadesEvento)
@@ -93,5 +94,53 @@ class EventoParticipanteController extends Controller
 
         return redirect()->route('eventos.show', $evento)
             ->with('success', 'Presença marcada com sucesso');
+    }
+
+    public function marcarPresencaLote(Evento $evento, Request $request)
+    {
+        $this->authorize('manageParticipantes', $evento);
+
+        $ids = $request->input('ids', []);
+        $updated = 0;
+
+        foreach ($ids as $id) {
+            $participante = EventoParticipante::where('evento_id', $evento->id)
+                ->where('id', $id)
+                ->first();
+
+            if ($participante) {
+                $participante->marcarPresenca();
+                $updated++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "✅ Presença marcada para $updated participante(s)"
+        ]);
+    }
+
+    public function removerLote(Evento $evento, Request $request)
+    {
+        $this->authorize('manageParticipantes', $evento);
+
+        $ids = $request->input('ids', []);
+        $deleted = 0;
+
+        foreach ($ids as $id) {
+            $participante = EventoParticipante::where('evento_id', $evento->id)
+                ->where('id', $id)
+                ->first();
+
+            if ($participante) {
+                $participante->delete();
+                $deleted++;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "✅ $deleted participante(s) removido(s)"
+        ]);
     }
 }

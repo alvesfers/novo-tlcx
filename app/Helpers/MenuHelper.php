@@ -101,35 +101,6 @@ class MenuHelper
         ];
     }
 
-    public static function getTailAdminItems()
-    {
-        return [
-            [
-                'icon' => 'square-3-stack-3d',
-                'name' => 'TailAdmin',
-                'subItems' => [
-                    ['name' => 'Calendar', 'path' => '/calendar'],
-                    ['name' => 'User Profile', 'path' => '/profile'],
-                    ['name' => 'Forms', 'path' => '/form-elements'],
-                    ['name' => 'Tables', 'path' => '/basic-tables'],
-                    ['name' => 'Pages', 'path' => '/blank'],
-                    ['name' => 'Charts', 'path' => '/line-chart'],
-                    ['name' => 'UI Elements', 'path' => '/alerts'],
-                    ['name' => 'Authentication', 'path' => '/signin'],
-                    ['name' => 'Alerts', 'path' => '/alerts'],
-                    ['name' => 'Avatars', 'path' => '/avatars'],
-                    ['name' => 'Badge', 'path' => '/badge'],
-                    ['name' => 'Buttons', 'path' => '/buttons'],
-                    ['name' => 'Images', 'path' => '/image'],
-                    ['name' => 'Videos', 'path' => '/videos'],
-                    ['name' => 'Blank', 'path' => '/blank'],
-                    ['name' => 'Error 404', 'path' => '/error-404'],
-                    ['name' => 'Line Chart', 'path' => '/line-chart'],
-                    ['name' => 'Bar Chart', 'path' => '/bar-chart'],
-                ],
-            ],
-        ];
-    }
 
     public static function getMainNavItems()
     {
@@ -147,10 +118,6 @@ class MenuHelper
             [
                 'title' => 'Sistema',
                 'items' => self::getSystemItems()
-            ],
-            [
-                'title' => 'Referências TailAdmin',
-                'items' => self::getTailAdminItems()
             ]
         ];
     }

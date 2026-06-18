@@ -111,10 +111,13 @@ Route::post('/eventos/{evento}/entidades', [EventoEntidadeController::class, 'st
 Route::delete('/eventos/{evento}/entidades/{eventoEntidade}', [EventoEntidadeController::class, 'destroy'])->name('eventos.entidades.destroy');
 
 // evento participantes routes
+Route::post('/eventos/{evento}/participantes/todos/escopo', [EventoController::class, 'adicionarTodosEscopo'])->name('eventos.participantes.todos-escopo');
 Route::get('/eventos/{evento}/participantes/create', [EventoParticipanteController::class, 'create'])->name('eventos.participantes.create');
 Route::post('/eventos/{evento}/participantes', [EventoParticipanteController::class, 'store'])->name('eventos.participantes.store');
 Route::delete('/eventos/{evento}/participantes/{eventoParticipante}', [EventoParticipanteController::class, 'destroy'])->name('eventos.participantes.destroy');
 Route::post('/eventos/{evento}/participantes/{eventoParticipante}/presenca', [EventoParticipanteController::class, 'marcarPresenca'])->name('eventos.participantes.presenca');
+Route::post('/eventos/{evento}/participantes/marcar-presenca-lote', [EventoParticipanteController::class, 'marcarPresencaLote'])->name('eventos.participantes.marcar-presenca-lote');
+Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteController::class, 'removerLote'])->name('eventos.participantes.remover-lote');
 
     // financeiro resources
     Route::resource('financeiro-categorias', FinanceiroCategoriaController::class);

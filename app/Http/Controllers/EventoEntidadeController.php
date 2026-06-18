@@ -17,7 +17,7 @@ class EventoEntidadeController extends Controller
         $this->authorize('manageParticipantes', $evento);
 
         $entidadesCriadora = $evento->entidadeCriadora;
-        $entidadeJaParticipa = $evento->entidades()->pluck('id')->toArray();
+        $entidadeJaParticipa = $evento->entidades()->pluck('entidades.id')->toArray();
 
         $entidades = Entidade::ativas()
             ->whereNotIn('id', $entidadeJaParticipa)

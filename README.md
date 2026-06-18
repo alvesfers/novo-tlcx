@@ -1,17 +1,6 @@
-# TailAdmin Laravel - Tailwind CSS Free Laravel Dashboard
+# TLC Admin Dashboard
 
-**TailAdmin Laravel** is a modern, production-ready admin dashboard template powered by **Laravel 12**, **Tailwind CSS v4**, **Alpine.js**, and a clean, modular architecture. TailAdmin is one of the most popular Tailwind CSS dashboard now also available for Larvael. It’s designed for building fast, scalable admin panels, CRM dashboards, SaaS backends, and any data-driven application where clarity and performance matter.
-![TailAdmin - Next.js Dashboard Preview](./tailadmin-laravel.png)
-
-
-## Quick Links
-
-* [✨ Get TailAdmin Laravel](https://tailadmin.com/laravel)
-* [📄 Documentation](https://tailadmin.com/docs)
-* [⬇️ Download](https://tailadmin.com/download)
-* [🌐 Live Demo](https://laravel-demo.tailadmin.com)
-
-Here’s a tighter, more search-friendly version that highlights value and avoids fluff while keeping your structure intact.
+**TLC Admin** is a modern, production-ready admin dashboard powered by **Laravel 12**, **Tailwind CSS v4**, **Alpine.js**, and a clean, modular architecture. It's designed for building fast, scalable admin panels with comprehensive data management, reporting, and organizational features.
 
 ## ✨ Key Features
 
@@ -24,29 +13,14 @@ Here’s a tighter, more search-friendly version that highlights value and avoid
 * 📊 **Advanced UI Components** - Charts, data tables, forms, calendars, modals, and reusable blocks for complex dashboards
 * 🎯 **Production-Ready Dashboard UI** - Clean, modern interface crafted for real apps, not placeholder demos
 
-### Other Versions
-
-- [Next.js Version](https://github.com/TailAdmin/free-nextjs-admin-dashboard)
-- [React.js Version](https://github.com/TailAdmin/free-react-tailwind-admin-dashboard)
-- [Vue.js Version](https://github.com/TailAdmin/vue-tailwind-admin-dashboard)
-- [Angular Version](https://github.com/TailAdmin/free-angular-tailwind-dashboard)
-- [Laravel Version](https://github.com/TailAdmin/tailadmin-laravel)
-
 ## 📋 Requirements
-To set up TailAdmin Laravel, make sure your environment includes:
+
+To set up TLC Admin, make sure your environment includes:
 
 * **PHP 8.2+**
 * **Composer** (PHP dependency manager)
 * **Node.js 18+** and **npm** (for compiling frontend assets)
 * **Database** - Works with SQLite (default), MySQL, or PostgreSQL
-
-### Tailwind CSS Laravel Dashboard
-
-TailAdmin delivers a refined Tailwind CSS Laravel Dashboard experience, combining Laravel’s robust backend with Tailwind’s flexible utility classes. The result is a clean, fast, and customizable dashboard that helps developers build modern admin interfaces without the usual front-end complexity. It’s ideal for teams looking for a Tailwind-powered Laravel starter that stays lightweight and easy to scale.
-
-### Laravel Admin Dashboard
-
-If you’re searching for a dependable Laravel Admin Dashboard template that’s easy to set up and ready for production, TailAdmin fits the job. It offers a polished UI, reusable components, optimized performance, and all the essentials needed to launch dashboards, CRM systems, and internal tools quickly. It gives developers a solid foundation, so projects move faster with fewer decisions to worry about.
 
 ### Check Your Environment
 
@@ -64,8 +38,8 @@ npm -v
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/TailAdmin/tailadmin-laravel.git
-cd tailadmin-laravel
+git clone https://github.com/yourusername/tlc-admin.git
+cd tlc-admin
 ```
 
 ### Step 2: Install PHP Dependencies
@@ -130,7 +104,7 @@ Update your `.env` file with your database credentials:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=tailadmin_db
+DB_DATABASE=tlc_admin
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
@@ -139,10 +113,10 @@ Create the database:
 
 ```bash
 # MySQL
-mysql -u root -p -e "CREATE DATABASE tailadmin_db;"
+mysql -u root -p -e "CREATE DATABASE tlc_admin;"
 
 # PostgreSQL
-createdb tailadmin_db
+createdb tlc_admin
 ```
 
 Run migrations:
@@ -343,7 +317,7 @@ php artisan make:migration create_your_table
 ## 📁 Project Structure
 
 ```
-tailadmin-laravel/
+tlc-admin/
 ├── app/                    # Application logic
 │   ├── Http/              # Controllers, Middleware, Requests
 │   ├── Models/            # Eloquent models
@@ -372,6 +346,14 @@ tailadmin-laravel/
 ├── tests/                 # Pest test files
 │   ├── Feature/
 │   └── Unit/
+├── .specs/                # 📋 Specifications & Documentation
+│   ├── ROADMAP.md         # Project roadmap (phases 1-6, status)
+│   ├── Arquitetura/       # Architecture & Technical Docs
+│   ├── Fase-1-Autenticacao/
+│   ├── Fase-2-Entidades-Nucleos-Dioceses/
+│   ├── Fase-3-Dirigentes/
+│   ├── Fase-4-Financeiro/
+│   └── Fase-5-Auditoria-Tarefas-Documentos-Almoxarifado/
 ├── .env.example           # Example environment file
 ├── artisan                # Artisan CLI
 ├── composer.json          # PHP dependencies
@@ -379,6 +361,46 @@ tailadmin-laravel/
 ├── vite.config.js         # Vite configuration
 └── tailwind.config.js     # Tailwind configuration
 ```
+
+## 📚 Documentation
+
+All specifications, architecture documentation, and implementation guides are organized in the **`.specs/`** folder:
+
+- **`.specs/ROADMAP.md`** - Complete project roadmap with all 6 phases and current status (85% complete)
+- **`.specs/Arquitetura/`** - Technical architecture and design documentation
+  - `ARQUITETURA.md` - System architecture and tech stack
+  - `ENTIDADES.md` - Entity model (Diocese, Núcleo, Secretaria hierarchy)
+  - `DIRIGENTES.md` - Leader management system
+  - `EVENTOS.md` - Event system documentation
+  - `FINANCEIRO.md` - Financial module
+  - `PERMISSOES.md` - Authorization matrix
+  - `API.md` - REST API documentation (24 endpoints)
+  - `IMPLEMENTACAO-COMPLETA.md` - Complete implementation guide
+
+- **Phase-specific folders** - Detailed specs for each implementation phase
+- **Feature documentation** - Reports, features, and bug fixes
+
+### Features Implemented ✅
+
+**MVP Features (75-80% Complete):**
+- ✅ Multi-entity hierarchy (Diocese → Núcleo → Secretaria)
+- ✅ User authentication with role-based access
+- ✅ Leader (Dirigente) management with complex linking
+- ✅ Event management with multi-entity participation
+- ✅ Financial tracking with reporting
+- ✅ Inventory management (Almoxarifado)
+- ✅ Task management system
+- ✅ Document library
+- ✅ Audit logging and tracking
+- ✅ REST API with Sanctum authentication (24 endpoints)
+- ✅ QR code generation and check-in system
+- ✅ Advanced reporting with PDF/Excel exports
+- ✅ Responsive dashboard with KPIs
+
+**Test Coverage:**
+- 37/37 tests passing ✅
+- 100% functional coverage
+- Feature, Integration, and Unit tests
 
 ## 🐛 Troubleshooting
 
@@ -410,30 +432,6 @@ php artisan optimize:clear
 - Ensure database server is running
 - Verify database exists
 
-## 🔄 Update Log
-
-### [2026-05-23]
-
-- Added **AI Settings** page to configure models, keys, and token limits.
-- Added **Maps** page with MapLibre GL, Leaflet, and iframe styles.
-- Added **Vector Maps** page powered by AmCharts 5 geodata (World & USA).
-- Added **Radar Charts** page with 3 unique formats.
-- Added **Radial Progress Charts** page featuring 4 custom layout templates.
-- Introduced new **Bar Charts Five & Six** and **Pie Charts Four & Five**.
-
-### [April 28, 2026]
-- Added **AI Dashboard** with token usage and revenue tracking.
-- Added **Sales Dashboard** with retention and multi-channel analytics.
-- Added **Finance Dashboard** with cashflow and balance management.
-- Introduced **6 New Layout variations** for improved UI flexibility.
-- Integrated **Advanced Data Visualization** with 7+ new chart types.
-
-### [2026-03-15]
-- Fixed PHP 8.5 deprecation warning
-
-### [2025-12-29]
-- Added Date Picker in Statistics Chart
-
 ## License
 
-Refer to our [LICENSE](https://tailadmin.com/license) page for more information.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

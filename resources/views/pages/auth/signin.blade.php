@@ -91,14 +91,6 @@
                     Entrar
                 </button>
             </form>
-
-            <!-- Sign Up Link -->
-            <p class="text-center text-sm text-gray-700 dark:text-gray-400 mt-6">
-                Não é um membro?
-                <a href="/signup" class="text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 font-medium">
-                    Comece uma avaliação gratuita
-                </a>
-            </p>
         </div>
     </div>
 @endsection

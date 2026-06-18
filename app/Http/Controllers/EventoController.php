@@ -7,9 +7,12 @@ use App\Http\Requests\UpdateEventoRequest;
 use App\Models\Evento;
 use App\Models\TipoEvento;
 use App\Models\Entidade;
+use App\Models\Dirigente;
+use App\Models\EventoParticipante;
 use App\Services\EventoService;
 use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EventoController extends Controller
 {
@@ -152,6 +155,76 @@ class EventoController extends Controller
 
         return redirect()->route('eventos.index')
             ->with('success', 'Evento deletado com sucesso');
+    }
+
+    public function adicionarTodosEscopo(Evento $evento)
+    {
+        $this->authorize('manageParticipantes', $evento);
+
+        try {
+            $adicionados = 0;
+            $skipped = 0;
+
+            // Busca dirigentes baseado no escopo do evento
+            $dirigentes = $this->getDirigentesEscopo($evento);
+
+            foreach ($dirigentes as $dirigente) {
+                // Verifica se já participa
+                $jaParticipa = EventoParticipante::where('evento_id', $evento->id)
+                    ->where('dirigente_id', $dirigente->id)
+                    ->where('tipo_participante', 'dirigente')
+                    ->exists();
+
+                if (!$jaParticipa) {
+                    EventoParticipante::create([
+                        'evento_id' => $evento->id,
+                        'tipo_participante' => 'dirigente',
+                        'dirigente_id' => $dirigente->id,
+                        'presenca' => false,
+                    ]);
+                    $adicionados++;
+                } else {
+                    $skipped++;
+                }
+            }
+
+            return back()->with('success', "✅ $adicionados dirigentes adicionados! ($skipped já estavam participando)");
+        } catch (\Exception $e) {
+            return back()->with('error', 'Erro ao adicionar dirigentes: ' . $e->getMessage());
+        }
+    }
+
+    private function getDirigentesEscopo(Evento $evento)
+    {
+        $entidadesIds = $evento->entidades()->pluck('entidade_id')->toArray();
+
+        if (empty($entidadesIds)) {
+            $entidadesIds = [$evento->entidade_criadora_id];
+        }
+
+        $query = Dirigente::where('ativo', true)
+            ->whereHas('vinculos', function ($q) use ($entidadesIds) {
+                $q->whereIn('entidade_id', $entidadesIds)
+                  ->where('ativo', true);
+            });
+
+        // Filtrar por cargo baseado no escopo
+        if ($evento->escopo->value === 'coordenadores') {
+            $query->whereHas('vinculos', function ($q) use ($entidadesIds) {
+                $q->whereIn('entidade_id', $entidadesIds)
+                  ->where('cargo', 'coordenador')
+                  ->where('ativo', true);
+            });
+        } elseif ($evento->escopo->value === 'dirigentes') {
+            $query->whereHas('vinculos', function ($q) use ($entidadesIds) {
+                $q->whereIn('entidade_id', $entidadesIds)
+                  ->where('cargo', 'dirigente')
+                  ->where('ativo', true);
+            });
+        }
+        // 'ambos', 'externos', 'publico' pegam todos (já filtrados por ativo)
+
+        return $query->distinct()->get();
     }
 
     protected function getModel()

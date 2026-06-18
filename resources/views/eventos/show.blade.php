@@ -126,59 +126,107 @@
     </div>
 
     <!-- Participantes Dirigentes -->
-    <div x-data="participantesManager()" class="bg-white rounded-lg shadow p-6 mb-6">
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">Participantes Dirigentes</h2>
-            <button onclick="openModal('participanteModal', false, { evento_id: {{ $evento->id }}, tipo_participante: 'dirigente' })" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
-                Adicionar Dirigente
-            </button>
+            <div class="flex gap-2">
+                <form method="POST" action="{{ route('eventos.participantes.todos-escopo', $evento) }}" style="display: inline;">
+                    @csrf
+                    <button type="submit" class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm" title="Adiciona todos os dirigentes do escopo: {{ $evento->escopo->label() }}">
+                        + Todos do Escopo
+                    </button>
+                </form>
+                <button type="button" onclick="openModal('participanteModal', false, { evento_id: {{ $evento->id }}, tipo_participante: 'dirigente' })" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
+                    + Adicionar Dirigente
+                </button>
+            </div>
         </div>
 
-        <table class="w-full">
-            <thead class="bg-gray-100">
-                <tr>
-                    <th class="px-4 py-2 text-left text-sm font-semibold">Nome</th>
-                    <th class="px-4 py-2 text-left text-sm font-semibold">Presença</th>
-                    <th class="px-4 py-2 text-left text-sm font-semibold">Check-in</th>
-                    <th class="px-4 py-2 text-left text-sm font-semibold">Observação</th>
-                    <th class="px-4 py-2 text-left text-sm font-semibold">Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($evento->participantes->where('tipo_participante', 'dirigente') as $p)
-                <tr class="border-t hover:bg-gray-50">
-                    <td class="px-4 py-2">{{ $p->dirigente->nome }}</td>
-                    <td class="px-4 py-2">
-                        <span class="px-2 py-1 rounded text-sm font-semibold @if($p->presenca) bg-green-100 text-green-800 @else bg-gray-100 text-gray-800 @endif">
-                            {{ $p->presenca ? 'Presente' : 'Ausente' }}
-                        </span>
-                    </td>
-                    <td class="px-4 py-2">{{ $p->checkin_em ? $p->checkin_em->format('d/m/Y H:i') : '-' }}</td>
-                    <td class="px-4 py-2 text-sm">{{ $p->observacao ?: '-' }}</td>
-                    <td class="px-4 py-2 text-sm">
-                        @if (!$p->presenca)
-                        <form method="POST" action="{{ route('eventos.participantes.presenca', [$evento, $p]) }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-blue-600 hover:text-blue-800 mr-4">Marcar Presença</button>
-                        </form>
-                        @endif
-                        <form method="POST" action="{{ route('eventos.participantes.destroy', [$evento, $p]) }}" class="inline" @submit.prevent="deleteItem($event)">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-800">Remover</button>
-                        </form>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" class="px-4 py-2 text-center text-gray-500">
-                        Nenhum dirigente adicionado
-                    </td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+        <div x-data="dirigentesBulkManager()">
+            <!-- Pesquisa e Ações em Massa -->
+            <div class="mb-4 flex justify-between items-center gap-4">
+                <input
+                    type="text"
+                    x-model="search"
+                    @input="filterDirigentes()"
+                    placeholder="Pesquisar por nome..."
+                    class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+
+                <!-- Botões de Ação em Massa -->
+                <div class="flex gap-2" x-show="selectedCount > 0">
+                    <button
+                        @click="marcarPresencaSelecionados()"
+                        class="bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700"
+                    >
+                        ✓ Marcar Presença (<span x-text="selectedCount"></span>)
+                    </button>
+                    <button
+                        @click="removerSelecionados()"
+                        class="bg-red-600 text-white px-3 py-2 rounded text-sm hover:bg-red-700"
+                    >
+                        🗑 Remover (<span x-text="selectedCount"></span>)
+                    </button>
+                </div>
+            </div>
+
+            <table class="w-full">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">
+                            <input type="checkbox" x-model="selectAll" @change="toggleAll()" class="rounded">
+                        </th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Nome</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Presença</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Check-in</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Observação</th>
+                        <th class="px-4 py-2 text-left text-sm font-semibold">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template x-for="p in filteredDirigentes" :key="p.id">
+                        <tr class="border-t hover:bg-gray-50">
+                            <td class="px-4 py-2">
+                                <input type="checkbox" :value="p.id" x-model="selected" @change="updateSelectedCount()" class="rounded">
+                            </td>
+                            <td class="px-4 py-2" x-text="p.dirigente.nome"></td>
+                            <td class="px-4 py-2">
+                                <span
+                                    :class="p.presenca ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
+                                    class="px-2 py-1 rounded text-sm font-semibold"
+                                    x-text="p.presenca ? 'Presente' : 'Ausente'"
+                                ></span>
+                            </td>
+                            <td class="px-4 py-2" x-text="p.checkin_em ? new Date(p.checkin_em).toLocaleString('pt-BR') : '-'"></td>
+                            <td class="px-4 py-2 text-sm" x-text="p.observacao || '-'"></td>
+                            <td class="px-4 py-2 text-sm">
+                                <template x-if="!p.presenca">
+                                    <button
+                                        @click="marcarPresencaUnico(p.id)"
+                                        class="text-blue-600 hover:text-blue-800 mr-4"
+                                    >
+                                        Marcar Presença
+                                    </button>
+                                </template>
+                                <button
+                                    @click="removerUnico(p.id)"
+                                    class="text-red-600 hover:text-red-800"
+                                >
+                                    Remover
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
+                    <template x-if="filteredDirigentes.length === 0">
+                        <tr>
+                            <td colspan="6" class="px-4 py-4 text-center text-gray-500">
+                                Nenhum dirigente adicionado
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
 
     <!-- Participantes Externos -->
     <div x-data="participantesManager()" class="bg-white rounded-lg shadow p-6 mb-6">
@@ -461,6 +509,152 @@
                 dirigenteSelect.style.display = 'none';
                 externoSelect.style.display = 'none';
             }
+        }
+
+        function dirigentesBulkManager() {
+            const eventoId = {{ $evento->id }};
+            const dirigentes = @json($evento->participantes->where('tipo_participante', 'dirigente')->values());
+
+            return {
+                search: '',
+                selected: [],
+                selectAll: false,
+                selectedCount: 0,
+                filteredDirigentes: dirigentes,
+
+                filterDirigentes() {
+                    const searchLower = this.search.toLowerCase();
+                    this.filteredDirigentes = dirigentes.filter(d =>
+                        d.dirigente.nome.toLowerCase().includes(searchLower)
+                    );
+                    this.selectAll = false;
+                    this.selected = [];
+                    this.selectedCount = 0;
+                },
+
+                toggleAll() {
+                    if (this.selectAll) {
+                        this.selected = this.filteredDirigentes.map(d => d.id.toString());
+                    } else {
+                        this.selected = [];
+                    }
+                    this.updateSelectedCount();
+                },
+
+                updateSelectedCount() {
+                    this.selectedCount = this.selected.length;
+                },
+
+                marcarPresencaSelecionados() {
+                    if (this.selected.length === 0) return;
+
+                    Swal.fire({
+                        title: 'Marcar presença?',
+                        text: `Marcar ${this.selected.length} dirigente(s) como presente?`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sim',
+                        cancelButtonText: 'Cancelar'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            fetch('{{ route("eventos.participantes.marcar-presenca-lote", $evento) }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ ids: this.selected })
+                            })
+                            .then(r => r.json())
+                            .then(data => {
+                                Swal.fire('Sucesso!', data.message, 'success').then(() => {
+                                    location.reload();
+                                });
+                            })
+                            .catch(() => Swal.fire('Erro', 'Erro ao marcar presença', 'error'));
+                        }
+                    });
+                },
+
+                removerSelecionados() {
+                    if (this.selected.length === 0) return;
+
+                    Swal.fire({
+                        title: 'Remover?',
+                        text: `Remover ${this.selected.length} dirigente(s)?`,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Remover',
+                        cancelButtonText: 'Cancelar'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            fetch('{{ route("eventos.participantes.remover-lote", $evento) }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ ids: this.selected })
+                            })
+                            .then(r => r.json())
+                            .then(data => {
+                                Swal.fire('Sucesso!', data.message, 'success').then(() => {
+                                    location.reload();
+                                });
+                            })
+                            .catch(() => Swal.fire('Erro', 'Erro ao remover', 'error'));
+                        }
+                    });
+                },
+
+                marcarPresencaUnico(id) {
+                    Swal.fire({
+                        title: 'Marcar presença?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Sim'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            fetch('{{ route("eventos.participantes.marcar-presenca-lote", $evento) }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ ids: [id] })
+                            })
+                            .then(r => r.json())
+                            .then(() => location.reload())
+                            .catch(() => Swal.fire('Erro', 'Erro ao marcar presença', 'error'));
+                        }
+                    });
+                },
+
+                removerUnico(id) {
+                    Swal.fire({
+                        title: 'Remover?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        confirmButtonText: 'Remover'
+                    }).then(result => {
+                        if (result.isConfirmed) {
+                            fetch('{{ route("eventos.participantes.remover-lote", $evento) }}', {
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ ids: [id] })
+                            })
+                            .then(r => r.json())
+                            .then(() => location.reload())
+                            .catch(() => Swal.fire('Erro', 'Erro ao remover', 'error'));
+                        }
+                    });
+                }
+            };
         }
     </script>
 </div>
