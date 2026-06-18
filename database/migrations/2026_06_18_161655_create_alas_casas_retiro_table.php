@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('quartos_casas_de_retiro', function (Blueprint $table) {
-            $table->id('id_quarto');
+        Schema::create('alas_casas_retiro', function (Blueprint $table) {
+            $table->id('id_ala');
             $table->unsignedBigInteger('id_casa');
-            $table->unsignedBigInteger('id_ala')->nullable();
-            $table->string('numero_quarto');
-            $table->integer('vagas')->default(0);
-            $table->integer('banheiros')->nullable();
-            $table->boolean('acessibilidade')->default(false);
+            $table->string('nome_ala');
+            $table->string('descricao')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('quartos_casas_de_retiro');
+        Schema::dropIfExists('alas_casas_retiro');
     }
 };

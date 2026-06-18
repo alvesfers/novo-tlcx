@@ -31,4 +31,9 @@ class CasasDeRetiro extends Model
     {
         return $this->hasMany(QuartosCasasDeRetiro::class, 'id_casa', 'id_casa');
     }
+
+    public function alas()
+    {
+        return $this->hasMany(AlasRetiro::class, 'id_casa', 'id_casa');
+    }
 }

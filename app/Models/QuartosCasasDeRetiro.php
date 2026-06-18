@@ -14,12 +14,10 @@ class QuartosCasasDeRetiro extends Model
 
     protected $fillable = [
         'id_casa',
+        'id_ala',
         'numero_quarto',
         'vagas',
-        'cama',
-        'beliche',
         'banheiros',
-        'chuveiros',
         'acessibilidade',
     ];
 
@@ -30,5 +28,10 @@ class QuartosCasasDeRetiro extends Model
     public function casa()
     {
         return $this->belongsTo(CasasDeRetiro::class, 'id_casa', 'id_casa');
+    }
+
+    public function ala()
+    {
+        return $this->belongsTo(AlasRetiro::class, 'id_ala', 'id_ala');
     }
 }
