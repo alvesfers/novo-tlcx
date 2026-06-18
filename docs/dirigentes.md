@@ -310,6 +310,231 @@ Fluxo:
 - [ ] Se tipo_vinculo = 'coordenacao', entidade deve ser diocese
 - [ ] Se tipo_vinculo = 'principal', entidade deve ser núcleo
 
+## Sistema de Habilidades (Skills)
+
+### Visão Geral
+
+Cada secretaria possui um conjunto de habilidades específicas (ex: Secretaria de Música → Violão, Canto; Apoio → Limpeza, Decoração). Dirigentes podem declarar quais habilidades possuem e em que nível (Iniciante até Profissional).
+
+### Tabelas: `habilidades` e `dirigente_habilidades`
+
+**Tabela: `habilidades`**
+```
+Coluna              Tipo              Descrição
+──────────────────────────────────────────────────────
+id                  BigInt PK         Identificador único
+entidade_id         BigInt FK         Referência à secretaria
+nome                String            Nome da habilidade (ex: Violão)
+descricao           Text              Descrição detalhada (nullable)
+ativo               Boolean           Habilidade disponível (default: true)
+created_at          Timestamp         Data de criação
+updated_at          Timestamp         Data de atualização
+deleted_at          Timestamp         Soft delete
+```
+
+**Tabela: `dirigente_habilidades` (Pivot)**
+```
+Coluna              Tipo              Descrição
+──────────────────────────────────────────────────────
+id                  BigInt PK         Identificador único
+dirigente_id        BigInt FK         Referência ao dirigente
+habilidade_id       BigInt FK         Referência à habilidade
+nivel               String            Nível de proficiência (enum)
+observacao          Text              Notas adicionais (nullable)
+created_at          Timestamp         Data de criação
+updated_at          Timestamp         Data de atualização
+Índices             UNIQUE            (dirigente_id, habilidade_id)
+```
+
+### Enum: `NivelHabilidade`
+
+```php
+// App/Enums/NivelHabilidade.php
+enum NivelHabilidade: string {
+    case Iniciante = 'iniciante';      // Cor: Azul
+    case Basico = 'basico';            // Cor: Ciano
+    case Intermediario = 'intermediario'; // Cor: Amarelo
+    case Experiente = 'experiente';    // Cor: Laranja
+    case Profissional = 'profissional'; // Cor: Vermelho
+}
+```
+
+Cada nível tem:
+- `label()` - Texto em português (ex: "Intermediário")
+- `color()` - Cor para badge visual
+
+### Relacionamentos
+
+**Habilidade → Secretaria**
+```php
+// Habilidade model
+public function secretaria(): BelongsTo {
+    return $this->belongsTo(Entidade::class, 'entidade_id');
+}
+
+public function dirigentes(): BelongsToMany {
+    return $this->belongsToMany(Dirigente::class, 'dirigente_habilidades')
+        ->withPivot(['nivel', 'observacao'])
+        ->using(DirigenteHabilidade::class);
+}
+```
+
+**Dirigente → Habilidades**
+```php
+// Dirigente model
+public function habilidades(): BelongsToMany {
+    return $this->belongsToMany(Habilidade::class, 'dirigente_habilidades')
+        ->withPivot(['nivel', 'observacao'])
+        ->using(DirigenteHabilidade::class);
+}
+```
+
+**Entidade (Secretaria) → Habilidades**
+```php
+// Entidade model
+public function habilidades(): HasMany {
+    return $this->hasMany(Habilidade::class, 'entidade_id');
+}
+```
+
+### Casos de Uso
+
+#### UC1: Secretaria adicionar habilidade
+```
+Ator: Coordenador da secretaria
+Pré-condição: Usuário autenticado, secretaria existe
+Fluxo:
+1. Acessa página da secretaria (secretarias/show)
+2. Clica "Adicionar Habilidade"
+3. Preenche: nome (obrigatório), descrição (opcional)
+4. Sistema valida:
+   - Nome não está vazio
+   - Não duplica habilidade na mesma secretaria
+5. Sistema cria habilidade com ativo=true
+6. Redirecionamento com confirmação
+```
+
+#### UC2: Dirigente declarar sua habilidade
+```
+Ator: Dirigente ou gestor de RH
+Pré-condição: Dirigente existe, habilidades existem
+Fluxo:
+1. Acessa perfil do dirigente (dirigentes/show)
+2. Clica "Adicionar habilidade"
+3. Seleciona secretaria (carrega habilidades dinâmicas via API)
+4. Seleciona habilidade
+5. Escolhe nível (dropdown com 5 opções)
+6. Opcionalmente adiciona observação
+7. Sistema valida:
+   - Habilidade pertence à secretaria selecionada
+   - Nível é válido
+   - Não duplica habilidade para o dirigente
+8. Sistema cria/atualiza vínculo em dirigente_habilidades
+9. Redirecionamento com confirmação
+```
+
+#### UC3: Editar nível de habilidade do dirigente
+```
+Ator: Dirigente ou gestor
+Pré-condição: Dirigente já tem habilidade registrada
+Fluxo:
+1. Na página de habilidades do dirigente, clica "Editar"
+2. Modal abre com:
+   - Nome da habilidade (read-only)
+   - Dropdown de nível com valor atual selecionado
+   - Campo de observação
+3. Modifica nível e/ou observação
+4. Salva com updateExistingPivot
+5. Redirecionamento com confirmação
+```
+
+#### UC4: Remover habilidade do dirigente
+```
+Ator: Dirigente ou gestor
+Pré-condição: Dirigente tem habilidade registrada
+Fluxo:
+1. Na página de habilidades, clica "Deletar"
+2. Confirmação de segurança
+3. Sistema executa detach(habilidade_id)
+4. Habilidade é removida do dirigente (não é deletada)
+5. Redirecionamento com confirmação
+```
+
+### Validações do Sistema de Habilidades
+
+#### Ao criar habilidade na secretaria
+- [ ] Nome não pode estar vazio
+- [ ] Descrição é opcional
+- [ ] Entidade_id aponta para secretaria ativa
+- [ ] Não duplica nome na mesma secretaria
+
+#### Ao adicionar habilidade ao dirigente
+- [ ] Dirigente existe e está ativo
+- [ ] Habilidade existe e está ativa
+- [ ] Habilidade pertence à secretaria correta
+- [ ] Nível é um dos 5 valores válidos
+- [ ] Não duplica (dirigente, habilidade)
+
+#### Ao editar nível do dirigente
+- [ ] Novo nível é válido
+- [ ] Pivô existe (habilidade está vinculada)
+
+#### Ao remover habilidade do dirigente
+- [ ] Pivô existe antes de remover
+
+### Endpoints de API
+
+**GET /api/secretarias/{entidade}/habilidades**
+- Retorna array JSON de habilidades ativas da secretaria
+- Necessário para carregar dropdown dinâmico no formulário
+- Autenticação: Sim (middleware: auth)
+
+```json
+[
+  { "id": 1, "nome": "Limpeza" },
+  { "id": 2, "nome": "Decoração" },
+  { "id": 3, "nome": "Culinária" }
+]
+```
+
+### Routes
+
+```php
+// Habilidades da secretaria
+Route::post('/secretarias/{entidade}/habilidades', [HabilidadeController::class, 'store']);
+Route::put('/habilidades/{habilidade}', [HabilidadeController::class, 'update']);
+Route::delete('/habilidades/{habilidade}', [HabilidadeController::class, 'destroy']);
+
+// Habilidades do dirigente
+Route::post('/dirigentes/{dirigente}/habilidades', [DirigenteHabilidadeController::class, 'store']);
+Route::put('/dirigentes/{dirigente}/habilidades/{habilidade}', [DirigenteHabilidadeController::class, 'update']);
+Route::delete('/dirigentes/{dirigente}/habilidades/{habilidade}', [DirigenteHabilidadeController::class, 'destroy']);
+
+// API
+Route::get('/api/secretarias/{entidade}/habilidades', [SearchController::class, 'secretariaHabilidades']);
+```
+
+### Views e Componentes
+
+**Componente: `DirigenteHabilidadesForm`**
+- Localização: `resources/views/components/dirigente-habilidades-form.blade.php`
+- Props: `$dirigente` (required)
+- Funcionalidades:
+  - Lista habilidades atuais agrupadas por secretaria
+  - Badges coloridas por nível
+  - Modal para editar nível
+  - Formulário para adicionar nova habilidade
+  - Carregamento dinâmico de habilidades por secretaria via fetch
+
+**Seção em Secretarias**
+- Arquivo: `resources/views/secretarias/show.blade.php`
+- Exibe: Tabela de habilidades com botões editar/deletar
+- Formulário para adicionar nova habilidade
+
+**Coluna em Listagem de Secretarias**
+- Arquivo: `resources/views/secretarias/index.blade.php`
+- Exibe: Badge com contagem de habilidades ativas
+
 ## Implementação Sugerida
 
 ### Models
