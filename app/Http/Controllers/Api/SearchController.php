@@ -84,4 +84,10 @@ class SearchController extends Controller
             'count' => count($results)
         ]);
     }
+
+    public function secretariaHabilidades(Entidade $entidade)
+    {
+        $habilidades = $entidade->habilidades()->ativas()->get(['id', 'nome']);
+        return response()->json($habilidades);
+    }
 }

@@ -6,7 +6,7 @@
         <h1 class="text-3xl font-bold">Dirigentes</h1>
     </div>
 
-    <!-- Filtros por Escopo -->
+    <!-- Filtros por Escopo (Login) -->
     <div class="mb-6 flex gap-2 flex-wrap">
         <a href="{{ route('dirigentes.index', ['filter' => 'todos']) }}"
            class="px-4 py-2 rounded-lg @if($filter === 'todos') bg-blue-600 text-white @else bg-gray-200 text-gray-800 hover:bg-gray-300 @endif">
@@ -32,6 +32,94 @@
                 </a>
             @endif
         @endif
+    </div>
+
+    <!-- Filtros Independentes -->
+    <div class="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div class="px-6 py-4">
+            <h3 class="text-sm font-semibold text-gray-800 dark:text-white/90 mb-3">Filtros Avançados</h3>
+            <form method="GET" action="{{ route('dirigentes.index') }}" class="flex gap-3 items-end flex-wrap">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Pesquisar</label>
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Nome do dirigente..."
+                        value="{{ request('search') }}"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Diocese</label>
+                    <select
+                        name="diocese_id"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">Todas as dioceses</option>
+                        @foreach($dioceses as $diocese)
+                            <option value="{{ $diocese->id }}" {{ request('diocese_id') == $diocese->id ? 'selected' : '' }}>
+                                {{ $diocese->nome }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Núcleo</label>
+                    <select
+                        name="nucleo_id"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">Todos os núcleos</option>
+                        @foreach($nucleos as $nucleo)
+                            <option value="{{ $nucleo->id }}" {{ request('nucleo_id') == $nucleo->id ? 'selected' : '' }}>
+                                {{ $nucleo->nome }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Secretaria</label>
+                    <select
+                        name="secretaria_id"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">Todas as secretarias</option>
+                        @foreach($secretarias as $secretaria)
+                            <option value="{{ $secretaria->id }}" {{ request('secretaria_id') == $secretaria->id ? 'selected' : '' }}>
+                                {{ $secretaria->nome }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Status</label>
+                    <select
+                        name="status"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">Todos os status</option>
+                        <option value="ativo" {{ request('status') === 'ativo' ? 'selected' : '' }}>Ativo</option>
+                        <option value="inativo" {{ request('status') === 'inativo' ? 'selected' : '' }}>Inativo</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2 text-theme-sm font-medium hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Filtrar
+                </button>
+                @if(request('diocese_id') || request('nucleo_id') || request('secretaria_id') || request('status') || request('search'))
+                    <a href="{{ route('dirigentes.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-gray-200 text-gray-700 px-4 py-2 text-theme-sm font-medium hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        Limpar
+                    </a>
+                @endif
+            </form>
+        </div>
     </div>
 
     @if ($message = Session::get('success'))

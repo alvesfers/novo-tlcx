@@ -44,6 +44,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->midd
 Route::middleware('auth')->group(function () {
     // busca
     Route::get('/api/search', [SearchController::class, 'search'])->name('search');
+    Route::get('/api/secretarias/{entidade}/habilidades', [SearchController::class, 'secretariaHabilidades']);
 
     // dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
@@ -91,6 +92,16 @@ Route::post('/dirigentes/{dirigente}/vinculos', [DirigenteEntidadeController::cl
 Route::get('/dirigentes/{dirigente}/vinculos/{vinculo}/edit', [DirigenteEntidadeController::class, 'edit'])->name('dirigentes.vinculos.edit');
 Route::put('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeController::class, 'update'])->name('dirigentes.vinculos.update');
 Route::delete('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeController::class, 'destroy'])->name('dirigentes.vinculos.destroy');
+
+// habilidades routes
+Route::post('/secretarias/{entidade}/habilidades', [\App\Http\Controllers\HabilidadeController::class, 'store'])->name('habilidades.store');
+Route::put('/habilidades/{habilidade}', [\App\Http\Controllers\HabilidadeController::class, 'update'])->name('habilidades.update');
+Route::delete('/habilidades/{habilidade}', [\App\Http\Controllers\HabilidadeController::class, 'destroy'])->name('habilidades.destroy');
+
+// dirigente habilidades routes
+Route::post('/dirigentes/{dirigente}/habilidades', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'store'])->name('dirigentes.habilidades.store');
+Route::put('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'update'])->name('dirigentes.habilidades.update');
+Route::delete('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'destroy'])->name('dirigentes.habilidades.destroy');
 
 // eventos resources
 Route::resource('tipo-eventos', TipoEventoController::class);

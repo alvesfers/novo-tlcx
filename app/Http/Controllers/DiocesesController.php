@@ -11,15 +11,26 @@ use App\Traits\BulkDeleteable;
 class DiocesesController extends Controller
 {
     use BulkDeleteable;
-    public function index(): View
+    public function index(Request $request): View
     {
-        $dioceses = Entidade::where('tipo_entidade', 'diocese')
-            ->with('entidadesFilhas')
-            ->get();
+        $query = Entidade::where('tipo_entidade', 'diocese')
+            ->with('entidadesFilhas');
+
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('ativo', $request->status === 'ativo' ? true : false);
+        }
+
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('nome', 'like', '%' . $request->search . '%');
+        }
+
+        $dioceses = $query->get();
 
         return view('dioceses.index', [
             'title' => 'Dioceses',
             'dioceses' => $dioceses,
+            'selectedStatus' => $request->status,
+            'searchQuery' => $request->search,
         ]);
     }
 

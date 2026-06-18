@@ -150,6 +150,81 @@
             <p class="text-gray-500">Nenhum dirigente vinculado</p>
         @endif
     </div>
+
+    <div class="mt-8 bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold mb-4">Habilidades</h2>
+
+        @if ($secretaria->habilidades->count() > 0)
+            <div class="mb-6">
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-100">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-sm font-semibold">Habilidade</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold">Descrição</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold">Status</th>
+                                <th class="px-4 py-2 text-left text-sm font-semibold">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($secretaria->habilidades as $habilidade)
+                                <tr class="border-t hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium">{{ $habilidade->nome }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-600">{{ $habilidade->descricao ?? '-' }}</td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2 py-1 rounded text-sm
+                                            @if($habilidade->ativo) bg-green-100 text-green-800
+                                            @else bg-gray-100 text-gray-800
+                                            @endif">
+                                            {{ $habilidade->ativo ? 'Ativa' : 'Inativa' }}
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3 text-sm space-x-2">
+                                        <button type="button" class="text-blue-600 hover:underline" onclick="editarHabilidade({{ $habilidade->id }}, '{{ $habilidade->nome }}', '{{ addslashes($habilidade->descricao ?? '') }}', {{ $habilidade->ativo ? 'true' : 'false' }})">
+                                            Editar
+                                        </button>
+                                        <form action="{{ route('habilidades.destroy', $habilidade) }}" method="POST" class="inline" onsubmit="return confirm('Tem certeza?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 hover:underline">
+                                                Deletar
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        @else
+            <p class="text-gray-500 mb-6">Nenhuma habilidade registrada ainda.</p>
+        @endif
+
+        <!-- Formulário para adicionar habilidade -->
+        <div class="border-t pt-6">
+            <h3 class="text-lg font-semibold mb-4">Adicionar Habilidade</h3>
+            <form action="{{ route('habilidades.store', $secretaria) }}" method="POST" class="space-y-4">
+                @csrf
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Nome da Habilidade *</label>
+                        <input type="text" name="nome" class="w-full px-4 py-2 border rounded-lg" placeholder="Ex: Violão" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Descrição</label>
+                        <input type="text" name="descricao" class="w-full px-4 py-2 border rounded-lg" placeholder="Ex: Habilidade em tocar violão">
+                    </div>
+                </div>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-green-600 text-white px-4 py-2 text-sm font-medium hover:bg-green-700">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Adicionar Habilidade
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
 
 <!-- Modal para editar secretaria -->

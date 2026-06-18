@@ -63,6 +63,13 @@ class Dirigente extends Model
             ->withTimestamps();
     }
 
+    public function habilidades(): BelongsToMany
+    {
+        return $this->belongsToMany(Habilidade::class, 'dirigente_habilidades')
+            ->withPivot(['nivel', 'observacao'])
+            ->using(DirigenteHabilidade::class);
+    }
+
     public function scopeAtivos($query)
     {
         return $query->where('ativo', true)->whereNull('deleted_at');

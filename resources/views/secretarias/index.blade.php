@@ -12,6 +12,49 @@
         </div>
     @endif
 
+    <!-- Filtros -->
+    <div class="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div class="px-6 py-4">
+            <h3 class="text-sm font-semibold text-gray-800 dark:text-white/90 mb-3">Filtros</h3>
+            <form method="GET" action="{{ route('secretarias.index') }}" class="flex gap-3 items-end flex-wrap">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Pesquisar</label>
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Nome da secretaria..."
+                        value="{{ $searchQuery }}"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Status</label>
+                    <select
+                        name="status"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">Todos os status</option>
+                        <option value="ativo" {{ $selectedStatus === 'ativo' ? 'selected' : '' }}>Ativo</option>
+                        <option value="inativo" {{ $selectedStatus === 'inativo' ? 'selected' : '' }}>Inativo</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2 text-theme-sm font-medium hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Filtrar
+                </button>
+                @if($selectedStatus || $searchQuery)
+                    <a href="{{ route('secretarias.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-gray-200 text-gray-700 px-4 py-2 text-theme-sm font-medium hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        Limpar
+                    </a>
+                @endif
+            </form>
+        </div>
+    </div>
+
     <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <!-- Header -->
         <div class="flex flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 dark:border-white/[0.05]">

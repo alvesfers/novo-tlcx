@@ -82,6 +82,11 @@ class Entidade extends Model
             ->withTimestamps();
     }
 
+    public function habilidades(): HasMany
+    {
+        return $this->hasMany(Habilidade::class, 'entidade_id');
+    }
+
     // ===== SCOPES =====
 
     public function scopeAtivas(Builder $query): Builder

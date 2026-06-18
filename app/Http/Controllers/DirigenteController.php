@@ -16,14 +16,39 @@ class DirigenteController extends Controller
 
     public function __construct(private DirigenteService $service) {}
 
-    public function index()
+    public function index(Request $request)
     {
-        $filter = request('filter', 'todos');
+        $filter = $request->get('filter', 'todos');
         $user = auth()->user();
 
         $query = Dirigente::with('vinculos.entidade');
 
-        if ($filter === 'minha_diocese' && $user->entidade) {
+        // Filtro por diocese (independente de login)
+        if ($request->has('diocese_id') && $request->diocese_id !== '') {
+            $dioceseId = $request->diocese_id;
+            $query->whereHas('vinculos', function ($q) use ($dioceseId) {
+                $q->whereHas('entidade', function ($q) use ($dioceseId) {
+                    $q->where('id', $dioceseId)
+                      ->orWhere('entidade_pai_id', $dioceseId);
+                });
+            });
+        }
+        // Filtro por núcleo (independente de login)
+        elseif ($request->has('nucleo_id') && $request->nucleo_id !== '') {
+            $nucleoId = $request->nucleo_id;
+            $query->whereHas('vinculos', function ($q) use ($nucleoId) {
+                $q->where('entidade_id', $nucleoId);
+            });
+        }
+        // Filtro por secretaria (independente de login)
+        elseif ($request->has('secretaria_id') && $request->secretaria_id !== '') {
+            $secretariaId = $request->secretaria_id;
+            $query->whereHas('vinculos', function ($q) use ($secretariaId) {
+                $q->where('entidade_id', $secretariaId);
+            });
+        }
+        // Filtros baseados em login
+        elseif ($filter === 'minha_diocese' && $user->entidade) {
             $diocese = $user->entidade->getDiocese();
             if ($diocese) {
                 $dioceseId = $diocese->id;
@@ -46,9 +71,28 @@ class DirigenteController extends Controller
             });
         }
 
+        // Filtro de status
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('ativo', $request->status === 'ativo' ? true : false);
+        }
+
+        // Filtro de texto (busca por nome)
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('nome', 'like', '%' . $request->search . '%');
+        }
+
         $dirigentes = $query->paginate(15);
+        $dioceses = Entidade::where('tipo_entidade', 'diocese')->ativas()->get();
         $nucleos = Entidade::where('tipo_entidade', 'nucleo')->where('ativo', true)->get();
-        return view('dirigentes.index', compact('dirigentes', 'filter', 'nucleos'));
+        $secretarias = Entidade::where('tipo_entidade', 'secretaria')->where('ativo', true)->get();
+
+        return view('dirigentes.index', compact(
+            'dirigentes',
+            'filter',
+            'nucleos',
+            'dioceses',
+            'secretarias'
+        ));
     }
 
     public function create()

@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             TarefaSeeder::class,
             DocumentoSeeder::class,
             CasasDeRetiroSeeder::class,
+            HabilidadeSeeder::class,
         ]);
     }
 }

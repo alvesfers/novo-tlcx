@@ -11,11 +11,20 @@ use Illuminate\Http\RedirectResponse;
 class SecretariasController extends Controller
 {
     use BulkDeleteable;
-    public function index(): View
+    public function index(Request $request): View
     {
-        $secretarias = Entidade::where('tipo_entidade', 'secretaria')
-            ->with('entidadePai')
-            ->get();
+        $query = Entidade::where('tipo_entidade', 'secretaria')
+            ->with('entidadePai');
+
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('ativo', $request->status === 'ativo' ? true : false);
+        }
+
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('nome', 'like', '%' . $request->search . '%');
+        }
+
+        $secretarias = $query->get();
 
         $nucleos = Entidade::where('tipo_entidade', 'nucleo')
             ->ativas()
@@ -25,6 +34,8 @@ class SecretariasController extends Controller
             'title' => 'Secretarias',
             'secretarias' => $secretarias,
             'nucleos' => $nucleos,
+            'selectedStatus' => $request->status,
+            'searchQuery' => $request->search,
         ]);
     }
 

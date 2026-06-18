@@ -11,11 +11,24 @@ use Illuminate\Http\RedirectResponse;
 class NucleosController extends Controller
 {
     use BulkDeleteable;
-    public function index(): View
+    public function index(Request $request): View
     {
-        $nucleos = Entidade::where('tipo_entidade', 'nucleo')
-            ->with('entidadePai', 'entidadesFilhas')
-            ->get();
+        $query = Entidade::where('tipo_entidade', 'nucleo')
+            ->with('entidadePai', 'entidadesFilhas');
+
+        if ($request->has('diocese_id') && $request->diocese_id !== '') {
+            $query->where('entidade_pai_id', $request->diocese_id);
+        }
+
+        if ($request->has('status') && $request->status !== '') {
+            $query->where('ativo', $request->status === 'ativo' ? true : false);
+        }
+
+        if ($request->has('search') && $request->search !== '') {
+            $query->where('nome', 'like', '%' . $request->search . '%');
+        }
+
+        $nucleos = $query->get();
 
         $dioceses = Entidade::where('tipo_entidade', 'diocese')
             ->ativas()
@@ -25,6 +38,9 @@ class NucleosController extends Controller
             'title' => 'Núcleos',
             'nucleos' => $nucleos,
             'dioceses' => $dioceses,
+            'selectedDiocese' => $request->diocese_id,
+            'selectedStatus' => $request->status,
+            'searchQuery' => $request->search,
         ]);
     }
 

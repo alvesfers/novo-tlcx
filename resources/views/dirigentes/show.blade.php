@@ -204,6 +204,10 @@
         @endif
     </div>
 
+    <div class="mt-8">
+        <x-dirigente-habilidades-form :dirigente="$dirigente" />
+    </div>
+
     <!-- Modal -->
     <x-modal-form
         id="vinculoModal"
