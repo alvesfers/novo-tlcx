@@ -16,14 +16,19 @@ class DirigenteService
     public function criarComVinculoPrincipal(array $data): Dirigente
     {
         return DB::transaction(function () use ($data) {
-            // Extrair dados do dirigente e vínculo
             $entidadeId = $data['entidade_id'];
             unset($data['entidade_id']);
 
-            // Criar dirigente
+            $foto = $data['foto'] ?? null;
+            unset($data['foto']);
+
             $dirigente = Dirigente::create($data);
 
-            // Criar vínculo principal
+            if ($foto) {
+                $path = $dirigente->storeFotoArquivo($foto, 'dirigentes');
+                $dirigente->update(['foto_arquivo' => $path]);
+            }
+
             $dirigente->vinculos()->create([
                 'entidade_id' => $entidadeId,
                 'tipo_vinculo' => TipoVinculo::Principal,
@@ -41,6 +46,14 @@ class DirigenteService
      */
     public function atualizar(Dirigente $dirigente, array $data): Dirigente
     {
+        $foto = $data['foto'] ?? null;
+        unset($data['foto']);
+
+        if ($foto) {
+            $path = $dirigente->storeFotoArquivo($foto, 'dirigentes');
+            $data['foto_arquivo'] = $path;
+        }
+
         $dirigente->update($data);
         return $dirigente->fresh();
     }

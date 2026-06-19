@@ -15,6 +15,9 @@ window.flatpickr = flatpickr;
 window.FullCalendar = Calendar;
 window.Swal = Swal;
 
+// Import Alpine managers (dioceses, nucleos, secretarias, dirigentes)
+import './alpine-managers';
+
 Alpine.start();
 
 // Initialize components on DOM ready

@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Enums\TipoUsuario;
+use App\Enums\TipoEntidade;
 use App\Models\Entidade;
 use App\Models\User;
 
@@ -17,7 +18,7 @@ class EntidadePolicy
     }
 
     /**
-     * Quem pode ver uma entidade específica
+     * Quem pode ver uma entidade específica (show pages são públicas para usuários logados)
      */
     public function view(User $user, Entidade $entidade): bool
     {
@@ -26,23 +27,22 @@ class EntidadePolicy
             return true;
         }
 
-        // Usuário diocesano vê sua diocese e estrutura
-        if ($user->isdiocese() && $user->entidade_id === $entidade->id) {
+        // Qualquer usuário logado pode ver dioceses, núcleos ou secretarias (show pages públicas)
+        return true;
+    }
+
+    /**
+     * Criar entidades - regras por tipo
+     */
+    public function create(User $user): bool
+    {
+        // Admin pode criar tudo
+        if ($user->isAdmin()) {
             return true;
         }
 
-        // Usuário diocesano vê núcleos e secretarias filhas
-        if ($user->isDiocese() && $entidade->entidade_pai_id === $user->entidade_id) {
-            return true;
-        }
-
-        // Usuário de núcleo/secretaria vê sua entidade
-        if ($user->entidade_id === $entidade->id) {
-            return true;
-        }
-
-        // Usuário de núcleo/secretaria vê sua diocese
-        if ($entidade->isdiocese() && $entidade->id === $user->entidade->entidade_pai_id) {
+        // Diocese pode criar núcleos/secretarias (entidades filhas)
+        if ($user->isDiocese()) {
             return true;
         }
 
@@ -50,15 +50,7 @@ class EntidadePolicy
     }
 
     /**
-     * Apenas admin e Diocese podem criar entidades
-     */
-    public function create(User $user): bool
-    {
-        return $user->isAdmin() || $user->isDiocese();
-    }
-
-    /**
-     * Admin e Diocese podem editar entidades filhas
+     * Editar entidades - regras por tipo e escopo
      */
     public function update(User $user, Entidade $entidade): bool
     {
@@ -67,30 +59,97 @@ class EntidadePolicy
             return true;
         }
 
-        // Diocese edita sua própria entidade
-        if ($user->isDiocese() && $user->entidade_id === $entidade->id) {
-            return true;
+        // **DIOCESES:** Diocese edita sua própria diocese
+        if ($entidade->tipo_entidade?->isDiocese()) {
+            return $user->isDiocese() && $user->entidade_id === $entidade->id;
         }
 
-        // Diocese edita núcleos/secretarias filhas
-        if ($user->isDiocese() && $entidade->entidade_pai_id === $user->entidade_id) {
-            return true;
+        // **NÚCLEOS:** Diocese edita tudo; Núcleo edita só sua própria
+        if ($entidade->tipo_entidade?->isNucleo()) {
+            if ($user->isDiocese()) {
+                return true; // Diocese edita todos os núcleos
+            }
+            if ($user->isNucleo() && $user->entidade_id === $entidade->id) {
+                return true; // Núcleo edita a si mesmo
+            }
+            return false;
         }
 
-        // Usuário de núcleo/secretaria edita sua própria entidade (dados básicos)
-        if ($user->entidade_id === $entidade->id) {
-            return true;
+        // **SECRETARIAS:** Diocese edita tudo; Secretaria edita só sua própria
+        if ($entidade->tipo_entidade?->isSecretaria()) {
+            if ($user->isDiocese()) {
+                return true; // Diocese edita todas as secretarias
+            }
+            if ($user->isSecretaria() && $user->entidade_id === $entidade->id) {
+                return true; // Secretaria edita a si mesma
+            }
+            return false;
         }
 
         return false;
     }
 
     /**
-     * Apenas admin pode deletar entidades
+     * Deletar entidades - regras por tipo e escopo
      */
     public function delete(User $user, Entidade $entidade): bool
     {
-        return $user->isAdmin();
+        // Admin pode deletar tudo
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // **DIOCESES:** Diocese pode deletar sua própria diocese
+        if ($entidade->tipo_entidade?->isDiocese()) {
+            return $user->isDiocese() && $user->entidade_id === $entidade->id;
+        }
+
+        // **NÚCLEOS:** Diocese pode deletar tudo; Núcleo pode deletar a si mesmo
+        if ($entidade->tipo_entidade?->isNucleo()) {
+            if ($user->isDiocese()) {
+                return true; // Diocese deleta todos os núcleos
+            }
+            if ($user->isNucleo() && $user->entidade_id === $entidade->id) {
+                return true; // Núcleo deleta a si mesmo
+            }
+            return false;
+        }
+
+        // **SECRETARIAS:** Diocese pode deletar tudo; Secretaria pode deletar a si mesma
+        if ($entidade->tipo_entidade?->isSecretaria()) {
+            if ($user->isDiocese()) {
+                return true; // Diocese deleta todas as secretarias
+            }
+            if ($user->isSecretaria() && $user->entidade_id === $entidade->id) {
+                return true; // Secretaria deleta a si mesma
+            }
+            return false;
+        }
+
+        return false;
+    }
+
+    /**
+     * Deletar múltiplas entidades - regras por tipo
+     */
+    public function deleteMultiple(User $user): bool
+    {
+        // Admin pode deletar tudo
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // Diocese pode deletar múltiplos
+        if ($user->isDiocese()) {
+            return true;
+        }
+
+        // Núcleo pode deletar múltiplos (entidades filhas)
+        if ($user->isNucleo()) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

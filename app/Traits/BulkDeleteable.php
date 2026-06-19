@@ -9,6 +9,9 @@ trait BulkDeleteable
     public function deleteMultiple(Request $request)
     {
         try {
+            // Check authorization
+            $this->authorize('deleteMultiple', $this->getModel());
+
             $ids = json_decode($request->input('ids', '[]'), true);
 
             if (empty($ids)) {

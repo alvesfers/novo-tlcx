@@ -20,6 +20,7 @@ class StoreDirigenteRequest extends FormRequest
             'genero' => 'nullable|string|in:m,f,outro',
             'data_nascimento' => 'nullable|date',
             'foto_url' => 'nullable|url',
+            'foto' => 'nullable|image|max:2048',
             'ativo' => 'boolean',
             'entidade_id' => 'required|exists:entidades,id',
         ];

@@ -7,6 +7,7 @@ use App\Models\Entidade;
 use App\Http\Requests\StoreDirigenteRequest;
 use App\Http\Requests\UpdateDirigenteRequest;
 use App\Services\DirigenteService;
+use App\Services\QRCodeService;
 use App\Traits\BulkDeleteable;
 use Illuminate\Http\Request;
 
@@ -14,7 +15,10 @@ class DirigenteController extends Controller
 {
     use BulkDeleteable;
 
-    public function __construct(private DirigenteService $service) {}
+    public function __construct(
+        private DirigenteService $service,
+        private QRCodeService $qrCodeService
+    ) {}
 
     public function index(Request $request)
     {
@@ -132,7 +136,15 @@ class DirigenteController extends Controller
     {
         $this->authorize('view', $dirigente);
         $dirigente->load('vinculos.entidade');
-        return view('dirigentes.show', compact('dirigente'));
+        $qrCode = $this->qrCodeService->generateForDirigente($dirigente->uuid);
+        return view('dirigentes.show', compact('dirigente', 'qrCode'));
+    }
+
+    public function qrCode(Dirigente $dirigente)
+    {
+        $this->authorize('view', $dirigente);
+        $qrCode = $this->qrCodeService->generateForDirigente($dirigente->uuid);
+        return view('dirigentes.qrcode', compact('dirigente', 'qrCode'));
     }
 
     public function edit(Dirigente $dirigente)
@@ -173,6 +185,14 @@ class DirigenteController extends Controller
     {
         $this->authorize('delete', $dirigente);
         $dirigente->delete();
+
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Dirigente deletado com sucesso!',
+            ]);
+        }
+
         return redirect()->route('dirigentes.index')->with('success', 'Dirigente removido com sucesso.');
     }
 

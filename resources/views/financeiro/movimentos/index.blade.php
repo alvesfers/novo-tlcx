@@ -6,55 +6,49 @@
         <h1 class="text-3xl font-bold">Movimentações Financeiras</h1>
     </div>
 
-    @if (session('success'))
-    <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-        {{ session('success') }}
-    </div>
-    @endif
-
-    @if (session('error'))
-    <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
-        {{ session('error') }}
-    </div>
-    @endif
-
     <!-- Filtros -->
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
-        <form method="GET" action="{{ route('financeiro-movimentos.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-                <label for="data_inicio" class="block text-sm font-semibold mb-2">Data Inicial</label>
-                <input type="date" id="data_inicio" name="data_inicio" value="{{ request('data_inicio') }}" class="w-full border rounded-lg px-3 py-2">
-            </div>
-            <div>
-                <label for="data_fim" class="block text-sm font-semibold mb-2">Data Final</label>
-                <input type="date" id="data_fim" name="data_fim" value="{{ request('data_fim') }}" class="w-full border rounded-lg px-3 py-2">
-            </div>
-            <div>
-                <label for="tipo" class="block text-sm font-semibold mb-2">Tipo</label>
-                <select id="tipo" name="tipo" class="w-full border rounded-lg px-3 py-2">
-                    <option value="">Todos</option>
-                    <option value="entrada" @selected(request('tipo') === 'entrada')>Entrada</option>
-                    <option value="saida" @selected(request('tipo') === 'saida')>Saída</option>
-                </select>
-            </div>
-            <div>
-                <label for="categoria_id" class="block text-sm font-semibold mb-2">Categoria</label>
-                <select id="categoria_id" name="categoria_id" class="w-full border rounded-lg px-3 py-2">
-                    <option value="">Todas</option>
-                    @foreach ($categorias as $cat)
-                    <option value="{{ $cat->id }}" @selected(request('categoria_id') === (string)$cat->id)>{{ $cat->nome }}</option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="md:col-span-4 flex gap-2">
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+    <div class="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div class="px-6 py-4">
+            <h3 class="text-sm font-semibold text-gray-800 dark:text-white/90 mb-3">Filtros</h3>
+            <form method="GET" action="{{ route('financeiro-movimentos.index') }}" class="flex gap-3 items-end flex-wrap">
+                <div class="flex-1 min-w-[200px]">
+                    <label for="data_inicio" class="block text-sm font-medium mb-2 dark:text-gray-200">Data Inicial</label>
+                    <input type="date" id="data_inicio" name="data_inicio" value="{{ request('data_inicio') }}" class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label for="data_fim" class="block text-sm font-medium mb-2 dark:text-gray-200">Data Final</label>
+                    <input type="date" id="data_fim" name="data_fim" value="{{ request('data_fim') }}" class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label for="tipo" class="block text-sm font-medium mb-2 dark:text-gray-200">Tipo</label>
+                    <select id="tipo" name="tipo" class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">Todos</option>
+                        <option value="entrada" @selected(request('tipo') === 'entrada')>Entrada</option>
+                        <option value="saida" @selected(request('tipo') === 'saida')>Saída</option>
+                    </select>
+                </div>
+                <div class="flex-1 min-w-[200px]">
+                    <label for="categoria_id" class="block text-sm font-medium mb-2 dark:text-gray-200">Categoria</label>
+                    <select id="categoria_id" name="categoria_id" class="w-full border rounded-lg px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <option value="">Todas</option>
+                        @foreach ($categorias as $cat)
+                        <option value="{{ $cat->id }}" @selected(request('categoria_id') === (string)$cat->id)>{{ $cat->nome }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2 text-theme-sm font-medium hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
                     Filtrar
                 </button>
-                <a href="{{ route('financeiro-movimentos.index') }}" class="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500">
-                    Limpar
-                </a>
-            </div>
-        </form>
+                @if(request('data_inicio') || request('data_fim') || request('tipo') || request('categoria_id'))
+                    <a href="{{ route('financeiro-movimentos.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-gray-200 text-gray-700 px-4 py-2 text-theme-sm font-medium hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        Limpar
+                    </a>
+                @endif
+            </form>
+        </div>
     </div>
 
     <!-- Table -->
@@ -74,7 +68,8 @@
             </button>
         </div>
 
-        <div class="max-w-full overflow-x-auto">
+        <!-- Desktop/Tablet Table View -->
+        <div class="max-w-full overflow-x-auto hidden md:block">
             <table class="w-full">
                 <thead class="border-b border-gray-100 dark:border-white/[0.05] bg-gray-50 dark:bg-gray-900">
                     <tr>
@@ -150,6 +145,77 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="md:hidden space-y-4 px-2">
+            @forelse($movimentos as $movimento)
+                <div class="bg-white dark:bg-white/[0.03] rounded-lg border border-gray-200 dark:border-white/[0.05] p-4">
+                    <div class="mb-3">
+                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ $movimento->descricao }}</p>
+                    </div>
+
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Tipo</span>
+                            <span class="inline-block px-2 py-1 rounded-full text-theme-xs font-medium
+                                @if($movimento->tipo->value === 'entrada')
+                                    bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-500
+                                @else
+                                    bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-500
+                                @endif">
+                                {{ $movimento->tipo->label() }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Valor</span>
+                            <span class="text-sm font-semibold text-gray-900 dark:text-white">R$ {{ number_format($movimento->valor, 2, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Data</span>
+                            <span class="text-sm text-gray-700 dark:text-gray-300">{{ $movimento->data_movimento->format('d/m/Y') }}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-3 border-t border-gray-200 dark:border-white/[0.05]">
+                        <button onclick="openModal('movimentoModal', true, {
+                            id: {{ $movimento->id }},
+                            descricao: '{{ addslashes($movimento->descricao) }}',
+                            tipo: '{{ $movimento->tipo->value }}',
+                            data_movimento: '{{ $movimento->data_movimento->format('Y-m-d') }}',
+                            financeiro_categoria_id: {{ $movimento->financeiro_categoria_id }},
+                            valor: {{ $movimento->valor }},
+                            forma_pagamento: '{{ $movimento->forma_pagamento->value }}',
+                            comprovante_url: '{{ addslashes($movimento->comprovante_url ?? '') }}',
+                            observacao: '{{ addslashes($movimento->observacao ?? '') }}'
+                        })"
+                           class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg text-amber-600 bg-amber-50 px-3 py-2 text-sm font-medium hover:bg-amber-100 dark:bg-amber-500/10 dark:hover:bg-amber-500/20">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Editar
+                        </button>
+                        <form action="{{ route('financeiro-movimentos.destroy', $movimento) }}" method="POST" class="flex-1"
+                              @submit.prevent="deleteItem({{ $movimento->id }}, $event)">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-lg text-red-600 bg-red-50 px-3 py-2 text-sm font-medium hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                Deletar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @empty
+                <div class="text-center py-12">
+                    <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="text-gray-500 dark:text-gray-400 mb-4">Nenhuma movimentação encontrada</p>
+                </div>
+            @endforelse
         </div>
 
         <!-- Pagination -->
@@ -294,12 +360,25 @@
                         title: 'Confirmar exclusão',
                         text: 'Tem certeza que deseja deletar este movimento?',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#6b7280',
                         confirmButtonText: 'Deletar',
-                        cancelButtonText: 'Cancelar'
+                        cancelButtonText: 'Cancelar',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            document.querySelector('.swal2-container').style.zIndex = '99999';
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            event.target.closest('form').submit();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: 'Movimento deletado com sucesso!',
+                                showConfirmButton: false,
+                                timer: 1500,
+                            }).then(() => {
+                                event.target.closest('form').submit();
+                            });
                         }
                     });
                 }

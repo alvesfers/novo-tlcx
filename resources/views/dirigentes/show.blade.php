@@ -34,9 +34,25 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-xl font-semibold mb-4">Informações Pessoais</h2>
 
+            @if($dirigente->foto_arquivo || $dirigente->foto_url)
+                <div class="mb-4 text-center">
+                    <img
+                        src="{{ $dirigente->getFotoUrl() }}"
+                        alt="{{ $dirigente->nome }}"
+                        class="w-48 h-48 object-cover rounded-lg shadow border border-gray-200 mx-auto"
+                    >
+                </div>
+            @endif
+
             <div class="mb-4">
                 <p class="text-sm text-gray-600">UUID</p>
-                <p class="font-mono text-sm">{{ $dirigente->uuid }}</p>
+                <div class="flex items-center gap-2">
+                    <p class="font-mono text-sm">{{ $dirigente->uuid }}</p>
+                    <a href="{{ route('dirigentes.qrcode', $dirigente) }}"
+                       class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                        Ver QR Code
+                    </a>
+                </div>
             </div>
 
             <div class="mb-4">

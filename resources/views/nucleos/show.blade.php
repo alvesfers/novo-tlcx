@@ -41,6 +41,16 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h2 class="text-xl font-semibold mb-4">Informações</h2>
 
+            @if($nucleo->getFotoUrl())
+                <div class="mb-4 text-center">
+                    <img
+                        src="{{ $nucleo->getFotoUrl() }}"
+                        alt="{{ $nucleo->nome }}"
+                        class="w-48 h-48 object-cover rounded-lg shadow border border-gray-200 mx-auto"
+                    >
+                </div>
+            @endif
+
             <div class="mb-4">
                 <p class="text-sm text-gray-600">Diocese</p>
                 <p class="font-semibold">

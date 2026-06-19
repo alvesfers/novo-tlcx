@@ -78,6 +78,7 @@ class SecretariasController extends Controller
                 'entidade_pai_id' => 'required|exists:entidades,id',
                 'nome' => 'required|string|max:255',
                 'email' => 'nullable|email',
+                'password' => 'nullable|string|min:6',
                 'tipo_secretaria' => 'required|in:aberta,fechada',
             ]);
 
@@ -114,12 +115,15 @@ class SecretariasController extends Controller
 
         try {
             $validated = $request->validate([
-                'entidade_pai_id' => 'required|exists:entidades,id',
                 'nome' => 'required|string|max:255',
                 'email' => 'nullable|email',
+                'password' => 'nullable|string|min:6',
                 'tipo_secretaria' => 'required|in:aberta,fechada',
                 'ativo' => 'boolean',
             ]);
+
+            // Manter o entidade_pai_id existente
+            $validated['entidade_pai_id'] = $secretaria->entidade_pai_id;
 
             $secretaria->update($validated);
 

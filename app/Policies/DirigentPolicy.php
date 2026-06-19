@@ -71,11 +71,35 @@ class DirigentPolicy
     }
 
     /**
-     * Apenas admin pode deletar dirigentes
+     * Admin e Diocese podem deletar dirigentes
      */
     public function delete(User $user, Dirigente $dirigente): bool
     {
-        return $user->isAdmin();
+        // Admin deleta tudo
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        // Diocese deleta dirigentes de sua estrutura
+        if ($user->isDiocese()) {
+            return $dirigente->vinculos()
+                ->whereHas('entidade', function ($query) use ($user) {
+                    $query->where('id', $user->entidade_id)
+                        ->orWhere('entidade_pai_id', $user->entidade_id);
+                })
+                ->exists();
+        }
+
+        // Núcleo/Secretaria não pode deletar
+        return false;
+    }
+
+    /**
+     * Apenas admin e Diocese podem deletar múltiplos dirigentes
+     */
+    public function deleteMultiple(User $user): bool
+    {
+        return $user->isAdmin() || $user->isDiocese();
     }
 
     /**

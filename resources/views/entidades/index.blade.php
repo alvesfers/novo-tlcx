@@ -12,7 +12,64 @@
         </div>
     @endif
 
-    <div class="overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+    <!-- Filtros -->
+    <div class="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+        <div class="px-6 py-4">
+            <h3 class="text-sm font-semibold text-gray-800 dark:text-white/90 mb-3">Filtros</h3>
+            <form method="GET" action="{{ route('entidades.index') }}" class="flex gap-3 items-end flex-wrap">
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Pesquisar</label>
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Nome da entidade..."
+                        value="{{ request('search') ?? '' }}"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Tipo</label>
+                    <select
+                        name="tipo_entidade"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">Todos os tipos</option>
+                        <option value="diocese" {{ request('tipo_entidade') === 'diocese' ? 'selected' : '' }}>Diocese</option>
+                        <option value="nucleo" {{ request('tipo_entidade') === 'nucleo' ? 'selected' : '' }}>Núcleo</option>
+                        <option value="secretaria" {{ request('tipo_entidade') === 'secretaria' ? 'selected' : '' }}>Secretaria</option>
+                    </select>
+                </div>
+
+                <div class="flex-1 min-w-[200px]">
+                    <label class="block text-sm font-medium mb-2 dark:text-gray-200">Status</label>
+                    <select
+                        name="status"
+                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                        <option value="">Todos os status</option>
+                        <option value="ativo" {{ request('status') === 'ativo' ? 'selected' : '' }}>Ativo</option>
+                        <option value="inativo" {{ request('status') === 'inativo' ? 'selected' : '' }}>Inativo</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="inline-flex items-center gap-2 rounded-lg bg-blue-600 text-white px-4 py-2 text-theme-sm font-medium hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    Filtrar
+                </button>
+                @if(request('search') || request('tipo_entidade') || request('status'))
+                    <a href="{{ route('entidades.index') }}" class="inline-flex items-center gap-2 rounded-lg bg-gray-200 text-gray-700 px-4 py-2 text-theme-sm font-medium hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+                        Limpar
+                    </a>
+                @endif
+            </form>
+        </div>
+    </div>
+
+    <!-- Desktop/Tablet View (≥768px) -->
+    <div class="hidden md:block overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
         <!-- Header -->
         <div class="flex flex-col gap-4 px-6 py-4 sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 dark:border-white/[0.05]">
             <div>
@@ -149,6 +206,82 @@
         </div>
     </div>
 
+    <!-- Mobile View (<768px) -->
+    <div class="md:hidden space-y-3">
+        @if(count($entidades) > 0)
+            <div class="flex flex-col gap-2">
+                <button onclick="openModal('entidadeModal', false)"
+                        class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-green-600 text-white px-4 py-3 text-theme-sm font-medium hover:bg-green-700">
+                    <svg class="fill-current" width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Nova Entidade
+                </button>
+            </div>
+        @endif
+
+        @forelse($entidades as $entidade)
+            <div class="rounded-lg border border-gray-200 bg-white p-4 dark:border-white/[0.05] dark:bg-white/[0.03]">
+                <div class="mb-3 flex items-start justify-between">
+                    <div class="flex-1">
+                        <h4 class="text-base font-medium text-gray-800 dark:text-white/90">{{ $entidade->nome }}</h4>
+                        <p class="text-theme-xs text-gray-500 dark:text-gray-400 mt-1">{{ ucfirst($entidade->tipo_entidade) }}</p>
+                    </div>
+                    <span class="inline-block px-2 py-1 rounded text-theme-xs font-medium ml-2
+                        @if($entidade->ativo)
+                            bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-500
+                        @else
+                            bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-400
+                        @endif">
+                        {{ $entidade->ativo ? 'Ativo' : 'Inativo' }}
+                    </span>
+                </div>
+
+                <div class="flex gap-2 mt-3">
+                    <a href="{{ route('entidades.show', $entidade) }}"
+                       class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-blue-200 bg-white px-3 py-2 text-theme-xs font-medium text-blue-600 hover:bg-blue-50 dark:border-blue-900 dark:bg-blue-500/10 dark:text-blue-400 dark:hover:bg-blue-500/20">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        Ver
+                    </a>
+
+                    <button onclick="openModal('entidadeModal', true, {
+                        id: {{ $entidade->id }},
+                        nome: '{{ addslashes($entidade->nome) }}',
+                        email: '{{ addslashes($entidade->email ?? '') }}',
+                        tipo_entidade: '{{ $entidade->tipo_entidade }}',
+                        tipo_secretaria: '{{ $entidade->tipo_secretaria ?? '' }}',
+                        ativo: {{ $entidade->ativo ? 'true' : 'false' }}
+                    })"
+                       class="flex-1 inline-flex items-center justify-center gap-2 rounded-lg border border-amber-200 bg-white px-3 py-2 text-theme-xs font-medium text-amber-600 hover:bg-amber-50 dark:border-amber-900 dark:bg-amber-500/10 dark:text-amber-400 dark:hover:bg-amber-500/20">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        Editar
+                    </button>
+
+                    <form action="{{ route('entidades.destroy', $entidade) }}" method="POST" class="flex-1"
+                          @submit.prevent="deleteItem({{ $entidade->id }}, $event)">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-white px-3 py-2 text-theme-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:bg-red-500/10 dark:text-red-400 dark:hover:bg-red-500/20">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            Deletar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        @empty
+            <div class="py-12 text-center text-gray-500">
+                Nenhuma entidade encontrada
+            </div>
+        @endforelse
+    </div>
+
     <!-- Modal -->
     <x-modal-form
         id="entidadeModal"
@@ -251,6 +384,9 @@
                             icon: 'warning',
                             title: 'Atenção',
                             text: 'Selecione pelo menos um item',
+                            didOpen: () => {
+                                document.querySelector('.swal2-container').style.zIndex = '99999';
+                            }
                         });
                         return;
                     }
@@ -260,9 +396,14 @@
                         title: 'Confirmar exclusão',
                         text: `Tem certeza que deseja deletar ${this.selectedRows.length} item(ns) selecionado(s)?`,
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#6b7280',
                         confirmButtonText: 'Deletar',
-                        cancelButtonText: 'Cancelar'
+                        cancelButtonText: 'Cancelar',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            document.querySelector('.swal2-container').style.zIndex = '99999';
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             const formData = new FormData();
@@ -282,12 +423,20 @@
                                           icon: 'success',
                                           title: 'Sucesso!',
                                           text: 'Entidades deletadas com sucesso!',
+                                          showConfirmButton: false,
+                                          timer: 1500,
+                                          didOpen: () => {
+                                              document.querySelector('.swal2-container').style.zIndex = '99999';
+                                          }
                                       }).then(() => window.location.reload());
                                   } else {
                                       Swal.fire({
                                           icon: 'error',
                                           title: 'Erro',
                                           text: 'Erro ao deletar itens: ' + (data.message || 'Erro desconhecido'),
+                                          didOpen: () => {
+                                              document.querySelector('.swal2-container').style.zIndex = '99999';
+                                          }
                                       });
                                   }
                               });
@@ -302,9 +451,14 @@
                         title: 'Confirmar exclusão',
                         text: 'Tem certeza que deseja deletar esta entidade?',
                         showCancelButton: true,
-                        confirmButtonColor: '#d33',
+                        confirmButtonColor: '#dc2626',
+                        cancelButtonColor: '#6b7280',
                         confirmButtonText: 'Deletar',
-                        cancelButtonText: 'Cancelar'
+                        cancelButtonText: 'Cancelar',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            document.querySelector('.swal2-container').style.zIndex = '99999';
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             event.target.closest('form').submit();

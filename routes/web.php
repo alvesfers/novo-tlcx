@@ -19,7 +19,9 @@ use App\Http\Controllers\CheckInController;
 use App\Http\Controllers\DiocesesController;
 use App\Http\Controllers\NucleosController;
 use App\Http\Controllers\SecretariasController;
+use App\Http\Controllers\SecretariaHabilidadeController;
 use App\Http\Controllers\Api\SearchController;
+use App\Http\Controllers\InfoController;
 
 // autenticação
 Route::middleware('guest')->group(function () {
@@ -82,9 +84,22 @@ Route::middleware('auth')->group(function () {
     Route::delete('/secretarias/{secretaria}', [SecretariasController::class, 'destroy'])->name('secretarias.destroy');
     Route::post('/secretarias/delete-multiple', [SecretariasController::class, 'deleteMultiple'])->name('secretarias.delete-multiple');
 
+    // secretarias habilidades API routes
+    Route::get('/secretarias/{secretaria}/habilidades', [SecretariaHabilidadeController::class, 'index'])->name('secretarias.habilidades.index');
+    Route::post('/secretarias/{secretaria}/habilidades', [SecretariaHabilidadeController::class, 'store'])->name('secretarias.habilidades.store');
+    Route::put('/secretarias/{secretaria}/habilidades/{habilidade}', [SecretariaHabilidadeController::class, 'update'])->name('secretarias.habilidades.update');
+    Route::delete('/secretarias/{secretaria}/habilidades/{habilidade}', [SecretariaHabilidadeController::class, 'destroy'])->name('secretarias.habilidades.destroy');
+
 // dirigentes resource
 Route::resource('dirigentes', DirigenteController::class);
+Route::get('/dirigentes/{dirigente}/qrcode', [DirigenteController::class, 'qrCode'])->name('dirigentes.qrcode');
 Route::post('/dirigentes/delete-multiple', [DirigenteController::class, 'deleteMultiple'])->name('dirigentes.delete-multiple');
+
+// info endpoints (para os modais)
+Route::get('/dioceses/{diocese}/info', [InfoController::class, 'diocese'])->name('dioceses.info');
+Route::get('/nucleos/{nucleo}/info', [InfoController::class, 'nucleo'])->name('nucleos.info');
+Route::get('/secretarias/{secretaria}/info', [InfoController::class, 'secretaria'])->name('secretarias.info');
+Route::get('/dirigentes/{dirigente}/info', [InfoController::class, 'dirigente'])->name('dirigentes.info');
 
 // dirigentes vinculos routes
 Route::get('/dirigentes/{dirigente}/vinculos/create', [DirigenteEntidadeController::class, 'create'])->name('dirigentes.vinculos.create');
@@ -102,6 +117,17 @@ Route::delete('/habilidades/{habilidade}', [\App\Http\Controllers\HabilidadeCont
 Route::post('/dirigentes/{dirigente}/habilidades', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'store'])->name('dirigentes.habilidades.store');
 Route::put('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'update'])->name('dirigentes.habilidades.update');
 Route::delete('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'destroy'])->name('dirigentes.habilidades.destroy');
+
+    // dirigente vinculos API routes (modal)
+    Route::get('/api/dirigentes/{dirigente}/vinculos', [\App\Http\Controllers\DirigenteVinculoApiController::class, 'vinculos'])->name('api.dirigentes.vinculos');
+    Route::post('/api/dirigentes/{dirigente}/vinculos', [\App\Http\Controllers\DirigenteVinculoApiController::class, 'addVinculo'])->name('api.dirigentes.vinculos.add');
+    Route::put('/api/dirigentes/{dirigente}/vinculos/{vinculo}', [\App\Http\Controllers\DirigenteVinculoApiController::class, 'updateVinculo'])->name('api.dirigentes.vinculos.update');
+    Route::delete('/api/dirigentes/{dirigente}/vinculos/{vinculo}', [\App\Http\Controllers\DirigenteVinculoApiController::class, 'removeVinculo'])->name('api.dirigentes.vinculos.remove');
+
+    // dirigente habilidades API routes (modal)
+    Route::get('/api/dirigentes/{dirigente}/habilidades', [\App\Http\Controllers\DirigenteHabilidadeApiController::class, 'habilidades'])->name('api.dirigentes.habilidades');
+    Route::post('/api/dirigentes/{dirigente}/habilidades', [\App\Http\Controllers\DirigenteHabilidadeApiController::class, 'addHabilidade'])->name('api.dirigentes.habilidades.add');
+    Route::delete('/api/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeApiController::class, 'removeHabilidade'])->name('api.dirigentes.habilidades.remove');
 
 // eventos resources
 Route::resource('tipo-eventos', TipoEventoController::class);

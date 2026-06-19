@@ -3,15 +3,16 @@
 namespace App\Models;
 
 use App\Enums\TipoVinculo;
+use App\Helpers\UuidHelper;
+use App\Traits\HandlesFoto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Str;
 
 class Dirigente extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HandlesFoto;
 
     protected $fillable = [
         'uuid',
@@ -21,6 +22,7 @@ class Dirigente extends Model
         'genero',
         'data_nascimento',
         'foto_url',
+        'foto_arquivo',
         'ativo',
     ];
 
@@ -35,7 +37,7 @@ class Dirigente extends Model
 
         static::creating(function ($model) {
             if (empty($model->uuid)) {
-                $model->uuid = Str::uuid();
+                $model->uuid = UuidHelper::generateUnique($model, 5);
             }
         });
     }

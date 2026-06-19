@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\TipoEntidade;
 use App\Enums\TipoSecretaria;
+use App\Traits\HandlesFoto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Entidade extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory, HandlesFoto;
 
     protected $table = 'entidades';
 
@@ -25,6 +26,11 @@ class Entidade extends Model
         'nome',
         'email',
         'tipo_secretaria',
+        'paroquia',
+        'endereco_paroquia',
+        'padre',
+        'foto_url',
+        'foto_arquivo',
         'ativo',
     ];
 

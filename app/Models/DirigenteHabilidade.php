@@ -17,6 +17,6 @@ class DirigenteHabilidade extends Pivot
     ];
 
     protected $casts = [
-        'nivel' => NivelHabilidade::class,
+        // 'nivel' é armazenado como string, não cast automático
     ];
 }

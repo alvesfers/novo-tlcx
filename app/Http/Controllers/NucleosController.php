@@ -83,6 +83,10 @@ class NucleosController extends Controller
                 'entidade_pai_id' => 'required|exists:entidades,id',
                 'nome' => 'required|string|max:255',
                 'email' => 'nullable|email',
+                'password' => 'nullable|string|min:6',
+                'paroquia' => 'nullable|string|max:255',
+                'endereco_paroquia' => 'nullable|string|max:255',
+                'padre' => 'nullable|string|max:255',
             ]);
 
             $nucleo = Entidade::create([
@@ -121,6 +125,10 @@ class NucleosController extends Controller
                 'entidade_pai_id' => 'required|exists:entidades,id',
                 'nome' => 'required|string|max:255',
                 'email' => 'nullable|email',
+                'password' => 'nullable|string|min:6',
+                'paroquia' => 'nullable|string|max:255',
+                'endereco_paroquia' => 'nullable|string|max:255',
+                'padre' => 'nullable|string|max:255',
                 'ativo' => 'boolean',
             ]);
 

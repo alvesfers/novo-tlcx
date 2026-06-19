@@ -15,6 +15,14 @@ class QRCodeService
         return 'data:image/png;base64,' . base64_encode($writer->write($qrCode)->getString());
     }
 
+    public function generateImage($uuid)
+    {
+        $qrCode = new QrCode($uuid);
+        $writer = new PngWriter();
+
+        return $writer->write($qrCode)->getString();
+    }
+
     public function generateCheckInUrl($eventoId, $dirigenteUuid): string
     {
         return route('api.eventos.checkin', [
