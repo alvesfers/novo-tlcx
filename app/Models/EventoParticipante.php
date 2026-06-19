@@ -12,6 +12,7 @@ class EventoParticipante extends Model
         'tipo_participante',
         'dirigente_id',
         'participante_externo_id',
+        'funcao_dirigente_id',
         'presenca',
         'checkin_em',
         'observacao',
@@ -38,6 +39,11 @@ class EventoParticipante extends Model
     public function participanteExterno()
     {
         return $this->belongsTo(ParticipanteExterno::class);
+    }
+
+    public function funcaoDirigente()
+    {
+        return $this->belongsTo(FuncaoDirigente::class);
     }
 
     public function isDirigente(): bool

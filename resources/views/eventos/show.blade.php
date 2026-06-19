@@ -170,63 +170,198 @@
                 </div>
             </div>
 
-            <table class="w-full">
-                <thead class="bg-gray-100">
+            <table class="w-full border-collapse">
+                <thead class="bg-gray-100 border-b-2 border-gray-300">
                     <tr>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">
+                        <th class="px-4 py-3 text-left text-sm font-semibold">
                             <input type="checkbox" x-model="selectAll" @change="toggleAll()" class="rounded">
                         </th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Nome</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Presença</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Check-in</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Observação</th>
-                        <th class="px-4 py-2 text-left text-sm font-semibold">Ações</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Nome</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Função</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Presença</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Check-in</th>
+                        <th class="px-4 py-3 text-left text-sm font-semibold">Observação</th>
+                        <th class="px-4 py-3 text-center text-sm font-semibold">Ações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <template x-for="p in filteredDirigentes" :key="p.id">
-                        <tr class="border-t hover:bg-gray-50">
-                            <td class="px-4 py-2">
+                        <tr class="border-t hover:bg-blue-50 transition">
+                            <td class="px-4 py-3">
                                 <input type="checkbox" :value="p.id" x-model="selected" @change="updateSelectedCount()" class="rounded">
                             </td>
-                            <td class="px-4 py-2" x-text="p.dirigente.nome"></td>
-                            <td class="px-4 py-2">
+                            <td class="px-4 py-3 font-medium text-gray-900" x-text="p.dirigente.nome"></td>
+                            <td class="px-4 py-3">
+                                <span
+                                    x-show="p.funcao_dirigente"
+                                    class="inline-block px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800"
+                                    x-text="p.funcao_dirigente ? p.funcao_dirigente.nome : '-'"
+                                ></span>
+                                <span x-show="!p.funcao_dirigente" class="text-gray-500">-</span>
+                            </td>
+                            <td class="px-4 py-3">
                                 <span
                                     :class="p.presenca ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'"
-                                    class="px-2 py-1 rounded text-sm font-semibold"
-                                    x-text="p.presenca ? 'Presente' : 'Ausente'"
+                                    class="inline-block px-3 py-1 rounded-full text-sm font-semibold"
+                                    x-text="p.presenca ? '✓ Presente' : '✗ Ausente'"
                                 ></span>
                             </td>
-                            <td class="px-4 py-2" x-text="p.checkin_em ? new Date(p.checkin_em).toLocaleString('pt-BR') : '-'"></td>
-                            <td class="px-4 py-2 text-sm" x-text="p.observacao || '-'"></td>
-                            <td class="px-4 py-2 text-sm">
-                                <template x-if="!p.presenca">
+                            <td class="px-4 py-3 text-sm text-gray-600" x-text="p.checkin_em ? new Date(p.checkin_em).toLocaleString('pt-BR') : '-'"></td>
+                            <td class="px-4 py-3 text-sm text-gray-600" x-text="p.observacao || '-'"></td>
+                            <td class="px-4 py-3 text-center">
+                                <div class="flex justify-center gap-3">
+                                    <template x-if="!p.presenca">
+                                        <button
+                                            @click="marcarPresencaUnico(p.id)"
+                                            title="Marcar presença"
+                                            class="text-green-600 hover:text-green-800 hover:bg-green-100 p-2 rounded transition"
+                                        >
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                                            </svg>
+                                        </button>
+                                    </template>
                                     <button
-                                        @click="marcarPresencaUnico(p.id)"
-                                        class="text-blue-600 hover:text-blue-800 mr-4"
+                                        @click="removerUnico(p.id)"
+                                        title="Remover participante"
+                                        class="text-red-600 hover:text-red-800 hover:bg-red-100 p-2 rounded transition"
                                     >
-                                        Marcar Presença
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
                                     </button>
-                                </template>
-                                <button
-                                    @click="removerUnico(p.id)"
-                                    class="text-red-600 hover:text-red-800"
-                                >
-                                    Remover
-                                </button>
+                                </div>
                             </td>
                         </tr>
                     </template>
                     <template x-if="filteredDirigentes.length === 0">
                         <tr>
-                            <td colspan="6" class="px-4 py-4 text-center text-gray-500">
-                                Nenhum dirigente adicionado
+                            <td colspan="7" class="px-4 py-8 text-center text-gray-500">
+                                <p class="text-lg">Nenhum dirigente adicionado</p>
                             </td>
                         </tr>
                     </template>
                 </tbody>
             </table>
         </div>
+
+    <!-- Tipos de Camiseta -->
+    @if ($evento->tiposCamiseta->count())
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-bold mb-4">Tipos de Camiseta Disponíveis</h2>
+
+        <div x-data="{ activeType: null }" class="space-y-3">
+            @foreach ($evento->tiposCamiseta as $tipo)
+            <div class="border border-gray-200 rounded-lg overflow-hidden">
+                <button
+                    @click="activeType = activeType === {{ $tipo->id }} ? null : {{ $tipo->id }}"
+                    class="w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 flex justify-between items-center"
+                >
+                    <div class="text-left">
+                        <p class="font-semibold text-gray-900">{{ $tipo->fornecedor->nome }}</p>
+                        <p class="text-sm text-gray-600">Fornecedor de Camisetas</p>
+                    </div>
+                    <svg :class="activeType === {{ $tipo->id }} ? 'rotate-180' : ''" class="w-5 h-5 text-gray-600 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                    </svg>
+                </button>
+
+                <div x-show="activeType === {{ $tipo->id }}" class="px-4 py-3 bg-white border-t border-gray-200">
+                    <div class="space-y-4">
+                        @forelse ($tipo->fornecedor->tipos as $tipoF)
+                            @if ($tipoF->ativo)
+                            <div class="bg-gray-50 p-3 rounded">
+                                <p class="font-semibold text-gray-900 mb-2">{{ $tipoF->tipo_camiseta }}</p>
+
+                                @if ($tipoF->tamanhos->count())
+                                <div class="grid grid-cols-2 gap-2">
+                                    @foreach ($tipoF->tamanhos as $tamanho)
+                                    <div class="text-sm bg-white border border-gray-200 rounded p-2">
+                                        <p class="font-medium text-gray-900">{{ $tamanho->tamanho }}</p>
+                                        @if($tamanho->medidas)
+                                        <div class="text-xs text-gray-600 mt-1 space-y-0.5">
+                                            @foreach (is_array($tamanho->medidas) ? $tamanho->medidas : json_decode($tamanho->medidas, true) as $medida => $valor)
+                                                <p>{{ $medida }}: {{ $valor }}</p>
+                                            @endforeach
+                                        </div>
+                                        @endif
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @else
+                                    <p class="text-sm text-gray-500 italic">Nenhum tamanho cadastrado</p>
+                                @endif
+                            </div>
+                            @endif
+                        @empty
+                            <p class="text-sm text-gray-500">Nenhum tipo disponível</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
+    <!-- Tabela de Preços -->
+    @if ($evento->valores->count())
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-bold mb-4">Tabela de Preços</h2>
+
+        <table class="w-full">
+            <thead class="border-b border-gray-200 bg-gray-50">
+                <tr>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Tipo</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Valor</th>
+                    <th class="px-4 py-3 text-left text-sm font-semibold text-gray-900">Descrição</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($evento->valores as $valor)
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="px-4 py-3 text-sm font-medium text-gray-900">{{ $valor->tipo_valor }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-900 font-semibold">R$ {{ number_format($valor->valor, 2, ',', '.') }}</td>
+                    <td class="px-4 py-3 text-sm text-gray-600">{{ $valor->descricao ?: '-' }}</td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    @endif
+
+    <!-- Barzinhos do Evento -->
+    @if ($evento->barzinhos && $evento->barzinhos->count())
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Barzinhos do Evento</h2>
+        </div>
+
+        <div class="space-y-3">
+            @foreach ($evento->barzinhos as $barzinho)
+            <div class="border border-gray-200 rounded-lg p-4">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="font-semibold text-gray-900">{{ $barzinho->nome }}</p>
+                        @if($barzinho->descricao)
+                            <p class="text-sm text-gray-600 mt-1">{{ $barzinho->descricao }}</p>
+                        @endif
+                        <div class="flex gap-4 mt-2 text-sm text-gray-600">
+                            <span>Produtos: {{ $barzinho->produtos->count() }}</span>
+                            <span>Vendas: {{ $barzinho->vendas->count() }}</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="px-2 py-1 rounded text-xs font-semibold @if($barzinho->ativo) bg-green-100 text-green-800 @else bg-gray-100 text-gray-800 @endif">
+                            {{ $barzinho->ativo ? 'Ativo' : 'Inativo' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
 
     <!-- Participantes Externos -->
     <div x-data="participantesManager()" class="bg-white rounded-lg shadow p-6 mb-6">
@@ -513,7 +648,14 @@
 
         function dirigentesBulkManager() {
             const eventoId = {{ $evento->id }};
-            const dirigentes = @json($evento->participantes->where('tipo_participante', 'dirigente')->values());
+            const dirigentes = @json($evento->participantes
+                ->where('tipo_participante', 'dirigente')
+                ->map(function($p) {
+                    return array_merge($p->toArray(), [
+                        'funcao_dirigente' => $p->funcaoDirigente ? $p->funcaoDirigente->toArray() : null
+                    ]);
+                })
+                ->values());
 
             return {
                 search: '',
