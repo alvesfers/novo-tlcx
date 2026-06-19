@@ -133,17 +133,7 @@
                                 </td>
                             @endcan
                             <td class="px-6 py-3.5">
-                                @if($secretaria->foto_arquivo || $secretaria->foto_url)
-                                    <img
-                                        src="{{ $secretaria->getFotoUrl() }}"
-                                        alt="{{ $secretaria->nome }}"
-                                        class="w-10 h-10 rounded-full object-cover border border-gray-200"
-                                    >
-                                @else
-                                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 text-sm font-bold">
-                                        {{ substr($secretaria->nome, 0, 1) }}
-                                    </div>
-                                @endif
+                                <x-avatar :model="$secretaria" size="md" />
                             </td>
                             <td class="px-6 py-3.5">
                                 <p class="text-gray-700 text-theme-sm dark:text-gray-400">{{ $secretaria->nome }}</p>
