@@ -24,6 +24,6 @@ class UuidHelper
         for ($i = 0; $i < $length; $i++) {
             $result .= self::$charset[rand(0, strlen(self::$charset) - 1)];
         }
-        return $result;
+        return strtoupper($result);
     }
 }
