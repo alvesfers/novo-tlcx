@@ -9,9 +9,11 @@ use Illuminate\View\View;
 
 class QuartoCasaRetiroController extends Controller
 {
-    public function index(CasasDeRetiro $casasDeRetiro): View
+    public function index($casaRetiro): View
     {
+        $casasDeRetiro = CasasDeRetiro::findOrFail($casaRetiro);
         $quartos = $casasDeRetiro->quartos()->paginate(15);
+
         return view('quartos-casa-retiro.index', compact('casasDeRetiro', 'quartos'));
     }
 

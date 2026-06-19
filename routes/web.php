@@ -237,7 +237,13 @@ Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteC
 
     // casas de retiro e quartos
     Route::resource('casas-retiro', \App\Http\Controllers\CasaRetiroController::class)->only(['index', 'store', 'update', 'destroy']);
+
+    Route::bind('casa_retiro', function ($value) {
+        return \App\Models\CasasDeRetiro::findOrFail($value);
+    });
+
     Route::resource('casas-retiro.quartos', \App\Http\Controllers\QuartoCasaRetiroController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('casas-retiro.alas', \App\Http\Controllers\AlasRetiroController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // calender pages
     Route::get('/calendar', function () {

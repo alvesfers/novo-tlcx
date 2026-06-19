@@ -7,12 +7,20 @@
             <a href="{{ route('casas-retiro.index') }}" class="text-blue-600 hover:text-blue-800 mb-2 inline-block">← Voltar</a>
             <h1 class="text-3xl font-bold">Quartos - {{ $casasDeRetiro->nome_casa }}</h1>
         </div>
-        <button onclick="openCreateQuartoModal()" class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-            </svg>
-            Novo Quarto
-        </button>
+        <div class="flex gap-3">
+            <a href="{{ route('casas-retiro.alas.index', $casasDeRetiro) }}" class="inline-flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                Ver Alas
+            </a>
+            <button onclick="openCreateQuartoModal()" class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+                Novo Quarto
+            </button>
+        </div>
     </div>
 
     <!-- Tabela de Quartos -->
