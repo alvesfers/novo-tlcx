@@ -17,12 +17,19 @@
                         <strong>{{ $secretaria }}:</strong>
                         <div class="mt-2">
                             @foreach ($habilidades as $habilidade)
+                                @php
+                                    $nivelEnum = \App\Enums\NivelHabilidade::tryFrom($habilidade->pivot->nivel);
+                                @endphp
                                 <div class="d-flex align-items-center justify-content-between mb-2 p-2 bg-light rounded">
                                     <div>
                                         <span>{{ $habilidade->nome }}</span>
-                                        <span class="badge bg-{{ $habilidade->pivot->nivel->color() }} ms-2">
-                                            {{ $habilidade->pivot->nivel->label() }}
-                                        </span>
+                                        @if ($nivelEnum)
+                                            <span class="badge bg-{{ $nivelEnum->color() }} ms-2">
+                                                {{ $nivelEnum->label() }}
+                                            </span>
+                                        @else
+                                            <span class="badge bg-secondary ms-2">{{ $habilidade->pivot->nivel }}</span>
+                                        @endif
                                         @if ($habilidade->pivot->observacao)
                                             <small class="d-block text-muted mt-1">{{ $habilidade->pivot->observacao }}</small>
                                         @endif
