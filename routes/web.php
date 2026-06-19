@@ -90,33 +90,33 @@ Route::middleware('auth')->group(function () {
     Route::put('/secretarias/{secretaria}/habilidades/{habilidade}', [SecretariaHabilidadeController::class, 'update'])->name('secretarias.habilidades.update');
     Route::delete('/secretarias/{secretaria}/habilidades/{habilidade}', [SecretariaHabilidadeController::class, 'destroy'])->name('secretarias.habilidades.destroy');
 
-// dirigentes resource
-Route::resource('dirigentes', DirigenteController::class);
-Route::get('/dirigentes/{dirigente}/qrcode', [DirigenteController::class, 'qrCode'])->name('dirigentes.qrcode');
-Route::post('/dirigentes/delete-multiple', [DirigenteController::class, 'deleteMultiple'])->name('dirigentes.delete-multiple');
+    // dirigentes resource
+    Route::get('/dirigentes/{dirigente}/qrcode', [DirigenteController::class, 'qrCode'])->name('dirigentes.qrcode');
+    Route::post('/dirigentes/delete-multiple', [DirigenteController::class, 'deleteMultiple'])->name('dirigentes.delete-multiple');
+    Route::resource('dirigentes', DirigenteController::class);
 
-// info endpoints (para os modais)
-Route::get('/dioceses/{diocese}/info', [InfoController::class, 'diocese'])->name('dioceses.info');
-Route::get('/nucleos/{nucleo}/info', [InfoController::class, 'nucleo'])->name('nucleos.info');
-Route::get('/secretarias/{secretaria}/info', [InfoController::class, 'secretaria'])->name('secretarias.info');
-Route::get('/dirigentes/{dirigente}/info', [InfoController::class, 'dirigente'])->name('dirigentes.info');
+    // info endpoints (para os modais)
+    Route::get('/dioceses/{diocese}/info', [InfoController::class, 'diocese'])->name('dioceses.info');
+    Route::get('/nucleos/{nucleo}/info', [InfoController::class, 'nucleo'])->name('nucleos.info');
+    Route::get('/secretarias/{secretaria}/info', [InfoController::class, 'secretaria'])->name('secretarias.info');
+    Route::get('/dirigentes/{dirigente}/info', [InfoController::class, 'dirigente'])->name('dirigentes.info');
 
-// dirigentes vinculos routes
-Route::get('/dirigentes/{dirigente}/vinculos/create', [DirigenteEntidadeController::class, 'create'])->name('dirigentes.vinculos.create');
-Route::post('/dirigentes/{dirigente}/vinculos', [DirigenteEntidadeController::class, 'store'])->name('dirigentes.vinculos.store');
-Route::get('/dirigentes/{dirigente}/vinculos/{vinculo}/edit', [DirigenteEntidadeController::class, 'edit'])->name('dirigentes.vinculos.edit');
-Route::put('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeController::class, 'update'])->name('dirigentes.vinculos.update');
-Route::delete('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeController::class, 'destroy'])->name('dirigentes.vinculos.destroy');
+    // dirigentes vinculos routes
+    Route::get('/dirigentes/{dirigente}/vinculos/create', [DirigenteEntidadeController::class, 'create'])->name('dirigentes.vinculos.create');
+    Route::post('/dirigentes/{dirigente}/vinculos', [DirigenteEntidadeController::class, 'store'])->name('dirigentes.vinculos.store');
+    Route::get('/dirigentes/{dirigente}/vinculos/{vinculo}/edit', [DirigenteEntidadeController::class, 'edit'])->name('dirigentes.vinculos.edit');
+    Route::put('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeController::class, 'update'])->name('dirigentes.vinculos.update');
+    Route::delete('/dirigentes/{dirigente}/vinculos/{vinculo}', [DirigenteEntidadeController::class, 'destroy'])->name('dirigentes.vinculos.destroy');
 
-// habilidades routes
-Route::post('/secretarias/{entidade}/habilidades', [\App\Http\Controllers\HabilidadeController::class, 'store'])->name('habilidades.store');
-Route::put('/habilidades/{habilidade}', [\App\Http\Controllers\HabilidadeController::class, 'update'])->name('habilidades.update');
-Route::delete('/habilidades/{habilidade}', [\App\Http\Controllers\HabilidadeController::class, 'destroy'])->name('habilidades.destroy');
+    // habilidades routes
+    Route::post('/secretarias/{entidade}/habilidades', [\App\Http\Controllers\HabilidadeController::class, 'store'])->name('habilidades.store');
+    Route::put('/habilidades/{habilidade}', [\App\Http\Controllers\HabilidadeController::class, 'update'])->name('habilidades.update');
+    Route::delete('/habilidades/{habilidade}', [\App\Http\Controllers\HabilidadeController::class, 'destroy'])->name('habilidades.destroy');
 
-// dirigente habilidades routes
-Route::post('/dirigentes/{dirigente}/habilidades', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'store'])->name('dirigentes.habilidades.store');
-Route::put('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'update'])->name('dirigentes.habilidades.update');
-Route::delete('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'destroy'])->name('dirigentes.habilidades.destroy');
+    // dirigente habilidades routes
+    Route::post('/dirigentes/{dirigente}/habilidades', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'store'])->name('dirigentes.habilidades.store');
+    Route::put('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'update'])->name('dirigentes.habilidades.update');
+    Route::delete('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeController::class, 'destroy'])->name('dirigentes.habilidades.destroy');
 
     // dirigente vinculos API routes (modal)
     Route::get('/api/dirigentes/{dirigente}/vinculos', [\App\Http\Controllers\DirigenteVinculoApiController::class, 'vinculos'])->name('api.dirigentes.vinculos');
@@ -129,23 +129,23 @@ Route::delete('/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Con
     Route::post('/api/dirigentes/{dirigente}/habilidades', [\App\Http\Controllers\DirigenteHabilidadeApiController::class, 'addHabilidade'])->name('api.dirigentes.habilidades.add');
     Route::delete('/api/dirigentes/{dirigente}/habilidades/{habilidade}', [\App\Http\Controllers\DirigenteHabilidadeApiController::class, 'removeHabilidade'])->name('api.dirigentes.habilidades.remove');
 
-// eventos resources
-Route::resource('tipo-eventos', TipoEventoController::class);
-Route::post('/tipo-eventos/delete-multiple', [TipoEventoController::class, 'deleteMultiple'])->name('tipo-eventos.delete-multiple');
+    // eventos resources
+    Route::resource('tipo-eventos', TipoEventoController::class);
+    Route::post('/tipo-eventos/delete-multiple', [TipoEventoController::class, 'deleteMultiple'])->name('tipo-eventos.delete-multiple');
 
-// calendario de eventos (deve estar ANTES do resource para não conflitar)
-Route::get('/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'index'])->name('eventos.calendario');
-Route::get('/api/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'getEventos'])->name('eventos.calendario.get');
+    // calendario de eventos (deve estar ANTES do resource para não conflitar)
+    Route::get('/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'index'])->name('eventos.calendario');
+    Route::get('/api/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'getEventos'])->name('eventos.calendario.get');
 
-Route::resource('eventos', EventoController::class);
-Route::post('/eventos/delete-multiple', [EventoController::class, 'deleteMultiple'])->name('eventos.delete-multiple');
-Route::resource('participante-externos', ParticipanteExternoController::class);
-Route::post('/participante-externos/delete-multiple', [ParticipanteExternoController::class, 'deleteMultiple'])->name('participante-externos.delete-multiple');
+    Route::resource('eventos', EventoController::class);
+    Route::post('/eventos/delete-multiple', [EventoController::class, 'deleteMultiple'])->name('eventos.delete-multiple');
+    Route::resource('participante-externos', ParticipanteExternoController::class);
+    Route::post('/participante-externos/delete-multiple', [ParticipanteExternoController::class, 'deleteMultiple'])->name('participante-externos.delete-multiple');
 
-// evento entidades routes
-Route::get('/eventos/{evento}/entidades/create', [EventoEntidadeController::class, 'create'])->name('eventos.entidades.create');
-Route::post('/eventos/{evento}/entidades', [EventoEntidadeController::class, 'store'])->name('eventos.entidades.store');
-Route::delete('/eventos/{evento}/entidades/{eventoEntidade}', [EventoEntidadeController::class, 'destroy'])->name('eventos.entidades.destroy');
+    // evento entidades routes
+    Route::get('/eventos/{evento}/entidades/create', [EventoEntidadeController::class, 'create'])->name('eventos.entidades.create');
+    Route::post('/eventos/{evento}/entidades', [EventoEntidadeController::class, 'store'])->name('eventos.entidades.store');
+    Route::delete('/eventos/{evento}/entidades/{eventoEntidade}', [EventoEntidadeController::class, 'destroy'])->name('eventos.entidades.destroy');
 
 // evento participantes routes
 Route::post('/eventos/{evento}/participantes/todos/escopo', [EventoController::class, 'adicionarTodosEscopo'])->name('eventos.participantes.todos-escopo');
@@ -203,7 +203,6 @@ Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteC
     // check-in
     Route::get('/eventos/{evento}/checkin', [CheckInController::class, 'show'])->name('check-in.show');
     Route::post('/eventos/{evento}/checkin', [CheckInController::class, 'processar'])->name('check-in.processar');
-    Route::get('/dirigentes/{dirigente}/qrcode', [CheckInController::class, 'qrcodeParticipante'])->name('dirigente.qrcode');
 
     // calender pages
     Route::get('/calendar', function () {
