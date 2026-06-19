@@ -9,8 +9,6 @@ class QRCodeService
     public function generateForDirigente($uuid): string
     {
         $qrCode = new QRCode();
-        $qrCode->setErrorCorrectionLevel('L');
-
         $image = $qrCode->render($uuid);
 
         return 'data:image/png;base64,' . base64_encode($image);
@@ -19,8 +17,6 @@ class QRCodeService
     public function generateImage($uuid)
     {
         $qrCode = new QRCode();
-        $qrCode->setErrorCorrectionLevel('L');
-
         return $qrCode->render($uuid);
     }
 
