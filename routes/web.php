@@ -215,7 +215,7 @@ Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteC
     // fornecedores de camisetas
     Route::resource('fornecedores-camisetas', \App\Http\Controllers\FornecedorCamisetaController::class);
     Route::resource('fornecedores-camisetas.tipos', \App\Http\Controllers\FornecedorCamisetaTipoController::class)->shallow();
-    Route::resource('fornecedores-camisetas.tipos.tamanhos', \App\Http\Controllers\FornecedorCamisetaTamanhoController::class)->shallow();
+    Route::resource('fornecedores-camisetas.tipos.tamanhos', \App\Http\Controllers\FornecedorCamisetaTamanhoController::class);
 
     // funções de dirigentes
     Route::resource('funcoes-dirigentes', \App\Http\Controllers\FuncaoDirigenteController::class);
