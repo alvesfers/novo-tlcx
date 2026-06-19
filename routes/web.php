@@ -28,6 +28,8 @@ use App\Http\Controllers\FornecedorCamisetaTamanhoController;
 use App\Http\Controllers\FuncaoDirigenteController;
 use App\Http\Controllers\BarzinhoCombController;
 use App\Http\Controllers\BarzinhoProdutoConsignadoController;
+use App\Http\Controllers\BarzinhoProdutoController;
+use App\Http\Controllers\BarzinhoVendaController;
 
 // autenticação
 Route::middleware('guest')->group(function () {
@@ -218,14 +220,18 @@ Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteC
     // funções de dirigentes
     Route::resource('funcoes-dirigentes', \App\Http\Controllers\FuncaoDirigenteController::class);
 
-    // eventos - tipos de camiseta
+    // formas de pagamento
+    Route::resource('formas-pagamento', \App\Http\Controllers\FormaPagamentoController::class);
+
+    // eventos - tipos de camiseta e valores
     Route::resource('eventos.tipos-camiseta', \App\Http\Controllers\EventoTipoCamisetaController::class)->shallow();
+    Route::resource('eventos.valores', \App\Http\Controllers\EventoValorController::class)->shallow();
 
-    // barzinhos - combos
+    // barzinhos - produtos, combos, consignados e vendas
+    Route::resource('barzinhos.produtos', \App\Http\Controllers\BarzinhoProdutoController::class)->shallow();
     Route::resource('barzinhos.combos', \App\Http\Controllers\BarzinhoCombController::class)->shallow();
-
-    // barzinhos - consignados
     Route::resource('barzinhos.consignados', \App\Http\Controllers\BarzinhoProdutoConsignadoController::class)->shallow();
+    Route::resource('barzinhos.vendas', \App\Http\Controllers\BarzinhoVendaController::class)->shallow();
 
     // calender pages
     Route::get('/calendar', function () {
