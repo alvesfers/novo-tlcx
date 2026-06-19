@@ -109,6 +109,36 @@ class FuncaoDirigentSeeder extends Seeder
                 'tipo' => 'interna',
                 'ativo' => true,
             ],
+            [
+                'nome' => 'Apoio',
+                'descricao' => 'Responsável pelo apoio e suporte logístico',
+                'tipo' => 'interna',
+                'ativo' => true,
+            ],
+            [
+                'nome' => 'Almoxarifado',
+                'descricao' => 'Responsável pelo almoxarifado e materiais',
+                'tipo' => 'interna',
+                'ativo' => true,
+            ],
+            [
+                'nome' => 'Orelhinha',
+                'descricao' => 'Responsável pela transmissão de informações',
+                'tipo' => 'interna',
+                'ativo' => true,
+            ],
+            [
+                'nome' => 'Financeiro',
+                'descricao' => 'Responsável pela gestão financeira do evento',
+                'tipo' => 'interna',
+                'ativo' => true,
+            ],
+            [
+                'nome' => 'Externa',
+                'descricao' => 'Função externa para participantes não dirigentes',
+                'tipo' => 'externa',
+                'ativo' => true,
+            ],
         ];
 
         foreach ($funcoes as $funcao) {
