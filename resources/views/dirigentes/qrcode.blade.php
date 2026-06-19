@@ -14,7 +14,19 @@
 
             <!-- QR Code -->
             <div class="mb-6 flex justify-center">
-                <img src="{{ $qrCode }}" alt="QR Code para {{ $dirigente->nome }}" class="w-64 h-64 border border-gray-300 rounded-lg">
+                @if($qrCode)
+                    <img src="{{ $qrCode }}" alt="QR Code para {{ $dirigente->nome }}" class="w-64 h-64 border border-gray-300 rounded-lg">
+                @else
+                    <div class="w-64 h-64 bg-gray-100 border border-gray-300 rounded-lg flex items-center justify-center">
+                        <p class="text-gray-500">Erro ao gerar QR Code</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Debug -->
+            <div style="display:none">
+                QR Code Length: {{ strlen($qrCode ?? '') }}
+                QR Code Start: {{ substr($qrCode ?? '', 0, 50) }}
             </div>
 
             <div class="space-y-2 mb-6 text-sm text-gray-600">

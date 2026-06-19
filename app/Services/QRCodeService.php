@@ -9,12 +9,16 @@ class QRCodeService
     public function generateForDirigente($uuid): string
     {
         $qrCode = new QRCode();
-        $svg = $qrCode->render($uuid);
-
-        return 'data:image/svg+xml;base64,' . base64_encode($svg);
+        return $qrCode->render($uuid);
     }
 
     public function generateImage($uuid)
+    {
+        $qrCode = new QRCode();
+        return $qrCode->render($uuid);
+    }
+
+    public function generateSvg($uuid): string
     {
         $qrCode = new QRCode();
         return $qrCode->render($uuid);
