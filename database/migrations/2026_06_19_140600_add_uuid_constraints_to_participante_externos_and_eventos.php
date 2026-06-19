@@ -12,37 +12,44 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Popular UUIDs em participante_externos se estiverem vazios ou NULL
-        DB::table('participante_externos')
-            ->where(function ($query) {
-                $query->whereNull('uuid')
-                      ->orWhere('uuid', '');
-            })
-            ->orderBy('id')
-            ->each(function ($participante) {
-                $uuid = $this->generateUniqueUuid();
-                DB::table('participante_externos')
-                    ->where('id', $participante->id)
-                    ->update(['uuid' => $uuid]);
-            });
+        // Verificar se a coluna uuid existe antes de tentar manipular
+        if (Schema::hasColumn('participante_externos', 'uuid')) {
+            // Popular UUIDs em participante_externos se estiverem vazios ou NULL
+            DB::table('participante_externos')
+                ->where(function ($query) {
+                    $query->whereNull('uuid')
+                          ->orWhere('uuid', '');
+                })
+                ->orderBy('id')
+                ->each(function ($participante) {
+                    $uuid = $this->generateUniqueUuid();
+                    DB::table('participante_externos')
+                        ->where('id', $participante->id)
+                        ->update(['uuid' => $uuid]);
+                });
 
-        // Popular UUIDs em eventos se estiverem vazios ou NULL
-        DB::table('eventos')
-            ->where(function ($query) {
-                $query->whereNull('uuid')
-                      ->orWhere('uuid', '');
-            })
-            ->orderBy('id')
-            ->each(function ($evento) {
-                $uuid = $this->generateUniqueUuid();
-                DB::table('eventos')
-                    ->where('id', $evento->id)
-                    ->update(['uuid' => $uuid]);
-            });
+            // Adicionar constraint unique
+            DB::statement('ALTER TABLE `participante_externos` ADD UNIQUE KEY IF NOT EXISTS `participante_externos_uuid_unique` (`uuid`)');
+        }
 
-        // Adicionar constraints unique
-        DB::statement('ALTER TABLE `participante_externos` ADD UNIQUE KEY IF NOT EXISTS `participante_externos_uuid_unique` (`uuid`)');
-        DB::statement('ALTER TABLE `eventos` ADD UNIQUE KEY IF NOT EXISTS `eventos_uuid_unique` (`uuid`)');
+        if (Schema::hasColumn('eventos', 'uuid')) {
+            // Popular UUIDs em eventos se estiverem vazios ou NULL
+            DB::table('eventos')
+                ->where(function ($query) {
+                    $query->whereNull('uuid')
+                          ->orWhere('uuid', '');
+                })
+                ->orderBy('id')
+                ->each(function ($evento) {
+                    $uuid = $this->generateUniqueUuid();
+                    DB::table('eventos')
+                        ->where('id', $evento->id)
+                        ->update(['uuid' => $uuid]);
+                });
+
+            // Adicionar constraint unique
+            DB::statement('ALTER TABLE `eventos` ADD UNIQUE KEY IF NOT EXISTS `eventos_uuid_unique` (`uuid`)');
+        }
     }
 
     /**

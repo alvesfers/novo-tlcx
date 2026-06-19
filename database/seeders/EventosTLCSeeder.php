@@ -251,7 +251,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo Consolação'] ?? null,
             $tlcTypeId,
             '2° TLC Consolação',
-            'Tema: Deixa as noventa e nove só para me buscar'
+            'Tema: Deixa as noventa e nove só para me buscar',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== SANTA CLARA =====
@@ -259,14 +261,18 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo Santa Clara'] ?? null,
             $tlcTypeId,
             '3° TLC Santa Clara',
-            'Tema: Seduziste-me senhor e eu me deixei seduzir'
+            'Tema: Seduziste-me senhor e eu me deixei seduzir',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Clara'] ?? null,
             $tlcTypeId,
             '3° TLC Santa Clara - EQR',
-            'Tema: É tudo o que tenho, recebe o meu nada'
+            'Tema: É tudo o que tenho, recebe o meu nada',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== SANTA TEREZINHA =====
@@ -274,7 +280,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo Santa Terezinha'] ?? null,
             $tlcTypeId,
             '7° TLC Santa Terezinha',
-            'Tema: É tempo de voltar'
+            'Tema: É tempo de voltar',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== RAINHA =====
@@ -282,7 +290,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo Rainha'] ?? null,
             $tlcTypeId,
             '7° TLC Rainha',
-            'Tema: Que o teu plano em mim possa realizar sem limitações'
+            'Tema: Que o teu plano em mim possa realizar sem limitações',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         $this->createEventoIfNotExists(
@@ -308,7 +318,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo São José'] ?? null,
             $tlcTypeId,
             '21° TLC São Jose',
-            'Tema: Vou recomeçar em ti um tempo novo'
+            'Tema: Vou recomeçar em ti um tempo novo',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== TLC DE PAIS =====
@@ -316,21 +328,27 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo TLC de Pais'] ?? null,
             $tlcTypeId,
             '15° TLC de Pais',
-            'Tema: ?'
+            'Tema: ?',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo TLC de Pais'] ?? null,
             $tlcTypeId,
             '17° TLC de Pais',
-            'Tema: Eu e minha casa, serviremos ao Senhor'
+            'Tema: Eu e minha casa, serviremos ao Senhor',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo TLC de Pais'] ?? null,
             $tlcTypeId,
             '21° TLC de Pais',
-            'Tema: Eu te levantarei'
+            'Tema: Eu te levantarei',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== SÃO BENTO =====
@@ -338,7 +356,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo São Bento'] ?? null,
             $tlcTypeId,
             '5° TLC São Bento',
-            'Tema: Não tenho nada a oferecer meu Senhor mas te doa a minha vida'
+            'Tema: Não tenho nada a oferecer meu Senhor mas te doa a minha vida',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== SANTA RITA =====
@@ -356,7 +376,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo São Bernardo'] ?? null,
             $miniTlcTypeId,
             '1° Mini TLC São Bernardo',
-            'Tema: Aqui eu sou criança, embalado em teus braços papai'
+            'Tema: Aqui eu sou criança, embalado em teus braços papai',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         $this->createEventoIfNotExists(
@@ -373,7 +395,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo Ap Miriam'] ?? null,
             $tlcTypeId,
             '10° TLC Ap Miriam',
-            'Tema: Dá-me tuas vestes'
+            'Tema: Dá-me tuas vestes',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== SÃO SEBASTIÃO (Inativo) =====
@@ -381,7 +405,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo São Sebastião'] ?? null,
             $tlcTypeId,
             '1° TLC São Sebastião',
-            'Tema: Se ninguém te adorar eu vou'
+            'Tema: Se ninguém te adorar eu vou',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== MEDALHA MILAGROSA (Inativo) =====
@@ -389,7 +415,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo Medalha Milagrosa'] ?? null,
             $tlcTypeId,
             '1° TLC Medalha Milagrosa',
-            'Tema: Maria, mãe do puro amor'
+            'Tema: Maria, mãe do puro amor',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== AREADO - TLC DE PAIS =====
@@ -397,7 +425,9 @@ class EventosTLCSeeder extends Seeder
             $dioceses['Diocese de Areado'] ?? null,
             $tlcTypeId,
             '1° TLC de Pais de Areado',
-            'Tema: Tudo posso naquele que me fortalece'
+            'Tema: Tudo posso naquele que me fortalece',
+            '2025-01-01',
+            '2025-01-03'
         );
 
         // ===== SANTO ANDRÉ - SANTO ARNALDO =====
@@ -405,7 +435,9 @@ class EventosTLCSeeder extends Seeder
             $nucleos['Núcleo Santo Arnaldo'] ?? null,
             $tlcTypeId,
             '2° TLC Santo Arnaldo',
-            'Tema: Eu estou aqui'
+            'Tema: Eu estou aqui',
+            '2025-01-01',
+            '2025-01-03'
         );
     }
 

@@ -19,10 +19,12 @@ class Dirigente extends Model
         'qr_code',
         'nome',
         'telefone',
+        'email',
         'genero',
         'data_nascimento',
         'foto_url',
         'foto_arquivo',
+        'id_tlc',
         'ativo',
     ];
 
@@ -70,6 +72,11 @@ class Dirigente extends Model
         return $this->belongsToMany(Habilidade::class, 'dirigente_habilidades')
             ->withPivot(['nivel', 'observacao'])
             ->using(DirigenteHabilidade::class);
+    }
+
+    public function tlc()
+    {
+        return $this->belongsTo(Evento::class, 'id_tlc');
     }
 
     public function scopeAtivos($query)
