@@ -11,16 +11,15 @@ class FinanceiroSeeder extends Seeder
     public function run(): void
     {
         $categoriasEntrada = [
-            'Dízimos',
             'Doações',
             'Inscrições',
-            'Ofertas',
             'Contribuições',
         ];
 
         $categoriasSaida = [
             'Transporte',
             'Alimentação',
+            'Mercado',
             'Inscrição',
             'Doação',
             'Material',

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Entidade;
 use App\Models\Habilidade;
+use App\Models\Dirigente;
 use Illuminate\Database\Seeder;
 
 class HabilidadeSeeder extends Seeder
@@ -51,6 +52,49 @@ class HabilidadeSeeder extends Seeder
                         );
                     }
                     break;
+                }
+            }
+        }
+
+        // Atribui habilidades ao dirigente Fernando
+        $fernando = Dirigente::where('nome', 'Fernando')->first();
+        if ($fernando) {
+            $secretariaMusica = Entidade::where('tipo_entidade', 'secretaria')
+                ->where('nome', 'Secretaria de Música')
+                ->first();
+
+            if ($secretariaMusica) {
+                // Violão -> Experiente
+                $violao = Habilidade::where('entidade_id', $secretariaMusica->id)
+                    ->where('nome', 'Violão')
+                    ->first();
+                if ($violao) {
+                    $fernando->habilidades()->updateOrCreate(
+                        ['habilidade_id' => $violao->id],
+                        ['nivel' => 'experiente']
+                    );
+                }
+
+                // Canto -> Intermediário
+                $canto = Habilidade::where('entidade_id', $secretariaMusica->id)
+                    ->where('nome', 'Canto')
+                    ->first();
+                if ($canto) {
+                    $fernando->habilidades()->updateOrCreate(
+                        ['habilidade_id' => $canto->id],
+                        ['nivel' => 'intermediario']
+                    );
+                }
+
+                // Teclado -> Básico
+                $teclado = Habilidade::where('entidade_id', $secretariaMusica->id)
+                    ->where('nome', 'Teclado')
+                    ->first();
+                if ($teclado) {
+                    $fernando->habilidades()->updateOrCreate(
+                        ['habilidade_id' => $teclado->id],
+                        ['nivel' => 'basico']
+                    );
                 }
             }
         }
