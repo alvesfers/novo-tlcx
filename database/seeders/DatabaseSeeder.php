@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             BarzinhoSeeder::class,
             EventoValorSeeder::class,
             EventosTLCSeeder::class,
+            DirigenteEventoFuncaoSeeder::class,
         ]);
     }
 }
