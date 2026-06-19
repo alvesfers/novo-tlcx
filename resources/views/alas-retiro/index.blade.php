@@ -20,9 +20,11 @@
         <table class="w-full">
             <thead class="border-b border-gray-200 bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nome da Ala</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nome</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Descrição</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Quartos</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Vagas</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Banheiros</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ações</th>
                 </tr>
             </thead>
@@ -34,6 +36,16 @@
                     <td class="px-6 py-4 text-sm text-gray-600">
                         <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
                             {{ $ala->quartos->count() }} quarto(s)
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">
+                        <span class="inline-block bg-cyan-100 text-cyan-800 px-2 py-1 rounded text-xs">
+                            {{ $ala->quartos->sum('vagas') ?? 0 }} vaga(s)
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">
+                        <span class="inline-block bg-orange-100 text-orange-800 px-2 py-1 rounded text-xs">
+                            {{ $ala->quartos->sum('banheiros') ?? 0 }} banho(s)
                         </span>
                     </td>
                     <td class="px-6 py-4 text-sm">
@@ -61,7 +73,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="px-6 py-8 text-center text-gray-500">
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
                         Nenhuma ala cadastrada
                     </td>
                 </tr>

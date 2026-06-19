@@ -19,8 +19,9 @@
                 <tr>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Nome</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Endereço</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Valor Estimado</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Alas</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Quartos</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Vagas</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ações</th>
                 </tr>
@@ -31,15 +32,18 @@
                     <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ $casa->nome_casa }}</td>
                     <td class="px-6 py-4 text-sm text-gray-600">{{ $casa->endereco ?: '-' }}</td>
                     <td class="px-6 py-4 text-sm text-gray-600">
-                        @if($casa->valor_estimado)
-                            R$ {{ number_format($casa->valor_estimado, 2, ',', '.') }}
-                        @else
-                            -
-                        @endif
+                        <span class="inline-block bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+                            {{ $casa->alas->count() }} ala(s)
+                        </span>
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-600">
                         <span class="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
                             {{ $casa->quartos->count() }} quarto(s)
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-600">
+                        <span class="inline-block bg-cyan-100 text-cyan-800 px-2 py-1 rounded text-xs">
+                            {{ $casa->quartos->sum('vagas') ?? 0 }} vaga(s)
                         </span>
                     </td>
                     <td class="px-6 py-4 text-sm">
@@ -81,7 +85,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                    <td colspan="7" class="px-6 py-8 text-center text-gray-500">
                         Nenhuma casa de retiro cadastrada
                     </td>
                 </tr>

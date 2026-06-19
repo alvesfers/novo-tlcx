@@ -23,12 +23,24 @@
         </div>
     </div>
 
+    <!-- Filtro por Alas -->
+    <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <label class="block text-sm font-medium mb-3">Filtrar por Ala:</label>
+        <select id="alaFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Todas as Alas</option>
+            @foreach ($casasDeRetiro->alas as $ala)
+                <option value="{{ $ala->id_ala }}">{{ $ala->nome_ala }}</option>
+            @endforeach
+        </select>
+    </div>
+
     <!-- Tabela de Quartos -->
     <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow">
         <table class="w-full">
             <thead class="border-b border-gray-200 bg-gray-50">
                 <tr>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Número</th>
+                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Ala</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Vagas</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Banheiros</th>
                     <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Acessibilidade</th>
@@ -37,8 +49,17 @@
             </thead>
             <tbody>
                 @forelse ($quartos as $quarto)
-                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                <tr class="border-b border-gray-200 hover:bg-gray-50 quarto-row" data-ala-id="{{ $quarto->id_ala ?? '' }}">
                     <td class="px-6 py-4 text-sm text-gray-900 font-medium">{{ $quarto->numero_quarto }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600">
+                        @if ($quarto->ala)
+                            <span class="inline-block bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">
+                                {{ $quarto->ala->nome_ala }}
+                            </span>
+                        @else
+                            <span class="text-gray-400 text-xs">Sem ala</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4 text-sm text-gray-600">{{ $quarto->vagas }}</td>
                     <td class="px-6 py-4 text-sm text-gray-600">{{ $quarto->banheiros ?? '-' }}</td>
                     <td class="px-6 py-4 text-sm">
@@ -71,7 +92,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+                    <td colspan="6" class="px-6 py-8 text-center text-gray-500">
                         Nenhum quarto cadastrado
                     </td>
                 </tr>
@@ -236,5 +257,20 @@ function confirmarDelecao(url) {
         }
     });
 @endif
+
+// Filtro de Alas
+document.getElementById('alaFilter').addEventListener('change', function(e) {
+    const selectedAlaId = this.value;
+    const rows = document.querySelectorAll('.quarto-row');
+
+    rows.forEach(row => {
+        const alaId = row.getAttribute('data-ala-id');
+        if (selectedAlaId === '' || alaId === selectedAlaId) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
+});
 </script>
 @endsection
