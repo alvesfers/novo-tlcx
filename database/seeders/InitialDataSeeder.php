@@ -88,6 +88,42 @@ class InitialDataSeeder extends Seeder
         ]);
         $dioceses['santos']->update(['user_id' => $userDioceseSantos->id]);
 
+        $dioceses['areado'] = Entidade::create([
+            'tipo_entidade' => TipoEntidade::Diocese,
+            'nome' => 'Diocese de Areado',
+            'email' => 'diocese@areado.com',
+            'ativo' => true,
+        ]);
+
+        // Usuário para Diocese Areado
+        $userDiocesesAreado = User::create([
+            'name' => 'Diocese de Areado',
+            'email' => 'diocese@areado.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Diocese,
+            'entidade_id' => $dioceses['areado']->id,
+            'ativo' => true,
+        ]);
+        $dioceses['areado']->update(['user_id' => $userDiocesesAreado->id]);
+
+        $dioceses['santo_andre'] = Entidade::create([
+            'tipo_entidade' => TipoEntidade::Diocese,
+            'nome' => 'Diocese de Santo André',
+            'email' => 'diocese@santoandre.com',
+            'ativo' => true,
+        ]);
+
+        // Usuário para Diocese Santo André
+        $userDiocesesSantoAndre = User::create([
+            'name' => 'Diocese de Santo André',
+            'email' => 'diocese@santoandre.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Diocese,
+            'entidade_id' => $dioceses['santo_andre']->id,
+            'ativo' => true,
+        ]);
+        $dioceses['santo_andre']->update(['user_id' => $userDiocesesSantoAndre->id]);
+
         // ===== NÚCLEOS =====
         $nucleos = [];
 
@@ -470,6 +506,42 @@ class InitialDataSeeder extends Seeder
         ]);
         $nucleos['salette']->update(['user_id' => $userNucleoSalette->id]);
 
+        $nucleos['sao_sebastiao'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['santo_amaro']->id,
+            'tipo_entidade' => TipoEntidade::Nucleo,
+            'nome' => 'Núcleo São Sebastião',
+            'email' => 'nucleo@saosebastiao.com',
+            'ativo' => false,
+        ]);
+
+        $userNucleoSaoSebastiao = User::create([
+            'name' => 'Núcleo São Sebastião',
+            'email' => 'nucleo@saosebastiao.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['sao_sebastiao']->id,
+            'ativo' => false,
+        ]);
+        $nucleos['sao_sebastiao']->update(['user_id' => $userNucleoSaoSebastiao->id]);
+
+        $nucleos['medalha_milagrosa'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['santo_amaro']->id,
+            'tipo_entidade' => TipoEntidade::Nucleo,
+            'nome' => 'Núcleo Medalha Milagrosa',
+            'email' => 'nucleo@medalhamilagrosa.com',
+            'ativo' => false,
+        ]);
+
+        $userNucleoMedalhaMilagrosa = User::create([
+            'name' => 'Núcleo Medalha Milagrosa',
+            'email' => 'nucleo@medalhamilagrosa.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['medalha_milagrosa']->id,
+            'ativo' => false,
+        ]);
+        $nucleos['medalha_milagrosa']->update(['user_id' => $userNucleoMedalhaMilagrosa->id]);
+
         $nucleos['santuario_santa_terezinha'] = Entidade::create([
             'entidade_pai_id' => $dioceses['campo_limpo']->id,
             'tipo_entidade' => TipoEntidade::Nucleo,
@@ -487,6 +559,44 @@ class InitialDataSeeder extends Seeder
             'ativo' => true,
         ]);
         $nucleos['santuario_santa_terezinha']->update(['user_id' => $userNucleoSantuario->id]);
+
+        // Núcleos da Diocese de Areado
+        $nucleos['tlc_pais_areado'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['areado']->id,
+            'tipo_entidade' => TipoEntidade::Nucleo,
+            'nome' => 'Núcleo TLC de Pais de Areado',
+            'email' => 'nucleo@tlcpaisareado.com',
+            'ativo' => true,
+        ]);
+
+        $userNucleoTlcPaisAreado = User::create([
+            'name' => 'Núcleo TLC de Pais de Areado',
+            'email' => 'nucleo@tlcpaisareado.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['tlc_pais_areado']->id,
+            'ativo' => true,
+        ]);
+        $nucleos['tlc_pais_areado']->update(['user_id' => $userNucleoTlcPaisAreado->id]);
+
+        // Núcleos da Diocese de Santo André
+        $nucleos['santo_arnaldo'] = Entidade::create([
+            'entidade_pai_id' => $dioceses['santo_andre']->id,
+            'tipo_entidade' => TipoEntidade::Nucleo,
+            'nome' => 'Núcleo Santo Arnaldo',
+            'email' => 'nucleo@santoarnaldo.com',
+            'ativo' => true,
+        ]);
+
+        $userNucleoSantoArnaldo = User::create([
+            'name' => 'Núcleo Santo Arnaldo',
+            'email' => 'nucleo@santoarnaldo.com',
+            'password' => bcrypt('password'),
+            'tipo_usuario' => TipoUsuario::Nucleo,
+            'entidade_id' => $nucleos['santo_arnaldo']->id,
+            'ativo' => true,
+        ]);
+        $nucleos['santo_arnaldo']->update(['user_id' => $userNucleoSantoArnaldo->id]);
 
         // ===== SECRETARIAS =====
         $secretarias = [];
@@ -2095,7 +2205,8 @@ class InitialDataSeeder extends Seeder
             'Luau' => 'Confraternização informal',
             'Congresso' => 'Congresso diocesano',
             'Eleição' => 'Eleição diocesana',
-            'TLC' => 'Encontro TLC',
+            'TLC' => 'Encontro TLC - formato completo',
+            'Mini TLC' => 'Encontro Mini TLC - formato reduzido',
         ] as $nome => $descricao) {
             $tipos[$nome] = TipoEvento::create([
                 'nome' => $nome,
@@ -2244,7 +2355,7 @@ class InitialDataSeeder extends Seeder
 
         // ABRIL - TLC e Mini TLC
         Evento::create([
-            'tipo_evento_id' => $tipos['TLC'],
+            'tipo_evento_id' => $tipos['Mini TLC'],
             'entidade_criadora_id' => $nucleos['sao_jose']->id,
             'nome' => 'Implantação Mini TLC São José (Cajula)',
             'descricao' => 'Mini TLC para o núcleo São José',
@@ -2270,7 +2381,7 @@ class InitialDataSeeder extends Seeder
         ]);
 
         Evento::create([
-            'tipo_evento_id' => $tipos['TLC'],
+            'tipo_evento_id' => $tipos['Mini TLC'],
             'entidade_criadora_id' => $nucleos['ap_miriam']->id,
             'nome' => 'Implantação Mini TLC Ap Miriam (Juventude)',
             'descricao' => 'Mini TLC para o núcleo Ap Miriam',
@@ -2312,19 +2423,19 @@ class InitialDataSeeder extends Seeder
         // JUNHO - TLC
         Evento::create([
             'tipo_evento_id' => $tipos['TLC'],
-            'entidade_criadora_id' => $nucleos['rosario']->id,
-            'nome' => 'TLC Cap Pedreria (Tabor)',
-            'descricao' => 'TLC para a região',
-            'data_inicio' => '2026-06-03 08:00:00',
+            'entidade_criadora_id' => $nucleos['cidinha']->id,
+            'nome' => 'TLC ap Pedreria (Tabor)',
+            'descricao' => 'TLC para o núcleo Cidinha',
+            'data_inicio' => '2026-06-05 08:00:00',
             'data_fim' => '2026-06-07 18:00:00',
-            'local' => 'Cap Pedreria',
+            'local' => 'ap Pedreria',
             'escopo' => EscopoEvento::Externos->value,
             'status' => StatusEvento::Publicado->value,
             'ativo' => true,
         ]);
 
         Evento::create([
-            'tipo_evento_id' => $tipos['TLC'],
+            'tipo_evento_id' => $tipos['Mini TLC'],
             'entidade_criadora_id' => $nucleos['ideal']->id,
             'nome' => 'Mini TLC Ideal (Tabor)',
             'descricao' => 'Mini TLC para o núcleo Ideal',
@@ -2351,7 +2462,7 @@ class InitialDataSeeder extends Seeder
         ]);
 
         Evento::create([
-            'tipo_evento_id' => $tipos['TLC'],
+            'tipo_evento_id' => $tipos['Mini TLC'],
             'entidade_criadora_id' => $nucleos['rosario']->id,
             'nome' => 'Mini TLC Rosário (Juventude)',
             'descricao' => 'Mini TLC para o núcleo Rosário',
@@ -2364,7 +2475,7 @@ class InitialDataSeeder extends Seeder
         ]);
 
         Evento::create([
-            'tipo_evento_id' => $tipos['TLC'],
+            'tipo_evento_id' => $tipos['Mini TLC'],
             'entidade_criadora_id' => $nucleos['ap_miriam']->id,
             'nome' => 'Implantação Mini TLC Ap Miriam (Juventude)',
             'descricao' => 'Mini TLC para o núcleo Ap Miriam',
@@ -2554,7 +2665,7 @@ class InitialDataSeeder extends Seeder
         ]);
 
         Evento::create([
-            'tipo_evento_id' => $tipos['TLC'],
+            'tipo_evento_id' => $tipos['Mini TLC'],
             'entidade_criadora_id' => $nucleos['igreja_verde']->id,
             'nome' => 'Mini TLC Igreja Verde (Cajula)',
             'descricao' => 'Mini TLC para o núcleo Igreja Verde',
@@ -2628,6 +2739,19 @@ class InitialDataSeeder extends Seeder
             'data_inicio' => '2026-12-04 08:00:00',
             'data_fim' => '2026-12-06 18:00:00',
             'local' => 'Rocio',
+            'escopo' => EscopoEvento::Externos->value,
+            'status' => StatusEvento::Publicado->value,
+            'ativo' => true,
+        ]);
+
+        Evento::create([
+            'tipo_evento_id' => $tipos['TLC'],
+            'entidade_criadora_id' => $nucleos['ideal']->id,
+            'nome' => 'TLC Ideal (Tabor)',
+            'descricao' => 'TLC para o núcleo Ideal',
+            'data_inicio' => '2026-12-04 08:00:00',
+            'data_fim' => '2026-12-06 18:00:00',
+            'local' => 'Ideal',
             'escopo' => EscopoEvento::Externos->value,
             'status' => StatusEvento::Publicado->value,
             'ativo' => true,

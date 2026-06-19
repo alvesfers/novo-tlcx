@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -21,6 +19,13 @@ class DatabaseSeeder extends Seeder
             DocumentoSeeder::class,
             CasasDeRetiroSeeder::class,
             HabilidadeSeeder::class,
+            // Fase 7: Sistema de Eventos Expandido
+            FuncaoDirigentSeeder::class,
+            FornecedorCamisetaSeeder::class,
+            FormaPagamentoSeeder::class,
+            BarzinhoSeeder::class,
+            EventoValorSeeder::class,
+            EventosTLCSeeder::class,
         ]);
     }
 }
