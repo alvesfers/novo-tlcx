@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Helpers\UuidHelper;
+use App\Services\QRCodeService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -10,6 +12,8 @@ class ParticipanteExterno extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'uuid',
+        'qr_code',
         'nome',
         'telefone',
         'email',
@@ -24,6 +28,21 @@ class ParticipanteExterno extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = UuidHelper::generateUnique($model, 5);
+            }
+            if (empty($model->qr_code)) {
+                $qrCodeService = new QRCodeService();
+                $model->qr_code = $qrCodeService->generateForDirigente($model->uuid);
+            }
+        });
+    }
 
     public function eventoParticipantes()
     {

@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\EscopoEvento;
 use App\Enums\StatusEvento;
 use App\Enums\TipoParticipanteEvento;
+use App\Helpers\UuidHelper;
+use App\Services\QRCodeService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -13,6 +15,8 @@ class Evento extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'uuid',
+        'qr_code',
         'tipo_evento_id',
         'entidade_criadora_id',
         'nome',
@@ -35,6 +39,21 @@ class Evento extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            if (empty($model->uuid)) {
+                $model->uuid = UuidHelper::generateUnique($model, 5);
+            }
+            if (empty($model->qr_code)) {
+                $qrCodeService = new QRCodeService();
+                $model->qr_code = $qrCodeService->generateForDirigente($model->uuid);
+            }
+        });
+    }
 
     public function tipoEvento()
     {
@@ -98,6 +117,11 @@ class Evento extends Model
     public function valores()
     {
         return $this->hasMany(EventoValor::class);
+    }
+
+    public function barzinhos()
+    {
+        return $this->hasMany(Barzinho::class, 'evento_id');
     }
 
     public function scopeAtivos($query)

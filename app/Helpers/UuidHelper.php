@@ -13,7 +13,7 @@ class UuidHelper
     {
         do {
             $uuid = self::generate($length);
-        } while (DB::table($model->getTable())->where('uuid', $uuid)->exists());
+        } while (self::uuidExists($uuid));
 
         return $uuid;
     }
@@ -25,5 +25,16 @@ class UuidHelper
             $result .= self::$charset[rand(0, strlen(self::$charset) - 1)];
         }
         return strtoupper($result);
+    }
+
+    /**
+     * Verificar se UUID existe em QUALQUER tabela relevante
+     * Garante unicidade global entre dirigentes, participante_externos e eventos
+     */
+    private static function uuidExists(string $uuid): bool
+    {
+        return DB::table('dirigentes')->where('uuid', $uuid)->exists() ||
+               DB::table('participante_externos')->where('uuid', $uuid)->exists() ||
+               DB::table('eventos')->where('uuid', $uuid)->exists();
     }
 }
