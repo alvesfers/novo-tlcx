@@ -21,6 +21,7 @@ class Evento extends Model
         'entidade_criadora_id',
         'nome',
         'descricao',
+        'tema',
         'data_inicio',
         'data_fim',
         'local',

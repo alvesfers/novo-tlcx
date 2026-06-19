@@ -14,6 +14,7 @@
 | **Fase 4: Financeiro** | ✅ Completa | Movimentos, Categorias, Relatórios, Consolidados |
 | **Fase 5: Dashboard & API** | 🟡 MVP | Autenticação Web, API Sanctum, Auditoria, Relatórios |
 | **Fase 6: Novos Módulos** | ✅ Completa | Almoxarifado, Tarefas, Documentos |
+| **Fase 7: Eventos Expandido** | 🟢 Código OK | Fornecedores, Barzinhos, Pagamentos, Consignação |
 
 ---
 
@@ -209,6 +210,53 @@ Documentos:       Admin > Diocese/Núcleo/Secretaria (público/privado)
 
 ---
 
+## 🆕 Fase 7: Sistema de Eventos Expandido (2026-06-19)
+
+**Status**: 🟢 Implementação de Código Concluída | ⏳ Seeders em Progresso
+
+### 7.1: Fornecedores de Camisetas ✅
+- [x] Models: FornecedorCamiseta, FornecedorCamisetaTipo, FornecedorCamisetaTamanho
+- [x] Controllers: CRUD completo
+- [x] Tipos: Infantil, Normal, Plus, Babylook, Oversized
+- [x] Medidas em JSON (altura, largura, comprimento)
+
+### 7.2: Funções de Dirigentes ✅
+- [x] Models: FuncaoDirigente, DirigenteFuncao
+- [x] Controllers: CRUD
+- [x] Tipos: interna, externa
+- [x] Relacionamento muitos-para-muitos com dirigentes
+
+### 7.3: Formas de Pagamento ✅
+- [x] Models: FormaPagamento
+- [x] Controllers: CRUD
+- [x] Tipos: dinheiro, crédito, débito, PIX
+- [x] Taxas customizáveis por tipo
+
+### 7.4: Barzinhos (Loja de Vendas) ✅
+- [x] Models: Barzinho, BarzinhoProduto, BarzinhoCombo, BarzinhoCombItem
+- [x] Controllers: CRUD completo
+- [x] Combos com múltiplos itens
+- [x] Sistema "pega agora, paga depois"
+
+### 7.5: Produtos Consignados ✅
+- [x] Models: BarzinhoProdutoConsignado, BarzinhoVenda, BarzinhoVendaItem
+- [x] Suporte a comissão (percentual ou valor fixo)
+- [x] Integração com almoxarifado
+
+### 7.6: Valores de Eventos ✅
+- [x] Models: EventoValor, EventoTipoCamiseta, EventoParticipanteCamisetaMedida
+- [x] Preços customizados por evento
+- [x] Suporte a múltiplos tipos de valores
+
+### 7.7: Seeders ⏳
+- ⏳ FuncaoDirigente (8 funções padrão)
+- ⏳ FornecedorCamiseta (3 fornecedores)
+- ⏳ FormaPagamento (máquinas padrão)
+- ⏳ Barzinho e produtos
+- ⏳ EventoValor
+
+---
+
 ## 📁 Estrutura de .specs
 
 ```
@@ -300,7 +348,8 @@ Documentos:       Admin > Diocese/Núcleo/Secretaria (público/privado)
 | 4 | ✅ | 1 | 40h | 100% |
 | 5 | 🟡 | 4 | 240h | ~80% |
 | 6 | ✅ | 1 | 145h | 100% |
-| **Total** | 🟡 **MVP** | **12** | **725h** | **~85%** |
+| 7 | 🟢 | 3 | 180h | ~95% |
+| **Total** | 🟢 **Avançado** | **15** | **905h** | **~90%** |
 
 ---
 

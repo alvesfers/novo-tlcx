@@ -107,6 +107,9 @@ class EventoController extends Controller
             'eventoEntidades.entidade',
             'participantes.dirigente',
             'participantes.participanteExterno',
+            'tiposCamiseta.fornecedor.tipos.tamanhos',
+            'valores',
+            'barzinhos.produtos',
         ]);
 
         return view('eventos.show', compact('evento'));

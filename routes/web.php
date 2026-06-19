@@ -30,6 +30,7 @@ use App\Http\Controllers\BarzinhoCombController;
 use App\Http\Controllers\BarzinhoProdutoConsignadoController;
 use App\Http\Controllers\BarzinhoProdutoController;
 use App\Http\Controllers\BarzinhoVendaController;
+use App\Http\Controllers\BarzinhoController;
 
 // autenticação
 Route::middleware('guest')->group(function () {
@@ -227,11 +228,16 @@ Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteC
     Route::resource('eventos.tipos-camiseta', \App\Http\Controllers\EventoTipoCamisetaController::class)->shallow();
     Route::resource('eventos.valores', \App\Http\Controllers\EventoValorController::class)->shallow();
 
-    // barzinhos - produtos, combos, consignados e vendas
+    // barzinhos - índice e recursos aninhados
+    Route::resource('barzinhos', BarzinhoController::class);
     Route::resource('barzinhos.produtos', \App\Http\Controllers\BarzinhoProdutoController::class)->shallow();
     Route::resource('barzinhos.combos', \App\Http\Controllers\BarzinhoCombController::class)->shallow();
     Route::resource('barzinhos.consignados', \App\Http\Controllers\BarzinhoProdutoConsignadoController::class)->shallow();
     Route::resource('barzinhos.vendas', \App\Http\Controllers\BarzinhoVendaController::class)->shallow();
+
+    // casas de retiro e quartos
+    Route::resource('casas-retiro', \App\Http\Controllers\CasaRetiroController::class)->only(['index', 'store', 'update', 'destroy']);
+    Route::resource('casas-retiro.quartos', \App\Http\Controllers\QuartoCasaRetiroController::class)->only(['index', 'store', 'update', 'destroy']);
 
     // calender pages
     Route::get('/calendar', function () {

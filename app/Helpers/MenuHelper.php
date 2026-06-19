@@ -28,6 +28,10 @@ class MenuHelper
                 'subItems' => [
                     ['name' => 'Lista de Eventos', 'path' => '/eventos'],
                     ['name' => 'Calendário', 'path' => '/eventos/calendario'],
+                    ['name' => 'Funções de Dirigentes', 'path' => '/funcoes-dirigentes'],
+                    ['name' => 'Fornecedores de Camiseta', 'path' => '/fornecedores-camisetas'],
+                    ['name' => 'Formas de Pagamento', 'path' => '/formas-pagamento'],
+                    ['name' => 'Casas de Retiro', 'path' => '/casas-retiro'],
                 ],
             ],
             [
@@ -101,6 +105,11 @@ class MenuHelper
         ];
     }
 
+    public static function getManagementItems()
+    {
+        return [];
+    }
+
 
     public static function getMainNavItems()
     {
@@ -150,6 +159,9 @@ class MenuHelper
             'inbox-stack' => 'heroicon-o-inbox-stack',
             'check-circle' => 'heroicon-o-check-circle',
             'folder' => 'heroicon-o-folder',
+            'shopping-bag' => 'heroicon-o-shopping-bag',
+            'document' => 'heroicon-o-document',
+            'arrow-left' => 'heroicon-o-arrow-left',
         ];
 
         return $iconMap[$iconName] ?? 'heroicon-o-circle-stack';

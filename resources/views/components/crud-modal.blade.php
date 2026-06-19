@@ -43,6 +43,7 @@
             <button
                 type="submit"
                 form="{{ $formId }}"
+                id="{{ $id }}SubmitText"
                 class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
             >
                 {{ $submitText }}

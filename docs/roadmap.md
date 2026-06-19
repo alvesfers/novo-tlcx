@@ -701,9 +701,77 @@ Dashboard executivo, API com Sanctum, Auditoria, Relatórios avançados e otimiz
 | 3 | 2 sem | 1 | 120h | ✅ Completa |
 | 4 | 1 dia | 1 | 40h | ✅ Completa |
 | 5 | 4 sem | 1 | 240h | 🟡 MVP Completa (~65% completo) |
-| **Total** | **13 sem** | **1** | **580h** | **~80% completo** |
+| 6 | 1 dia | 1 | 145h | ✅ Completa |
+| 7 | 3 dias | 1 | 180h | 🟡 Parcial (Código/Seeders) |
+| **Total** | **15 sem** | **1** | **905h** | **~85% completo** |
 
-**Nota**: Fases 1-4 completadas. Fase 5 MVP concluída com 6/8 subfases implementadas. Pendências: Dashboard completo, Gráficos avançados, Exportações PDF/Excel, Documentação Swagger
+**Nota**: Fases 1-6 completadas. Fase 7 implementação de código concluída. Pendências: Seeders, Views secundárias, Testes, Documentação Swagger
+
+## Fase 7: Sistema de Eventos Expandido (2026-06-19) 🆕
+
+### Resumo da Fase 7
+Sistema completo para gerenciar eventos com suporte avançado a camisetas, barzinhos, pagamentos e consignação.
+
+#### 7.1: Fornecedores de Camisetas ✅
+- [x] Models: FornecedorCamiseta, FornecedorCamisetaTipo, FornecedorCamisetaTamanho
+- [x] Controllers: CRUD completo
+- [x] Form Requests com validações
+- [x] Suporte a múltiplos tipos (Infantil, Normal, Plus, Babylook, Oversized)
+- [x] Medidas detalhadas em JSON
+
+#### 7.2: Funções de Dirigentes ✅
+- [x] Models: FuncaoDirigente, DirigenteFuncao
+- [x] Controllers: CRUD
+- [x] Tipos de função: interna, externa
+- [x] Relacionamento muitos-para-muitos com dirigentes
+
+#### 7.3: Formas de Pagamento ✅
+- [x] Models: FormaPagamento
+- [x] Controllers: CRUD
+- [x] Suporte a múltiplos tipos: dinheiro, crédito, débito, PIX
+- [x] Taxas customizáveis por tipo
+
+#### 7.4: Barzinhos (Loja de Vendas) ✅
+- [x] Models: Barzinho, BarzinhoProduto, BarzinhoCombo, BarzinhoCombItem
+- [x] Controllers: CRUD completo
+- [x] Suporte a combos de produtos
+- [x] Sistema "pega agora, paga depois"
+- [x] Rastreamento de vendas com timestamp
+
+#### 7.5: Produtos Consignados ✅
+- [x] Models: BarzinhoProdutoConsignado, BarzinhoVenda, BarzinhoVendaItem
+- [x] Controllers: Gerenciar consignações
+- [x] Suporte a comissão percentual ou valor fixo
+- [x] Integração com almoxarifado
+
+#### 7.6: Valores e Preços de Eventos ✅
+- [x] Models: EventoValor, EventoTipoCamiseta, EventoParticipanteCamisetaMedida
+- [x] Controllers: CRUD
+- [x] Suporte a múltiplos tipos de valores (inscrição, camiseta, combos)
+- [x] Preços customizados por evento
+
+#### 7.7: Formulários Dinâmicos ✅
+- [x] Modificações em eventos (campos JSON)
+- [x] Modificações em evento_participantes
+- [x] Suporte a respostas de formulários
+
+#### 7.8: Seeders para Fase 7 ⏳
+- ⏳ FuncaoDirigente (padrões de funções)
+- ⏳ FornecedorCamiseta (fornecedores padrão)
+- ⏳ FormaPagamento (máquinas padrão por entidade)
+- ⏳ Barzinho (criados por evento)
+- ⏳ EventoValor (preços padrão)
+
+**Status da Fase 7**: 🟢 Implementação concluída | ⏳ Seeders pendentes
+
+**Arquivos Criados**: 
+- 14 Models
+- 12 Controllers
+- 14 Form Requests
+- 21 Migrations
+- 12+ Routes
+
+---
 
 ## Próximas Etapas (Fase 5 - Pendências)
 
@@ -721,7 +789,7 @@ Dashboard executivo, API com Sanctum, Auditoria, Relatórios avançados e otimiz
 4. 📖 **Documentação OpenAPI/Swagger**: Documentação completa da API
 5. ⚡ **Otimizações Finais**: Performance, Rate limiting, CORS, Segurança avançada
 
-## Etapas Futuras (Após Fase 5)
+## Etapas Futuras (Após Fase 7)
 
 1. **App Mobile**: Flutter/React Native para check-in
 2. **QR Code Scanner**: Integração com gerador/scanner

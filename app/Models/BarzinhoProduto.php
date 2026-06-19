@@ -34,11 +34,6 @@ class BarzinhoProduto extends Model
         return $this->belongsTo(Barzinho::class, 'barzinho_id');
     }
 
-    public function consignacoes(): HasMany
-    {
-        return $this->hasMany(BarzinhoProdutoConsignado::class, 'barzinho_produto_id');
-    }
-
     public function consignados(): HasMany
     {
         return $this->hasMany(BarzinhoProdutoConsignado::class, 'barzinho_produto_id');

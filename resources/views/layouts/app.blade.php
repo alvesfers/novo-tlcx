@@ -161,9 +161,31 @@
     <x-common.preloader/>
     {{-- preloader end --}}
 
+    @php
+        // Detectar se estamos em contexto de evento
+        $eventId = null;
+        $isEventContext = false;
+
+        // Verificar se a rota tem um parâmetro 'evento'
+        if (request()->route('evento')) {
+            $eventId = request()->route('evento')?->id ?? request()->route('evento');
+            $isEventContext = true;
+        }
+        // Alternativa: verificar pelo padrão de URL
+        elseif (preg_match('/^eventos\/(\d+)/', request()->path())) {
+            preg_match('/^eventos\/(\d+)/', request()->path(), $matches);
+            $eventId = $matches[1];
+            $isEventContext = true;
+        }
+    @endphp
+
     <div class="min-h-screen xl:flex">
         @include('layouts.backdrop')
-        @include('layouts.sidebar')
+        @if($isEventContext && $eventId)
+            @include('components.sidebar-evento', ['evento' => $eventId])
+        @else
+            @include('layouts.sidebar')
+        @endif
 
         <div class="flex-1 transition-all duration-300 ease-in-out"
             :class="{
