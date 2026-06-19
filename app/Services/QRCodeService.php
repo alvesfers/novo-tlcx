@@ -2,25 +2,26 @@
 
 namespace App\Services;
 
-use Endroid\QrCode\QrCode;
-use Endroid\QrCode\Writer\PngWriter;
+use chillerlan\QRCode\QRCode;
 
 class QRCodeService
 {
     public function generateForDirigente($uuid): string
     {
-        $qrCode = new QrCode($uuid);
-        $writer = new PngWriter();
+        $qrCode = new QRCode();
+        $qrCode->setErrorCorrectionLevel('L');
 
-        return 'data:image/png;base64,' . base64_encode($writer->write($qrCode)->getString());
+        $image = $qrCode->render($uuid);
+
+        return 'data:image/png;base64,' . base64_encode($image);
     }
 
     public function generateImage($uuid)
     {
-        $qrCode = new QrCode($uuid);
-        $writer = new PngWriter();
+        $qrCode = new QRCode();
+        $qrCode->setErrorCorrectionLevel('L');
 
-        return $writer->write($qrCode)->getString();
+        return $qrCode->render($uuid);
     }
 
     public function generateCheckInUrl($eventoId, $dirigenteUuid): string
