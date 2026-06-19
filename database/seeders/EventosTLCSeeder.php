@@ -14,6 +14,7 @@ class EventosTLCSeeder extends Seeder
     public function run(): void
     {
         $nucleos = Entidade::where('tipo_entidade', 'nucleo')->get()->keyBy('nome');
+        $dioceses = Entidade::where('tipo_entidade', 'diocese')->get()->keyBy('nome');
 
         $tlcType = TipoEvento::where('nome', 'TLC')->first();
         $miniTlcType = TipoEvento::where('nome', 'Mini TLC')->first();
@@ -37,7 +38,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '18 TLC Santa Paulina',
             'Tema: Não vou mais tirar os meus olhos de Ti',
             '2025-10-31',
@@ -46,7 +47,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '17 TLC Santa Paulina',
             'Tema: Todas as coisas cooperam para o bem daqueles que amam a Deus',
             '2024-11-06',
@@ -55,7 +56,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '16 TLC Santa Paulina',
             'Tema: Novas Vestes',
             '2023-11-17',
@@ -64,7 +65,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '15 TLC Santa Paulina',
             'Tema: Dai-me um coração semelhante ao Teu',
             '2022-11-25',
@@ -73,7 +74,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '14 TLC Santa Paulina',
             'Tema: Livre para amar',
             '2019-11-22',
@@ -82,7 +83,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '13 TLC Santa Paulina',
             'Tema: Eu prefiro o paraiso',
             '2018-11-23',
@@ -91,7 +92,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '12 TLC Santa Paulina',
             'Tema: O poderoso fez em mim Maravilhas',
             '2017-11-03',
@@ -100,7 +101,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '11 TLC Santa Paulina',
             'Tema: Eu não Vim chamar os justos, mas sim os pecadores',
             '2016-11-04',
@@ -109,7 +110,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '10 TLC Santa Paulina',
             '',
             '2015-11-06',
@@ -118,7 +119,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Paulina'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '09 TLC Santa Paulina',
             '',
             '2014-11-07',
@@ -128,7 +129,7 @@ class EventosTLCSeeder extends Seeder
         // ===== CIDINHA =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Cidinha'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '9.6 TLC Cidinha',
             'Tema: Curados para Amar',
             '2023-06-02',
@@ -138,7 +139,7 @@ class EventosTLCSeeder extends Seeder
         // ===== AP GRAJAU =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Ap Grajau'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '18° TLC Ap Grajau',
             'Tema: Luto contra mim pois desejo a Ti',
             '2022-04-22',
@@ -147,7 +148,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Ap Grajau'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '19° TLC Ap Grajau',
             'Tema: O meu coração deseja te encontrar como a terra seca anseia pela chuva',
             '2023-04-21',
@@ -156,7 +157,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Ap Grajau'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '20° TLC Ap Grajau',
             'Tema: Pode morar, serei tua casa',
             '2024-04-24',
@@ -166,7 +167,7 @@ class EventosTLCSeeder extends Seeder
         // ===== IGREJA VERDE =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Igreja Verde'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '4° TLC Igreja Verde',
             'Tema: O teu olhar jamais se afastou de mim',
             '2022-07-15',
@@ -193,7 +194,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Igreja Verde'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '5° TLC Igreja Verde',
             'Tema: É ele quem te saciará',
             '2023-07-07',
@@ -202,7 +203,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Igreja Verde'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '6° TLC Igreja Verde',
             'Tema: Jesus, se eu te olhar eu vou',
             '2024-05-03',
@@ -229,7 +230,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Igreja Verde'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '7° TLC Igreja Verde',
             'Tema: Somos só eu e o Senhor',
             '2025-05-16',
@@ -238,7 +239,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Igreja Verde'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '8° TLC Igreja Verde',
             'Tema: Me deixa passar a vida com você',
             '2026-04-17',
@@ -248,7 +249,7 @@ class EventosTLCSeeder extends Seeder
         // ===== CONSOLAÇÃO =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Consolação'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '2° TLC Consolação',
             'Tema: Deixa as noventa e nove só para me buscar'
         );
@@ -256,14 +257,14 @@ class EventosTLCSeeder extends Seeder
         // ===== SANTA CLARA =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Clara'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '3° TLC Santa Clara',
             'Tema: Seduziste-me senhor e eu me deixei seduzir'
         );
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Clara'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '3° TLC Santa Clara - EQR',
             'Tema: É tudo o que tenho, recebe o meu nada'
         );
@@ -271,7 +272,7 @@ class EventosTLCSeeder extends Seeder
         // ===== SANTA TEREZINHA =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Terezinha'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '7° TLC Santa Terezinha',
             'Tema: É tempo de voltar'
         );
@@ -279,14 +280,14 @@ class EventosTLCSeeder extends Seeder
         // ===== RAINHA =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Rainha'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '7° TLC Rainha',
             'Tema: Que o teu plano em mim possa realizar sem limitações'
         );
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Rainha'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '10° TLC Rainha',
             'Tema: Desperta e se achegue a quem quer te dar Amor',
             '2022-08-05',
@@ -295,7 +296,7 @@ class EventosTLCSeeder extends Seeder
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Rainha'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '11° TLC Rainha',
             'Tema: Senhor te encontrei, como te deixarei?',
             '2023-06-16',
@@ -305,7 +306,7 @@ class EventosTLCSeeder extends Seeder
         // ===== SÃO JOSÉ =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo São José'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '21° TLC São Jose',
             'Tema: Vou recomeçar em ti um tempo novo'
         );
@@ -313,21 +314,21 @@ class EventosTLCSeeder extends Seeder
         // ===== TLC DE PAIS =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo TLC de Pais'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '15° TLC de Pais',
             'Tema: ?'
         );
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo TLC de Pais'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '17° TLC de Pais',
             'Tema: Eu e minha casa, serviremos ao Senhor'
         );
 
         $this->createEventoIfNotExists(
             $nucleos['Núcleo TLC de Pais'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '21° TLC de Pais',
             'Tema: Eu te levantarei'
         );
@@ -335,7 +336,7 @@ class EventosTLCSeeder extends Seeder
         // ===== SÃO BENTO =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo São Bento'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '5° TLC São Bento',
             'Tema: Não tenho nada a oferecer meu Senhor mas te doa a minha vida'
         );
@@ -343,7 +344,7 @@ class EventosTLCSeeder extends Seeder
         // ===== SANTA RITA =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santa Rita'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '5° TLC Santa Rita',
             'Tema: Nada temas, pois eu te resgato e te chamo pelo nome, és meu',
             '2025-05-02',
@@ -370,7 +371,7 @@ class EventosTLCSeeder extends Seeder
         // ===== AP MIRIAM =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Ap Miriam'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '10° TLC Ap Miriam',
             'Tema: Dá-me tuas vestes'
         );
@@ -378,7 +379,7 @@ class EventosTLCSeeder extends Seeder
         // ===== SÃO SEBASTIÃO (Inativo) =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo São Sebastião'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '1° TLC São Sebastião',
             'Tema: Se ninguém te adorar eu vou'
         );
@@ -386,15 +387,15 @@ class EventosTLCSeeder extends Seeder
         // ===== MEDALHA MILAGROSA (Inativo) =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Medalha Milagrosa'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '1° TLC Medalha Milagrosa',
             'Tema: Maria, mãe do puro amor'
         );
 
         // ===== AREADO - TLC DE PAIS =====
         $this->createEventoIfNotExists(
-            $nucleos['Núcleo TLC de Pais de Areado'] ?? null,
-            $tlcType->id,
+            $dioceses['Diocese de Areado'] ?? null,
+            $tlcTypeId,
             '1° TLC de Pais de Areado',
             'Tema: Tudo posso naquele que me fortalece'
         );
@@ -402,7 +403,7 @@ class EventosTLCSeeder extends Seeder
         // ===== SANTO ANDRÉ - SANTO ARNALDO =====
         $this->createEventoIfNotExists(
             $nucleos['Núcleo Santo Arnaldo'] ?? null,
-            $tlcType->id,
+            $tlcTypeId,
             '2° TLC Santo Arnaldo',
             'Tema: Eu estou aqui'
         );

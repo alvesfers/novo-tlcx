@@ -560,25 +560,6 @@ class InitialDataSeeder extends Seeder
         ]);
         $nucleos['santuario_santa_terezinha']->update(['user_id' => $userNucleoSantuario->id]);
 
-        // Núcleos da Diocese de Areado
-        $nucleos['tlc_pais_areado'] = Entidade::create([
-            'entidade_pai_id' => $dioceses['areado']->id,
-            'tipo_entidade' => TipoEntidade::Nucleo,
-            'nome' => 'Núcleo TLC de Pais de Areado',
-            'email' => 'nucleo@tlcpaisareado.com',
-            'ativo' => true,
-        ]);
-
-        $userNucleoTlcPaisAreado = User::create([
-            'name' => 'Núcleo TLC de Pais de Areado',
-            'email' => 'nucleo@tlcpaisareado.com',
-            'password' => bcrypt('password'),
-            'tipo_usuario' => TipoUsuario::Nucleo,
-            'entidade_id' => $nucleos['tlc_pais_areado']->id,
-            'ativo' => true,
-        ]);
-        $nucleos['tlc_pais_areado']->update(['user_id' => $userNucleoTlcPaisAreado->id]);
-
         // Núcleos da Diocese de Santo André
         $nucleos['santo_arnaldo'] = Entidade::create([
             'entidade_pai_id' => $dioceses['santo_andre']->id,
