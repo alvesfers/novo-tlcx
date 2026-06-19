@@ -22,6 +22,12 @@ use App\Http\Controllers\SecretariasController;
 use App\Http\Controllers\SecretariaHabilidadeController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\InfoController;
+use App\Http\Controllers\EventoTipoCamisetaController;
+use App\Http\Controllers\FornecedorCamisetaTipoController;
+use App\Http\Controllers\FornecedorCamisetaTamanhoController;
+use App\Http\Controllers\FuncaoDirigenteController;
+use App\Http\Controllers\BarzinhoCombController;
+use App\Http\Controllers\BarzinhoProdutoConsignadoController;
 
 // autenticação
 Route::middleware('guest')->group(function () {
@@ -203,6 +209,23 @@ Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteC
     // check-in
     Route::get('/eventos/{evento}/checkin', [CheckInController::class, 'show'])->name('check-in.show');
     Route::post('/eventos/{evento}/checkin', [CheckInController::class, 'processar'])->name('check-in.processar');
+
+    // fornecedores de camisetas
+    Route::resource('fornecedores-camisetas', \App\Http\Controllers\FornecedorCamisetaController::class);
+    Route::resource('fornecedores-camisetas.tipos', \App\Http\Controllers\FornecedorCamisetaTipoController::class)->shallow();
+    Route::resource('fornecedores-camisetas.tipos.tamanhos', \App\Http\Controllers\FornecedorCamisetaTamanhoController::class)->shallow();
+
+    // funções de dirigentes
+    Route::resource('funcoes-dirigentes', \App\Http\Controllers\FuncaoDirigenteController::class);
+
+    // eventos - tipos de camiseta
+    Route::resource('eventos.tipos-camiseta', \App\Http\Controllers\EventoTipoCamisetaController::class)->shallow();
+
+    // barzinhos - combos
+    Route::resource('barzinhos.combos', \App\Http\Controllers\BarzinhoCombController::class)->shallow();
+
+    // barzinhos - consignados
+    Route::resource('barzinhos.consignados', \App\Http\Controllers\BarzinhoProdutoConsignadoController::class)->shallow();
 
     // calender pages
     Route::get('/calendar', function () {

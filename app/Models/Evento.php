@@ -90,6 +90,16 @@ class Evento extends Model
         ->withTimestamps();
     }
 
+    public function tiposCamiseta()
+    {
+        return $this->hasMany(EventoTipoCamiseta::class);
+    }
+
+    public function valores()
+    {
+        return $this->hasMany(EventoValor::class);
+    }
+
     public function scopeAtivos($query)
     {
         return $query->where('ativo', true);
