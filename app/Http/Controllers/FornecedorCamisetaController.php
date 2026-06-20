@@ -6,13 +6,12 @@ use App\Models\FornecedorCamiseta;
 use App\Http\Requests\StoreFornecedorCamisetaRequest;
 use App\Http\Requests\UpdateFornecedorCamisetaRequest;
 use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
 
 class FornecedorCamisetaController extends Controller
 {
     public function index(): View
     {
-        $fornecedores = FornecedorCamiseta::with('tipos')->paginate(15);
+        $fornecedores = FornecedorCamiseta::withoutTrashed()->with('tipos')->paginate(15);
         return view('fornecedores-camisetas.index', compact('fornecedores'));
     }
 
@@ -21,9 +20,18 @@ class FornecedorCamisetaController extends Controller
         return view('fornecedores-camisetas.create');
     }
 
-    public function store(StoreFornecedorCamisetaRequest $request): RedirectResponse
+    public function store(StoreFornecedorCamisetaRequest $request)
     {
-        FornecedorCamiseta::create($request->validated());
+        $fornecedor = FornecedorCamiseta::create($request->validated());
+
+        if ($request->header('Accept') === 'application/json' || $request->isJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Fornecedor criado com sucesso!',
+                'fornecedor' => $fornecedor,
+            ]);
+        }
+
         return redirect()->route('fornecedores-camisetas.index')
             ->with('success', 'Fornecedor de camisetas criado com sucesso!');
     }
@@ -39,16 +47,34 @@ class FornecedorCamisetaController extends Controller
         return view('fornecedores-camisetas.edit', compact('fornecedorCamiseta'));
     }
 
-    public function update(UpdateFornecedorCamisetaRequest $request, FornecedorCamiseta $fornecedorCamiseta): RedirectResponse
+    public function update(UpdateFornecedorCamisetaRequest $request, FornecedorCamiseta $fornecedorCamiseta)
     {
         $fornecedorCamiseta->update($request->validated());
+
+        if ($request->header('Accept') === 'application/json' || $request->isJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Fornecedor atualizado com sucesso!',
+                'fornecedor' => $fornecedorCamiseta,
+            ]);
+        }
+
         return redirect()->route('fornecedores-camisetas.show', $fornecedorCamiseta)
             ->with('success', 'Fornecedor atualizado com sucesso!');
     }
 
-    public function destroy(FornecedorCamiseta $fornecedorCamiseta): RedirectResponse
+    public function destroy($id)
     {
+        $fornecedorCamiseta = FornecedorCamiseta::findOrFail($id);
         $fornecedorCamiseta->delete();
+
+        if (request()->header('Accept') === 'application/json' || request()->isJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Fornecedor deletado com sucesso!'
+            ]);
+        }
+
         return redirect()->route('fornecedores-camisetas.index')
             ->with('success', 'Fornecedor deletado com sucesso!');
     }

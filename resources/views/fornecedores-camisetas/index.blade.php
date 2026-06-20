@@ -164,24 +164,42 @@ document.getElementById('fornecedorForm').addEventListener('submit', async funct
             method: method,
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
             },
             body: JSON.stringify(data),
         });
 
+        const responseData = await response.json().catch(e => null);
+        console.log('════════════════════════════════════════');
+        console.log('📊 STATUS:', response.status);
+        console.log('📦 RESPOSTA COMPLETA:', responseData);
+        console.log('════════════════════════════════════════');
+
         if (!response.ok) {
-            const errorData = await response.json();
-            if (errorData.errors) {
-                Object.keys(errorData.errors).forEach(key => {
+            console.error('❌ ERRO NA REQUISIÇÃO');
+            console.error('Status:', response.status);
+            console.error('Dados:', responseData);
+            if (responseData?.errors) {
+                console.error('Erros de validação:', responseData.errors);
+                Object.keys(responseData.errors).forEach(key => {
                     const errorEl = document.getElementById(key + 'Error');
                     if (errorEl) {
-                        errorEl.textContent = errorData.errors[key][0];
+                        errorEl.textContent = responseData.errors[key][0];
                     }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Erro ao processar o formulário (Status: ' + response.status + ')',
                 });
             }
             return;
         }
 
+        console.log('✅ SUCESSO! Dados retornados:');
+        console.table(responseData);
         document.getElementById('fornecedorModal').classList.add('hidden');
         Swal.fire({
             icon: 'success',
@@ -203,6 +221,7 @@ document.getElementById('fornecedorForm').addEventListener('submit', async funct
 });
 
 function confirmarDelecao(url) {
+    console.log('🗑️ URL PARA DELETAR:', url);
     Swal.fire({
         icon: 'warning',
         title: 'Confirmar exclusão',
@@ -218,9 +237,48 @@ function confirmarDelecao(url) {
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            const form = document.getElementById('deleteForm');
-            form.action = url;
-            form.submit();
+            console.log('🚀 ENVIANDO DELETE PARA:', url);
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json',
+                },
+                body: '_method=DELETE'
+            })
+            .then(async response => {
+                const data = await response.json().catch(e => null);
+                console.log('════════════════════════════════════════');
+                console.log('📊 STATUS DELETE:', response.status);
+                console.log('📦 RESPOSTA COMPLETA:', data);
+                console.log('════════════════════════════════════════');
+
+                if (response.ok) {
+                    console.log('✅ DELETADO COM SUCESSO');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: 'Fornecedor deletado com sucesso!',
+                        showConfirmButton: false,
+                        timer: 1500,
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    throw new Error('Erro: ' + response.status);
+                }
+            })
+            .catch(error => {
+                console.error('════════════════════════════════════════');
+                console.error('❌ ERRO AO DELETAR:', error);
+                console.error('════════════════════════════════════════');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro',
+                    text: 'Erro ao deletar fornecedor: ' + error.message,
+                });
+            });
         }
     });
 }

@@ -28,7 +28,7 @@ class CasaRetiroController extends Controller
 
         $casa = CasasDeRetiro::create($validated);
 
-        if ($request->expectsJson()) {
+        if ($request->header('Accept') === 'application/json' || $request->isJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Casa de retiro criada com sucesso!',
@@ -40,8 +40,10 @@ class CasaRetiroController extends Controller
             ->with('success', 'Casa de retiro criada com sucesso!');
     }
 
-    public function update(Request $request, CasasDeRetiro $casasDeRetiro)
+    public function update(Request $request, $id)
     {
+        $casasDeRetiro = CasasDeRetiro::findOrFail($id);
+
         $validated = $request->validate([
             'nome_casa' => 'required|string|max:255',
             'endereco' => 'nullable|string|max:255',
@@ -53,7 +55,7 @@ class CasaRetiroController extends Controller
 
         $casasDeRetiro->update($validated);
 
-        if ($request->expectsJson()) {
+        if ($request->header('Accept') === 'application/json' || $request->isJson()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Casa de retiro atualizada com sucesso!',
@@ -65,13 +67,19 @@ class CasaRetiroController extends Controller
             ->with('success', 'Casa de retiro atualizada com sucesso!');
     }
 
-    public function destroy(CasasDeRetiro $casasDeRetiro)
+    public function destroy($id)
     {
+        $casasDeRetiro = CasasDeRetiro::findOrFail($id);
         $casasDeRetiro->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Casa de retiro deletada com sucesso!',
-        ]);
+        if (request()->header('Accept') === 'application/json' || request()->isJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Casa de retiro deletada com sucesso!'
+            ]);
+        }
+
+        return redirect()->route('casas-retiro.index')
+            ->with('success', 'Casa de retiro deletada com sucesso!');
     }
 }
