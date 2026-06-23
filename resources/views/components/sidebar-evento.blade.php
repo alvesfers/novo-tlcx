@@ -63,30 +63,6 @@
                 </h3>
             </div>
 
-            <!-- Configurações (sempre visível) -->
-            <div class="mb-4 space-y-2">
-                <a href="{{ route('eventos.configuracao.show', $eventoId) }}" class="menu-item group w-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800"
-                    :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
-                    'xl:justify-center' :
-                    'justify-start'">
-                    <span class="text-blue-600 dark:text-blue-400">
-                        <x-menu-icon icon="cog-6-tooth" />
-                    </span>
-                    <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                        class="menu-item-text text-blue-600 dark:text-blue-400 font-semibold">Configurações</span>
-                </a>
-                <a href="{{ route('eventos.formularios.show', $eventoId) }}" class="menu-item group w-full bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800"
-                    :class="(!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
-                    'xl:justify-center' :
-                    'justify-start'">
-                    <span class="text-purple-600 dark:text-purple-400">
-                        <x-menu-icon icon="document-text" />
-                    </span>
-                    <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
-                        class="menu-item-text text-purple-600 dark:text-purple-400 font-semibold">Formulários</span>
-                </a>
-            </div>
-
             <!-- Menu Items - Dinâmico baseado em modulos_habilitados -->
             <div class="flex flex-col gap-4">
                 <ul class="flex flex-col gap-1">
@@ -108,6 +84,40 @@
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
                                 class="menu-item-text">Detalhes</span>
+                        </a>
+                    </li>
+
+                    <!-- Configurações (sempre visível) -->
+                    <li>
+                        <a href="{{ route('eventos.configuracao.show', $eventoId) }}" class="menu-item group"
+                            :class="[
+                                isActive('/eventos/{{ $eventoId }}/configuracao') ? 'menu-item-active' : 'menu-item-inactive',
+                                (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/configuracao') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
+                                <x-menu-icon icon="cog-6-tooth" />
+                            </span>
+                            <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                class="menu-item-text">Configurações</span>
+                        </a>
+                    </li>
+
+                    <!-- Formulários (sempre visível) -->
+                    <li>
+                        <a href="{{ route('eventos.formularios.show', $eventoId) }}" class="menu-item group"
+                            :class="[
+                                isActive('/eventos/{{ $eventoId }}/formularios') ? 'menu-item-active' : 'menu-item-inactive',
+                                (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/formularios') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
+                                <x-menu-icon icon="document-text" />
+                            </span>
+                            <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                class="menu-item-text">Formulários</span>
                         </a>
                     </li>
 

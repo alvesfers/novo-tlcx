@@ -110,9 +110,19 @@ class EventoController extends Controller
             'tiposCamiseta.fornecedor.tipos.tamanhos',
             'valores',
             'barzinhos.produtos',
+            'casaDeRetiro',
+            'fornecedorCamisetas',
         ]);
 
-        return view('eventos.show', compact('evento'));
+        // Calcular estatísticas de participantes
+        $stats = [
+            'dirigentes_chamados' => $evento->participantes->where('tipo_participante', 'dirigente')->count(),
+            'dirigentes_confirmados' => $evento->participantes->where('tipo_participante', 'dirigente')->where('presenca', true)->count(),
+            'externos_total' => $evento->participantes->where('tipo_participante', 'externo')->count(),
+            'externos_confirmados' => $evento->participantes->where('tipo_participante', 'externo')->where('presenca', true)->count(),
+        ];
+
+        return view('eventos.show', compact('evento', 'stats'));
     }
 
     public function edit(Evento $evento)
