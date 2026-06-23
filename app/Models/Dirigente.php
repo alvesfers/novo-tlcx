@@ -18,6 +18,7 @@ class Dirigente extends Model
         'uuid',
         'qr_code',
         'nome',
+        'apelido',
         'telefone',
         'email',
         'genero',
@@ -25,6 +26,7 @@ class Dirigente extends Model
         'foto_url',
         'foto_arquivo',
         'id_tlc',
+        'id_mini_tlc',
         'ativo',
     ];
 
@@ -77,6 +79,11 @@ class Dirigente extends Model
     public function tlc()
     {
         return $this->belongsTo(Evento::class, 'id_tlc');
+    }
+
+    public function miniTlc()
+    {
+        return $this->belongsTo(Evento::class, 'id_mini_tlc');
     }
 
     public function scopeAtivos($query)

@@ -31,6 +31,21 @@ use App\Http\Controllers\BarzinhoProdutoConsignadoController;
 use App\Http\Controllers\BarzinhoProdutoController;
 use App\Http\Controllers\BarzinhoVendaController;
 use App\Http\Controllers\BarzinhoController;
+use App\Http\Controllers\InscricaoController;
+use App\Http\Controllers\QuickCadastroController;
+
+// Formulário de inscrição público
+Route::get('/inscricao', [InscricaoController::class, 'show'])->name('inscricao.show');
+Route::post('/inscricao', [InscricaoController::class, 'store'])->name('inscricao.store');
+
+// Quick-cadastro (usado nos modais da inscrição pública)
+Route::prefix('quick')->name('quick.')->group(function () {
+    Route::post('/diocese',    [QuickCadastroController::class, 'diocese'])->name('diocese');
+    Route::post('/nucleo',     [QuickCadastroController::class, 'nucleo'])->name('nucleo');
+    Route::post('/secretaria', [QuickCadastroController::class, 'secretaria'])->name('secretaria');
+    Route::post('/tlc',        [QuickCadastroController::class, 'eventoTlc'])->name('tlc');
+    Route::post('/mini-tlc',   [QuickCadastroController::class, 'eventoMiniTlc'])->name('mini-tlc');
+});
 
 // autenticação
 Route::middleware('guest')->group(function () {
