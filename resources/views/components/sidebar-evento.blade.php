@@ -104,14 +104,14 @@
                     <!-- Entidades Envolvidas -->
                     @if ($modulos['entidades'] ?? false)
                     <li>
-                        <a href="{{ route('eventos.show', $eventoId) }}#entidades" class="menu-item group"
+                        <a href="{{ route('eventos.entidades.index', $eventoId) }}" class="menu-item group"
                             :class="[
-                                'menu-item-inactive',
+                                isActive('/eventos/{{ $eventoId }}/entidades') ? 'menu-item-active' : 'menu-item-inactive',
                                 (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                                 'xl:justify-center' :
                                 'justify-start'
                             ]">
-                            <span class="menu-item-icon-inactive">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/entidades') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
                                 <x-menu-icon icon="building-office-2" />
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
@@ -123,14 +123,14 @@
                     <!-- Participantes Dirigentes -->
                     @if ($modulos['participantes_dirigentes'] ?? false)
                     <li>
-                        <a href="{{ route('eventos.show', $eventoId) }}#dirigentes" class="menu-item group"
+                        <a href="{{ route('eventos.dirigentes.index', $eventoId) }}" class="menu-item group"
                             :class="[
-                                'menu-item-inactive',
+                                isActive('/eventos/{{ $eventoId }}/dirigentes') ? 'menu-item-active' : 'menu-item-inactive',
                                 (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                                 'xl:justify-center' :
                                 'justify-start'
                             ]">
-                            <span class="menu-item-icon-inactive">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/dirigentes') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
                                 <x-menu-icon icon="users" />
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
@@ -142,14 +142,14 @@
                     <!-- Participantes Externos -->
                     @if ($modulos['participantes_externos'] ?? false)
                     <li>
-                        <a href="{{ route('eventos.show', $eventoId) }}#externos" class="menu-item group"
+                        <a href="{{ route('eventos.externos.index', $eventoId) }}" class="menu-item group"
                             :class="[
-                                'menu-item-inactive',
+                                isActive('/eventos/{{ $eventoId }}/externos') ? 'menu-item-active' : 'menu-item-inactive',
                                 (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                                 'xl:justify-center' :
                                 'justify-start'
                             ]">
-                            <span class="menu-item-icon-inactive">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/externos') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
                                 <x-menu-icon icon="user-group" />
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
@@ -161,14 +161,14 @@
                     <!-- Tipos de Camiseta -->
                     @if ($modulos['tipos_camiseta'] ?? false)
                     <li>
-                        <a href="{{ route('eventos.show', $eventoId) }}#camisetas" class="menu-item group"
+                        <a href="{{ route('eventos.tipos-camiseta.index', $eventoId) }}" class="menu-item group"
                             :class="[
-                                'menu-item-inactive',
+                                isActive('/eventos/{{ $eventoId }}/tipos-camiseta') ? 'menu-item-active' : 'menu-item-inactive',
                                 (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                                 'xl:justify-center' :
                                 'justify-start'
                             ]">
-                            <span class="menu-item-icon-inactive">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/tipos-camiseta') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
                                 <x-menu-icon icon="square-3-stack-3d" />
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
@@ -180,14 +180,14 @@
                     <!-- Preços -->
                     @if ($modulos['precos'] ?? false)
                     <li>
-                        <a href="{{ route('eventos.show', $eventoId) }}#precos" class="menu-item group"
+                        <a href="{{ route('eventos.valores.index', $eventoId) }}" class="menu-item group"
                             :class="[
-                                'menu-item-inactive',
+                                isActive('/eventos/{{ $eventoId }}/valores') ? 'menu-item-active' : 'menu-item-inactive',
                                 (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                                 'xl:justify-center' :
                                 'justify-start'
                             ]">
-                            <span class="menu-item-icon-inactive">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/valores') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
                                 <x-menu-icon icon="banknotes" />
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
@@ -199,14 +199,14 @@
                     <!-- Barzinho -->
                     @if ($modulos['barzinho'] ?? false)
                     <li>
-                        <a href="{{ route('eventos.show', $eventoId) }}#barzinho" class="menu-item group"
+                        <a href="{{ route('eventos.barzinho-configuracao.show', $eventoId) }}" class="menu-item group"
                             :class="[
-                                'menu-item-inactive',
+                                isActive('/eventos/{{ $eventoId }}/barzinho-configuracao') ? 'menu-item-active' : 'menu-item-inactive',
                                 (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                                 'xl:justify-center' :
                                 'justify-start'
                             ]">
-                            <span class="menu-item-icon-inactive">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/barzinho-configuracao') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
                                 <x-menu-icon icon="shopping-bag" />
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
@@ -218,14 +218,14 @@
                     <!-- Cronograma -->
                     @if ($modulos['cronograma'] ?? false)
                     <li>
-                        <a href="{{ route('eventos.show', $eventoId) }}#cronograma" class="menu-item group"
+                        <a href="{{ route('eventos.cronograma.index', $eventoId) }}" class="menu-item group"
                             :class="[
-                                'menu-item-inactive',
+                                isActive('/eventos/{{ $eventoId }}/cronograma') ? 'menu-item-active' : 'menu-item-inactive',
                                 (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
                                 'xl:justify-center' :
                                 'justify-start'
                             ]">
-                            <span class="menu-item-icon-inactive">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/cronograma') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
                                 <x-menu-icon icon="calendar" />
                             </span>
                             <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"

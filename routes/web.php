@@ -183,6 +183,16 @@ Route::middleware('auth')->group(function () {
     Route::put('/eventos/{evento}/barzinho-configuracao', [EventoBarzinhoConfiguracaoController::class, 'update'])
         ->name('eventos.barzinho-configuracao.update');
 
+    // módulos como páginas separadas
+    Route::get('/eventos/{evento}/entidades', [\App\Http\Controllers\EventoEntidadesPageController::class, 'index'])
+        ->name('eventos.entidades.index');
+    Route::get('/eventos/{evento}/dirigentes', [\App\Http\Controllers\EventoDirigentesPageController::class, 'index'])
+        ->name('eventos.dirigentes.index');
+    Route::get('/eventos/{evento}/externos', [\App\Http\Controllers\EventoExternosPageController::class, 'index'])
+        ->name('eventos.externos.index');
+    Route::get('/eventos/{evento}/cronograma', [\App\Http\Controllers\EventoCronogramaPageController::class, 'index'])
+        ->name('eventos.cronograma.index');
+
     // API: Cronograma
     Route::get('/api/eventos/{evento}/cronograma', [EventoCronogramaController::class, 'listar'])
         ->name('api.eventos.cronograma.listar');
