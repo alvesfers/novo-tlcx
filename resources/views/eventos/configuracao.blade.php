@@ -44,6 +44,141 @@
         @csrf
         @method('PUT')
 
+        <!-- Dados do Evento Section -->
+        <div class="bg-white rounded-lg shadow">
+            <div class="bg-gray-50 border-b px-6 py-4 flex items-start gap-4">
+                <svg class="w-6 h-6 text-blue-600 flex-shrink-0 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900">Informações do Evento</h3>
+                    <p class="text-sm text-gray-600 mt-1">Edite os dados básicos do seu evento</p>
+                </div>
+            </div>
+
+            <div class="p-6 space-y-6">
+                <!-- Nome -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Nome do Evento *</label>
+                    <input
+                        type="text"
+                        name="nome"
+                        value="{{ $evento->nome }}"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('nome') border-red-500 @enderror"
+                    >
+                    @error('nome')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Descrição -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Descrição</label>
+                    <textarea
+                        name="descricao"
+                        rows="4"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('descricao') border-red-500 @enderror"
+                    >{{ $evento->descricao }}</textarea>
+                    @error('descricao')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Tema -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Tema</label>
+                    <input
+                        type="text"
+                        name="tema"
+                        value="{{ $evento->tema }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('tema') border-red-500 @enderror"
+                    >
+                    @error('tema')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Local -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Local</label>
+                    <input
+                        type="text"
+                        name="local"
+                        value="{{ $evento->local }}"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('local') border-red-500 @enderror"
+                    >
+                    @error('local')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Datas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">Data de Início *</label>
+                        <input
+                            type="datetime-local"
+                            name="data_inicio"
+                            value="{{ $evento->data_inicio->format('Y-m-d\TH:i') }}"
+                            required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('data_inicio') border-red-500 @enderror"
+                        >
+                        @error('data_inicio')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">Data de Término</label>
+                        <input
+                            type="datetime-local"
+                            name="data_fim"
+                            value="{{ $evento->data_fim ? $evento->data_fim->format('Y-m-d\TH:i') : '' }}"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('data_fim') border-red-500 @enderror"
+                        >
+                        @error('data_fim')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Status *</label>
+                    <select
+                        name="status"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('status') border-red-500 @enderror"
+                    >
+                        <option value="">Selecione um status...</option>
+                        @foreach(\App\Enums\StatusEvento::cases() as $status)
+                            <option value="{{ $status->value }}" {{ $evento->status->value === $status->value ? 'selected' : '' }}>
+                                {{ $status->label() }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('status')
+                        <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Ativo -->
+                <div class="flex items-center">
+                    <input
+                        type="checkbox"
+                        name="ativo"
+                        value="1"
+                        {{ $evento->ativo ? 'checked' : '' }}
+                        class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+                    >
+                    <label class="ml-3 text-sm font-medium text-gray-900 cursor-pointer">
+                        Evento ativo
+                    </label>
+                </div>
+            </div>
+        </div>
+
         <!-- Módulos Section -->
         <div class="bg-white rounded-lg shadow">
             <div class="bg-gray-50 border-b px-6 py-4 flex items-start gap-4">

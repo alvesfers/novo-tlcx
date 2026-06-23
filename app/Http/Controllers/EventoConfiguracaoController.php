@@ -22,20 +22,42 @@ class EventoConfiguracaoController extends Controller
     {
         $this->authorize('update', $evento);
 
-        $validatedModulos = $request->validate([
+        $validated = $request->validate([
+            'nome' => 'required|string|max:255',
+            'descricao' => 'nullable|string',
+            'tema' => 'nullable|string|max:255',
+            'local' => 'nullable|string|max:255',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'nullable|date|after_or_equal:data_inicio',
+            'status' => 'required|string|in:rascunho,publicado,encerrado,cancelado',
+            'ativo' => 'boolean',
             'modulos' => 'array',
             'modulos.*' => 'string',
-        ])['modulos'] ?? [];
+        ]);
 
-        // Converter para array de flags
+        // Converter módulos para array de flags
+        $validatedModulos = $request->input('modulos', []);
         $modulosHabilitados = [];
         foreach (ModulosEvento::cases() as $modulo) {
             $modulosHabilitados[$modulo->value] = in_array($modulo->value, $validatedModulos);
         }
 
-        $evento->update(['modulos_habilitados' => $modulosHabilitados]);
+        // Preparar dados para salvar
+        $dataToUpdate = [
+            'nome' => $validated['nome'],
+            'descricao' => $validated['descricao'],
+            'tema' => $validated['tema'],
+            'local' => $validated['local'],
+            'data_inicio' => $validated['data_inicio'],
+            'data_fim' => $validated['data_fim'],
+            'status' => $validated['status'],
+            'ativo' => $validated['ativo'] ?? true,
+            'modulos_habilitados' => $modulosHabilitados,
+        ];
+
+        $evento->update($dataToUpdate);
 
         return redirect()->route('eventos.show', $evento)
-            ->with('success', 'Configurações atualizadas com sucesso!');
+            ->with('success', 'Configurações do evento atualizadas com sucesso!');
     }
 }
