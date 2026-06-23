@@ -163,6 +163,45 @@
                     @enderror
                 </div>
 
+                <!-- Casa de Retiro e Fornecedor Camisetas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">Casa de Retiro</label>
+                        <select
+                            name="id_casa"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('id_casa') border-red-500 @enderror"
+                        >
+                            <option value="">Nenhuma</option>
+                            @foreach(\App\Models\CasaDeRetiro::where('ativa', true)->get() as $casa)
+                                <option value="{{ $casa->id_casa }}" {{ $evento->id_casa == $casa->id_casa ? 'selected' : '' }}>
+                                    {{ $casa->nome_casa }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('id_casa')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">Fornecedor de Camisetas</label>
+                        <select
+                            name="fornecedores_camisetas_id"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 @error('fornecedores_camisetas_id') border-red-500 @enderror"
+                        >
+                            <option value="">Nenhum</option>
+                            @foreach(\App\Models\FornecedorCamiseta::where('ativo', true)->get() as $fornecedor)
+                                <option value="{{ $fornecedor->id }}" {{ $evento->fornecedores_camisetas_id == $fornecedor->id ? 'selected' : '' }}>
+                                    {{ $fornecedor->nome }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('fornecedores_camisetas_id')
+                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
                 <!-- Ativo -->
                 <div class="flex items-center">
                     <input

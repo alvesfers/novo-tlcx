@@ -30,6 +30,8 @@ class Evento extends Model
         'ativo',
         'cronograma',
         'modulos_habilitados',
+        'id_casa',
+        'fornecedores_camisetas_id',
     ];
 
     protected $casts = [

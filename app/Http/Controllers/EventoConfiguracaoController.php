@@ -31,6 +31,8 @@ class EventoConfiguracaoController extends Controller
             'data_fim' => 'nullable|date|after_or_equal:data_inicio',
             'status' => 'required|string|in:rascunho,publicado,encerrado,cancelado',
             'ativo' => 'boolean',
+            'id_casa' => 'nullable|exists:casas_de_retiro,id_casa',
+            'fornecedores_camisetas_id' => 'nullable|exists:fornecedores_camisetas,id',
             'modulos' => 'array',
             'modulos.*' => 'string',
         ]);
@@ -52,6 +54,8 @@ class EventoConfiguracaoController extends Controller
             'data_fim' => $validated['data_fim'],
             'status' => $validated['status'],
             'ativo' => $validated['ativo'] ?? true,
+            'id_casa' => $validated['id_casa'],
+            'fornecedores_camisetas_id' => $validated['fornecedores_camisetas_id'],
             'modulos_habilitados' => $modulosHabilitados,
         ];
 
