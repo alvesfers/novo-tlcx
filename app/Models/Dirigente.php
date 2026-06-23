@@ -28,6 +28,7 @@ class Dirigente extends Model
         'id_tlc',
         'id_mini_tlc',
         'ativo',
+        'respostas_formulario_evento',
     ];
 
     protected $casts = [
