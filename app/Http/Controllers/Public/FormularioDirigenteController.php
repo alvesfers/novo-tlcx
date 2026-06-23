@@ -77,23 +77,25 @@ class FormularioDirigenteController extends Controller
             ]);
         }
 
-        // Salvar respostas do formulário no dirigente
-        $dirigente->update([
-            'respostas_formulario_evento' => $validated,
-        ]);
-
-        // Criar evento_participante se não existir
+        // Criar ou atualizar evento_participante com respostas
         $eventoParticipante = EventoParticipante::where('evento_id', $evento->id)
             ->where('dirigente_id', $dirigente->id)
             ->where('tipo_participante', 'dirigente')
             ->first();
 
-        if (!$eventoParticipante) {
+        if ($eventoParticipante) {
+            // Atualizar respostas se já existir
+            $eventoParticipante->update([
+                'respostas_formulario' => $validated,
+            ]);
+        } else {
+            // Criar novo registro
             EventoParticipante::create([
                 'evento_id' => $evento->id,
                 'dirigente_id' => $dirigente->id,
                 'tipo_participante' => 'dirigente',
                 'presenca' => false,
+                'respostas_formulario' => $validated,
             ]);
         }
 

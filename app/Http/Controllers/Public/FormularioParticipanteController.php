@@ -72,26 +72,28 @@ class FormularioParticipanteController extends Controller
             $participanteExterno = ParticipanteExterno::create([
                 'nome' => $nome,
                 'email' => $email,
-                'respostas_formulario' => $validated,
-            ]);
-        } else {
-            $participanteExterno->update([
-                'respostas_formulario' => $validated,
             ]);
         }
 
-        // Criar evento_participante se não existir
+        // Criar ou atualizar evento_participante com respostas
         $eventoParticipante = EventoParticipante::where('evento_id', $evento->id)
             ->where('participante_externo_id', $participanteExterno->id)
             ->where('tipo_participante', 'externo')
             ->first();
 
-        if (!$eventoParticipante) {
+        if ($eventoParticipante) {
+            // Atualizar respostas se já existir
+            $eventoParticipante->update([
+                'respostas_formulario' => $validated,
+            ]);
+        } else {
+            // Criar novo registro
             EventoParticipante::create([
                 'evento_id' => $evento->id,
                 'participante_externo_id' => $participanteExterno->id,
                 'tipo_participante' => 'externo',
                 'presenca' => false,
+                'respostas_formulario' => $validated,
             ]);
         }
 
