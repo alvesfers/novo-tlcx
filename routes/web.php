@@ -33,10 +33,20 @@ use App\Http\Controllers\BarzinhoVendaController;
 use App\Http\Controllers\BarzinhoController;
 use App\Http\Controllers\InscricaoController;
 use App\Http\Controllers\QuickCadastroController;
+use App\Http\Controllers\EventoConfiguracaoController;
+use App\Http\Controllers\EventoBarzinhoConfiguracaoController;
+use App\Http\Controllers\EventoCronogramaController;
 
 // Formulário de inscrição público
 Route::get('/inscricao', [InscricaoController::class, 'show'])->name('inscricao.show');
 Route::post('/inscricao', [InscricaoController::class, 'store'])->name('inscricao.store');
+
+// Gerenciamento de secretarias e habilidades
+Route::get('/inscricoes/secretarias', [\App\Http\Controllers\InscricoesSecretariasController::class, 'index'])->name('inscricoes.secretarias');
+Route::post('/inscricoes/secretarias/store', [\App\Http\Controllers\InscricoesSecretariasController::class, 'storeSecretaria'])->name('inscricoes.secretarias.store');
+Route::post('/inscricoes/secretarias/habilidade', [\App\Http\Controllers\InscricoesSecretariasController::class, 'storeHabilidade'])->name('inscricoes.secretarias.habilidade.store');
+Route::delete('/inscricoes/secretarias/habilidade', [\App\Http\Controllers\InscricoesSecretariasController::class, 'deleteHabilidade'])->name('inscricoes.secretarias.habilidade.delete');
+Route::put('/inscricoes/secretarias/update', [\App\Http\Controllers\InscricoesSecretariasController::class, 'updateSecretaria'])->name('inscricoes.secretarias.update');
 
 // Quick-cadastro (usado nos modais da inscrição pública)
 Route::prefix('quick')->name('quick.')->group(function () {
@@ -160,6 +170,28 @@ Route::middleware('auth')->group(function () {
     // calendario de eventos (deve estar ANTES do resource para não conflitar)
     Route::get('/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'index'])->name('eventos.calendario');
     Route::get('/api/eventos/calendario', [\App\Http\Controllers\EventoCalendarController::class, 'getEventos'])->name('eventos.calendario.get');
+
+    // configuração geral do evento (módulos habilitados)
+    Route::get('/eventos/{evento}/configuracao', [EventoConfiguracaoController::class, 'show'])
+        ->name('eventos.configuracao.show');
+    Route::put('/eventos/{evento}/configuracao', [EventoConfiguracaoController::class, 'update'])
+        ->name('eventos.configuracao.update');
+
+    // configuração de barzinho
+    Route::get('/eventos/{evento}/barzinho-configuracao', [EventoBarzinhoConfiguracaoController::class, 'show'])
+        ->name('eventos.barzinho-configuracao.show');
+    Route::put('/eventos/{evento}/barzinho-configuracao', [EventoBarzinhoConfiguracaoController::class, 'update'])
+        ->name('eventos.barzinho-configuracao.update');
+
+    // API: Cronograma
+    Route::get('/api/eventos/{evento}/cronograma', [EventoCronogramaController::class, 'listar'])
+        ->name('api.eventos.cronograma.listar');
+    Route::post('/api/eventos/{evento}/cronograma', [EventoCronogramaController::class, 'adicionar'])
+        ->name('api.eventos.cronograma.adicionar');
+    Route::put('/api/eventos/{evento}/cronograma/{cronogramaId}', [EventoCronogramaController::class, 'editar'])
+        ->name('api.eventos.cronograma.editar');
+    Route::delete('/api/eventos/{evento}/cronograma/{cronogramaId}', [EventoCronogramaController::class, 'remover'])
+        ->name('api.eventos.cronograma.remover');
 
     Route::resource('eventos', EventoController::class);
     Route::post('/eventos/delete-multiple', [EventoController::class, 'deleteMultiple'])->name('eventos.delete-multiple');

@@ -28,6 +28,8 @@ class Evento extends Model
         'escopo',
         'status',
         'ativo',
+        'cronograma',
+        'modulos_habilitados',
     ];
 
     protected $casts = [
@@ -36,6 +38,8 @@ class Evento extends Model
         'escopo' => EscopoEvento::class,
         'status' => StatusEvento::class,
         'ativo' => 'boolean',
+        'cronograma' => 'json',
+        'modulos_habilitados' => 'json',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -125,6 +129,11 @@ class Evento extends Model
         return $this->hasMany(Barzinho::class, 'evento_id');
     }
 
+    public function barzinho()
+    {
+        return $this->hasOne(Barzinho::class, 'evento_id');
+    }
+
     public function scopeAtivos($query)
     {
         return $query->where('ativo', true);
@@ -153,5 +162,30 @@ class Evento extends Model
     public function isCancelado(): bool
     {
         return $this->status === StatusEvento::Cancelado;
+    }
+
+    public function isModuloHabilitado($modulo): bool
+    {
+        $habilitados = $this->modulos_habilitados ?? [];
+        $moduloValue = is_string($modulo) ? $modulo : $modulo->value;
+        return $habilitados[$moduloValue] ?? false;
+    }
+
+    public function getModulosHabilitados(): array
+    {
+        $habilitados = $this->modulos_habilitados ?? [];
+        return array_keys(array_filter($habilitados, fn($v) => $v === true));
+    }
+
+    public function getCronogramaOrdenado(): array
+    {
+        $cronograma = $this->cronograma ?? [];
+        usort($cronograma, function ($a, $b) {
+            if ($a['dia'] !== $b['dia']) {
+                return $a['dia'] <=> $b['dia'];
+            }
+            return $a['horario'] <=> $b['horario'];
+        });
+        return $cronograma;
     }
 }

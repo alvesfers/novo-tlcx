@@ -13,7 +13,7 @@
     class="min-h-screen bg-gray-50">
 
     {{-- ==================== MODAIS ==================== --}}
-    <div x-show="modal !== null" x-cloak x-transition.opacity
+    <div x-show="modal !== null" x-cloak x-transition.opacity.duration.300ms
         class="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm" @click="modal = null"></div>
 
     {{-- Modal Diocese --}}
@@ -151,11 +151,11 @@
     </div>
 
     {{-- ==================== WIZARD ==================== --}}
-    <div class="max-w-2xl mx-auto px-4 py-10">
+    <div class="max-w-2xl mx-auto px-4 py-6 md:py-10">
 
         <div class="text-center mb-8">
-            <h1 class="text-3xl font-semibold text-gray-800">Ficha de Inscrição</h1>
-            <p class="mt-2 text-gray-500 text-sm">Preencha seus dados para se cadastrar como dirigente.</p>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Ficha de Inscrição</h1>
+            <p class="mt-2 text-gray-500 text-sm md:text-base">Preencha seus dados para se cadastrar como dirigente.</p>
         </div>
 
         @if(session('success'))
@@ -200,39 +200,45 @@
             <input type="hidden" name="timeline" :value="JSON.stringify(computeTimeline())">
 
             {{-- ===== STEP 1: DADOS PESSOAIS ===== --}}
-            <div x-show="step === 1" x-cloak x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-x-3" x-transition:enter-end="opacity-100 translate-x-0">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                    <h2 class="text-base font-semibold text-gray-700 mb-6">Dados Pessoais</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div x-show="step === 1" x-cloak x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+                    <h2 class="text-lg md:text-base font-semibold text-gray-700 mb-6">Dados Pessoais</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
                         <div class="md:col-span-2">
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Nome completo <span class="text-red-500">*</span></label>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nome completo <span class="text-red-500">*</span></label>
                             <input type="text" name="nome" value="{{ old('nome') }}" required
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                @input="$event.target.value = $event.target.value.replace(/[^a-záéíóúàâêôãõç\s]/gi, '').replace(/^\s+/, '')"
+                                class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Apelido</label>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Apelido</label>
                             <input type="text" name="apelido" value="{{ old('apelido') }}"
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">E-mail</label>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">E-mail</label>
                             <input type="email" name="email" value="{{ old('email') }}"
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Telefone / WhatsApp</label>
-                            <input type="text" name="telefone" value="{{ old('telefone') }}" placeholder="(11) 99999-9999"
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Telefone / WhatsApp</label>
+                            <input type="tel" name="telefone" placeholder="(11) 99999-9999"
+                                :value="telefone"
+                                @input="telefone = formatTelefone($event.target.value)"
+                                inputmode="numeric"
+                                class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Data de nascimento</label>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Data de nascimento</label>
                             <input type="date" name="data_nascimento" value="{{ old('data_nascimento') }}"
-                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                :max="getMaxDataNascimento()"
+                                class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all">
+                            <p class="text-xs text-gray-400 mt-1">Mínimo 6 anos de idade</p>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Gênero</label>
-                            <select name="genero" class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Gênero</label>
+                            <select name="genero" class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all">
                                 <option value="">Selecione</option>
                                 <option value="M" @selected(old('genero')==='M')>Masculino</option>
                                 <option value="F" @selected(old('genero')==='F')>Feminino</option>
@@ -244,28 +250,30 @@
             </div>
 
             {{-- ===== STEP 2: MINI TLC ===== --}}
-            <div x-show="step === 2" x-cloak x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-x-3" x-transition:enter-end="opacity-100 translate-x-0">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 space-y-6">
-                    <h2 class="text-base font-semibold text-gray-700">Mini TLC</h2>
+            <div x-show="step === 2" x-cloak x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8 space-y-6">
+                    <h2 class="text-lg md:text-base font-semibold text-gray-700">Mini TLC</h2>
 
                     {{-- Pergunta principal --}}
                     <div>
-                        <p class="text-sm text-gray-600 mb-3">Você já fez o Mini TLC?</p>
-                        <div class="flex gap-6">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" x-model="fez_mini" value="sim" class="text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Sim</span>
+                        <p class="text-base md:text-sm text-gray-600 mb-4 font-medium">Você já fez o Mini TLC?</p>
+                        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                            <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="radio" x-model="fez_mini" value="sim" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                <span class="text-base md:text-sm text-gray-700 font-medium">Sim</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" x-model="fez_mini" value="nao" class="text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Não</span>
+                            <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="radio" x-model="fez_mini" value="nao" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                <span class="text-base md:text-sm text-gray-700 font-medium">Não</span>
                             </label>
                         </div>
                     </div>
 
-                    <div x-show="fez_mini === 'nao'" x-transition>
-                        <p class="text-sm text-gray-400 italic">Tudo bem! Continue para o TLC.</p>
+                    <div x-show="fez_mini === 'nao'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                        <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                            <p class="text-sm text-green-700 font-medium">✓ Tudo bem! Continue para o próximo passo.</p>
+                        </div>
                     </div>
 
                     <div x-show="fez_mini === 'sim'" x-transition class="space-y-5">
@@ -293,17 +301,17 @@
                         </div>
 
                         {{-- Pergunta: foi para outro núcleo após o mini? --}}
-                        <div x-show="m_evt && m_data" x-transition class="space-y-4">
+                        <div x-show="m_evt && m_data" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4">
                             <div>
-                                <p class="text-sm text-gray-600 mb-3">Após o Mini TLC, você foi para outro núcleo?</p>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" x-model="m_mudou_pos" value="sim" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-gray-700">Sim</span>
+                                <p class="text-base md:text-sm text-gray-600 mb-4 font-medium">Após o Mini TLC, você foi para outro núcleo?</p>
+                                <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="radio" x-model="m_mudou_pos" value="sim" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                        <span class="text-base md:text-sm text-gray-700 font-medium">Sim</span>
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" x-model="m_mudou_pos" value="nao" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-gray-700">Não</span>
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="radio" x-model="m_mudou_pos" value="nao" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                        <span class="text-base md:text-sm text-gray-700 font-medium">Não</span>
                                     </label>
                                 </div>
                             </div>
@@ -324,17 +332,17 @@
                         </div>
 
                         {{-- Pergunta: tinha outro núcleo antes do mini? --}}
-                        <div x-show="m_mudou_pos !== null" x-transition class="space-y-4">
+                        <div x-show="m_mudou_pos !== null" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4">
                             <div>
-                                <p class="text-sm text-gray-600 mb-3">Antes de fazer o Mini TLC, você estava em outro núcleo?</p>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" x-model="m_tem_antes" value="sim" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-gray-700">Sim</span>
+                                <p class="text-base md:text-sm text-gray-600 mb-4 font-medium">Antes de fazer o Mini TLC, você estava em outro núcleo?</p>
+                                <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="radio" x-model="m_tem_antes" value="sim" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                        <span class="text-base md:text-sm text-gray-700 font-medium">Sim</span>
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" x-model="m_tem_antes" value="nao" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-gray-700">Não</span>
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="radio" x-model="m_tem_antes" value="nao" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                        <span class="text-base md:text-sm text-gray-700 font-medium">Não</span>
                                     </label>
                                 </div>
                             </div>
@@ -397,21 +405,21 @@
             </div>
 
             {{-- ===== STEP 3: TLC ===== --}}
-            <div x-show="step === 3" x-cloak x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-x-3" x-transition:enter-end="opacity-100 translate-x-0">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 space-y-6">
-                    <h2 class="text-base font-semibold text-gray-700">TLC</h2>
+            <div x-show="step === 3" x-cloak x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8 space-y-6">
+                    <h2 class="text-lg md:text-base font-semibold text-gray-700">TLC</h2>
 
                     <div>
-                        <p class="text-sm text-gray-600 mb-3">Você fez o TLC?</p>
-                        <div class="flex gap-6">
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" x-model="fez_tlc" value="sim" class="text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Sim</span>
+                        <p class="text-base md:text-sm text-gray-600 mb-4 font-medium">Você fez o TLC?</p>
+                        <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                            <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="radio" x-model="fez_tlc" value="sim" @change="onTlcChange()" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                <span class="text-base md:text-sm text-gray-700 font-medium">Sim</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer">
-                                <input type="radio" x-model="fez_tlc" value="nao" class="text-blue-600 focus:ring-blue-500">
-                                <span class="text-sm text-gray-700">Ainda não</span>
+                            <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                <input type="radio" x-model="fez_tlc" value="nao" @change="onTlcChange()" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                <span class="text-base md:text-sm text-gray-700 font-medium">Ainda não</span>
                             </label>
                         </div>
                     </div>
@@ -454,26 +462,26 @@
                         </div>
 
                         {{-- Pergunta: trocou de núcleo após o TLC? --}}
-                        <div x-show="t_evt && t_data" x-transition class="space-y-4">
+                        <div x-show="t_evt && t_data" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-4">
                             <div>
-                                <p class="text-sm text-gray-600 mb-3">Depois do TLC, você trocou de núcleo?</p>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" x-model="t_trocou" value="sim" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-gray-700">Sim</span>
+                                <p class="text-base md:text-sm text-gray-600 mb-4 font-medium">Depois do TLC, você trocou de núcleo?</p>
+                                <div class="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="radio" x-model="t_trocou" value="sim" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                        <span class="text-base md:text-sm text-gray-700 font-medium">Sim</span>
                                     </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" x-model="t_trocou" value="nao" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-gray-700">Não, estou no mesmo</span>
+                                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <input type="radio" x-model="t_trocou" value="nao" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                        <span class="text-base md:text-sm text-gray-700 font-medium">Não, estou no mesmo</span>
                                     </label>
                                 </div>
                             </div>
 
                             <div x-show="t_trocou === 'nao'" x-transition>
-                                <div class="p-3 bg-blue-50 rounded-lg">
-                                    <p class="text-sm text-blue-700">Desde quando você está neste núcleo?</p>
-                                    <input type="date" x-model="t_desde_quando" class="mt-2 w-full border border-blue-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                                    <p class="text-xs text-blue-500 mt-1">💡 Se não lembrar, coloque 01/01 do ano aproximado.</p>
+                                <div class="p-4 bg-green-50 border border-green-200 rounded-lg">
+                                    <p class="text-sm text-green-700 font-medium mb-2">✓ Perfeito! Você está no núcleo desde a data do TLC:</p>
+                                    <p class="text-lg font-semibold text-green-800" x-text="t_data"></p>
+                                    <input type="hidden" x-model="t_desde_quando" :value="t_data">
                                 </div>
                             </div>
 
@@ -538,19 +546,35 @@
                             </div>
                         </div>
 
-                        {{-- Checkbox TLC de Pais --}}
-                        <div x-show="t_trocou !== null" x-transition class="pt-1">
-                            <label class="flex items-start gap-3 cursor-pointer">
-                                <input type="checkbox" name="participa_nucleo_tlc_pais" value="1" x-model="tlc_pais"
-                                    class="mt-0.5 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
-                                <span class="text-sm text-gray-700">Além do núcleo principal, também participo do <strong>Núcleo do TLC de Pais</strong>.</span>
-                            </label>
+                        {{-- TLC de Pais --}}
+                        <div x-show="t_trocou !== null" x-transition class="space-y-4 pt-4">
+                            <div>
+                                <label class="flex items-start gap-3 cursor-pointer">
+                                    <input type="checkbox" x-model="tlc_pais"
+                                        class="mt-0.5 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
+                                    <span class="text-sm text-gray-700">Além do núcleo principal, também participo do <strong>Núcleo do TLC de Pais</strong>.</span>
+                                </label>
+                            </div>
+                            <div x-show="tlc_pais" x-transition class="ml-6 p-4 bg-blue-50 rounded-lg space-y-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nome do TLC de Pais</label>
+                                    <input type="text" x-model="tlc_pais_nome"
+                                        placeholder="Ex.: TLC de Pais 2025"
+                                        class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Tema <span class="text-gray-400 font-normal normal-case">(opcional)</span></label>
+                                    <input type="text" x-model="tlc_pais_tema"
+                                        placeholder="Ex.: Renovação da Fé"
+                                        class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
+                                </div>
+                            </div>
                         </div>
 
                     </div>{{-- /fez_tlc sim --}}
 
                     {{-- SE NÃO FEZ O TLC --}}
-                    <div x-show="fez_tlc === 'nao'" x-transition class="space-y-5">
+                    <div x-show="fez_tlc === 'nao'" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="space-y-5">
                         <div class="p-4 bg-gray-50 rounded-xl space-y-4">
                             <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Qual é o seu núcleo atual?</p>
                             @include('inscricao._select-row', ['label' => 'Diocese', 'xModel' => 'direto_dio', 'optExpr' => 'dioceses', 'onChange' => 'direto_nuc = null', 'modalType' => 'diocese', 'modalTarget' => 'direto_dio', 'modalPrefill' => '{}'])
@@ -565,16 +589,16 @@
                             </div>
                         </div>
 
-                        <div x-show="direto_nuc" x-transition>
-                            <p class="text-sm text-gray-600 mb-3">Antes deste núcleo, você estava em outro?</p>
-                            <div class="flex gap-6 mb-4">
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" x-model="direto_tem_antes" value="sim" class="text-blue-600 focus:ring-blue-500">
-                                    <span class="text-sm text-gray-700">Sim</span>
+                        <div x-show="direto_nuc" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+                            <p class="text-base md:text-sm text-gray-600 mb-4 font-medium">Antes deste núcleo, você estava em outro?</p>
+                            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-4">
+                                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" x-model="direto_tem_antes" value="sim" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                    <span class="text-base md:text-sm text-gray-700 font-medium">Sim</span>
                                 </label>
-                                <label class="flex items-center gap-2 cursor-pointer">
-                                    <input type="radio" x-model="direto_tem_antes" value="nao" class="text-blue-600 focus:ring-blue-500">
-                                    <span class="text-sm text-gray-700">Não</span>
+                                <label class="flex items-center gap-3 cursor-pointer p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                                    <input type="radio" x-model="direto_tem_antes" value="nao" class="w-4 h-4 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                    <span class="text-base md:text-sm text-gray-700 font-medium">Não</span>
                                 </label>
                             </div>
 
@@ -622,12 +646,28 @@
                             </div>
                         </div>
 
-                        <div x-show="direto_nuc" x-transition class="pt-1">
-                            <label class="flex items-start gap-3 cursor-pointer">
-                                <input type="checkbox" name="participa_nucleo_tlc_pais" value="1" x-model="tlc_pais"
-                                    class="mt-0.5 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
-                                <span class="text-sm text-gray-700">Além do núcleo principal, também participo do <strong>Núcleo do TLC de Pais</strong>.</span>
-                            </label>
+                        <div x-show="direto_nuc" x-transition class="space-y-4 pt-4">
+                            <div>
+                                <label class="flex items-start gap-3 cursor-pointer">
+                                    <input type="checkbox" x-model="tlc_pais"
+                                        class="mt-0.5 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
+                                    <span class="text-sm text-gray-700">Além do núcleo principal, também participo do <strong>Núcleo do TLC de Pais</strong>.</span>
+                                </label>
+                            </div>
+                            <div x-show="tlc_pais" x-transition class="ml-6 p-4 bg-blue-50 rounded-lg space-y-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Nome do TLC de Pais</label>
+                                    <input type="text" x-model="tlc_pais_nome"
+                                        placeholder="Ex.: TLC de Pais 2025"
+                                        class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Tema <span class="text-gray-400 font-normal normal-case">(opcional)</span></label>
+                                    <input type="text" x-model="tlc_pais_tema"
+                                        placeholder="Ex.: Renovação da Fé"
+                                        class="w-full border border-gray-200 rounded-lg px-4 py-3 text-base md:text-sm text-gray-700 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all placeholder-gray-400">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -635,17 +675,17 @@
             </div>
 
             {{-- ===== STEP 4: SECRETARIAS & HABILIDADES ===== --}}
-            <div x-show="step === 4" x-cloak x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-x-3" x-transition:enter-end="opacity-100 translate-x-0">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-                    <div class="flex items-start justify-between mb-2">
-                        <h2 class="text-base font-semibold text-gray-700">Secretarias e Habilidades</h2>
+            <div x-show="step === 4" x-cloak x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 md:p-8">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+                        <h2 class="text-lg md:text-base font-semibold text-gray-700">Secretarias e Habilidades</h2>
                         <button type="button" @click="openModal('secretaria', 'secretaria')"
-                            class="shrink-0 text-xs text-blue-600 hover:text-blue-800 font-medium px-2 py-1 rounded-lg hover:bg-blue-50 transition-colors">
-                            Não encontrei minha secretaria
+                            class="shrink-0 text-xs text-blue-600 hover:text-blue-800 font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition-colors whitespace-nowrap">
+                            + Não encontrei
                         </button>
                     </div>
-                    <p class="text-sm text-gray-500 mb-6">Selecione as secretarias das quais você participa e informe o nível em cada habilidade.</p>
+                    <p class="text-sm md:text-xs text-gray-500 mb-6">Selecione as secretarias das quais você participa e informe o nível em cada habilidade.</p>
 
                     <div class="space-y-3">
                         <template x-for="s in secretarias" :key="s.id">
@@ -688,8 +728,8 @@
             </div>
 
             {{-- ===== STEP 5: RESUMO ===== --}}
-            <div x-show="step === 5" x-cloak x-transition:enter="transition ease-out duration-200"
-                x-transition:enter-start="opacity-0 translate-x-3" x-transition:enter-end="opacity-100 translate-x-0">
+            <div x-show="step === 5" x-cloak x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0">
                 <div class="space-y-4">
                     {{-- Dados pessoais --}}
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
@@ -758,31 +798,84 @@
             </div>
 
             {{-- Navegação --}}
-            <div class="flex justify-between mt-6">
+            <div class="flex justify-between gap-3 mt-8 mb-6">
                 <button type="button" @click="prevStep()" x-show="step > 1"
-                    class="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-sm">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-                    Anterior
+                    class="flex items-center justify-center gap-2 px-4 md:px-5 py-3 md:py-2.5 text-sm font-medium text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 active:bg-gray-100 transition-all shadow-sm touch-manipulation">
+                    <svg class="w-5 md:w-4 h-5 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    <span class="hidden sm:inline">Anterior</span>
                 </button>
-                <div x-show="step === 1"></div>
+                <div x-show="step === 1" class="flex-1"></div>
 
                 <button type="button" @click="nextStep()" x-show="step < 5"
-                    class="flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm">
-                    Próximo
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                    class="flex items-center justify-center gap-2 px-4 md:px-5 py-3 md:py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 rounded-xl transition-all shadow-sm touch-manipulation flex-1 sm:flex-none">
+                    <span class="hidden sm:inline">Próximo</span>
+                    <span class="sm:hidden">Próximo</span>
+                    <svg class="w-5 md:w-4 h-5 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
                 </button>
 
                 <button type="submit" x-show="step === 5"
-                    class="flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors shadow-sm">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                    Enviar inscrição
+                    class="flex items-center justify-center gap-2 px-4 md:px-6 py-3 md:py-2.5 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 active:bg-green-800 rounded-xl transition-all shadow-sm touch-manipulation flex-1 sm:flex-none">
+                    <svg class="w-5 md:w-4 h-5 md:h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                    Enviar
                 </button>
             </div>
         </form>
     </div>
 </div>
 
-<style>[x-cloak]{display:none!important}</style>
+<style>
+    [x-cloak]{display:none!important}
+
+    @media (max-width: 640px) {
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        select,
+        textarea {
+            font-size: 16px !important;
+            min-height: 44px;
+        }
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    input[type="tel"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+        animation: focusPulse 0.3s ease-out;
+    }
+
+    @keyframes focusPulse {
+        0% { transform: scale(0.99); }
+        100% { transform: scale(1); }
+    }
+
+    /* Smooth scroll behavior */
+    html { scroll-behavior: smooth; }
+
+    /* Melhor feedback ao clicar em botões mobile */
+    button {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Animação ao entrar em elemento */
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .transition {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+</style>
 @endsection
 
 @push('scripts')
@@ -791,10 +884,69 @@ function inscricao(dioceses, nucleos, secretarias, habilidades, eventosTlc, even
     return {
         step: 1, maxStep: 1,
         steps: ['Dados', 'Mini TLC', 'TLC', 'Secretarias', 'Resumo'],
+        telefone: '{{ old('telefone') }}',
 
-        nextStep() { if(this.step<5){this.step++;this.maxStep=Math.max(this.maxStep,this.step);window.scrollTo({top:0,behavior:'smooth'});} },
-        prevStep() { if(this.step>1){this.step--;window.scrollTo({top:0,behavior:'smooth'});} },
-        goToStep(n) { if(n<=this.maxStep){this.step=n;window.scrollTo({top:0,behavior:'smooth'});} },
+        formatTelefone(value) {
+            const cleaned = value.replace(/\D/g, '');
+            if (cleaned.length <= 2) return cleaned;
+            if (cleaned.length <= 7) return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2)}`;
+            return `(${cleaned.slice(0, 2)}) ${cleaned.slice(2, 7)}-${cleaned.slice(7, 11)}`;
+        },
+
+        nextStep() {
+            if(this.step<5) {
+                // Validação por step
+                if (this.step === 1) {
+                    const nome = document.querySelector('[name="nome"]').value.trim();
+                    const dataNasc = document.querySelector('[name="data_nascimento"]').value;
+                    const genero = document.querySelector('[name="genero"]').value;
+
+                    if (!nome) {
+                        Swal.fire({ icon: 'warning', title: 'Campo obrigatório', text: 'Informe seu nome completo.', confirmButtonColor: '#3b82f6' });
+                        return;
+                    }
+                    if (!dataNasc) {
+                        Swal.fire({ icon: 'warning', title: 'Campo obrigatório', text: 'Informe sua data de nascimento.', confirmButtonColor: '#3b82f6' });
+                        return;
+                    }
+                    if (!genero) {
+                        Swal.fire({ icon: 'warning', title: 'Campo obrigatório', text: 'Informe seu gênero.', confirmButtonColor: '#3b82f6' });
+                        return;
+                    }
+                }
+
+                // Validação step 2 (Mini TLC)
+                if (this.step === 2) {
+                    if (this.fez_mini === null) {
+                        Swal.fire({ icon: 'warning', title: 'Campo obrigatório', text: 'Responda se você fez o Mini TLC.', confirmButtonColor: '#3b82f6' });
+                        return;
+                    }
+                }
+
+                // Validação step 3 (TLC)
+                if (this.step === 3) {
+                    if (this.fez_tlc === null) {
+                        Swal.fire({ icon: 'warning', title: 'Campo obrigatório', text: 'Responda se você fez o TLC.', confirmButtonColor: '#3b82f6' });
+                        return;
+                    }
+                }
+
+                // Validação step 4 (Secretarias) - verificar se tem núcleo selecionado
+                if (this.step === 4) {
+                    const temNucleo = this.fez_tlc === 'sim' ? this.t_nuc : this.direto_nuc;
+                    if (!temNucleo) {
+                        Swal.fire({ icon: 'warning', title: 'Informação faltando', text: 'Por favor, volte e selecione seu núcleo.', confirmButtonColor: '#3b82f6' });
+                        return;
+                    }
+                }
+
+                this.step++;
+                this.maxStep=Math.max(this.maxStep,this.step);
+                this.$nextTick(()=>window.scrollTo({top:0,behavior:'smooth'}));
+            }
+        },
+        prevStep() { if(this.step>1){this.step--;this.$nextTick(()=>window.scrollTo({top:0,behavior:'smooth'}));} },
+        goToStep(n) { if(n<=this.maxStep){this.step=n;this.$nextTick(()=>window.scrollTo({top:0,behavior:'smooth'}));} },
 
         // Mini TLC
         fez_mini: null,
@@ -815,10 +967,37 @@ function inscricao(dioceses, nucleos, secretarias, habilidades, eventosTlc, even
         t_trocou: null, t_desde_quando: '',
         t_pos: [],
         tlc_pais: false,
+        tlc_pais_nome: '',
+        tlc_pais_tema: '',
+
+        onTlcChange() {
+            if (this.fez_mini === 'nao' && this.fez_tlc === 'nao') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Desculpe!',
+                    html: '<p style="text-align: left; margin: 20px 0;">Este formulário é <strong>exclusivo para TLCistas</strong>.</p><p style="text-align: left; margin: 20px 0;">Se você ainda não participou do TLC ou Mini TLC, não faz sentido preencher este formulário. Aguarde o próximo evento!</p>',
+                    confirmButtonColor: '#3b82f6',
+                    confirmButtonText: 'Entendi',
+                    allowOutsideClick: false,
+                    didClose: () => {
+                        this.fez_tlc = null;
+                        this.step = 1;
+                        this.maxStep = 1;
+                        this.$nextTick(()=>window.scrollTo({top:0,behavior:'smooth'}));
+                    }
+                });
+            }
+        },
 
         onTlcEvtChange() {
             const e = this.eventosTlc.find(x => Number(x.id) === Number(this.t_evt));
             if (e && e.data_inicio) this.t_data = e.data_inicio;
+        },
+
+        getMaxDataNascimento() {
+            const hoje = new Date();
+            const max = new Date(hoje.getFullYear() - 6, hoje.getMonth(), hoje.getDate());
+            return max.toISOString().split('T')[0];
         },
 
         // Direto (sem TLC)

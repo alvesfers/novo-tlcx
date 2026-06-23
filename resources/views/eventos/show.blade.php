@@ -2,10 +2,14 @@
 
 @section('content')
 <div class="container mx-auto px-4 py-8">
-    <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">{{ $evento->nome }}</h1>
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-8">
         <div>
-            <a href="{{ route('eventos.edit', $evento) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mr-2">
+            <h1 class="text-4xl font-bold">{{ $evento->nome }}</h1>
+            <p class="text-gray-600 mt-1">{{ $evento->entidadeCriadora->nome }}</p>
+        </div>
+        <div class="flex gap-2">
+            <a href="{{ route('eventos.edit', $evento) }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
                 Editar
             </a>
             <a href="{{ route('eventos.index') }}" class="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400">
@@ -14,14 +18,17 @@
         </div>
     </div>
 
-    @if (session('success'))
-    <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-        {{ session('success') }}
-    </div>
-    @endif
+    <!-- Conteúdo Principal -->
+    <div>
+            @if (session('success'))
+            <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                {{ session('success') }}
+            </div>
+            @endif
 
-    <!-- Informações do Evento -->
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <!-- Módulo: Detalhes -->
+            <div class="space-y-6">
+            <div class="bg-white rounded-lg shadow p-6">
         <div class="grid grid-cols-2 gap-6">
             <div>
                 <p class="text-gray-600 text-sm font-semibold">Tipo</p>
@@ -78,8 +85,12 @@
         @endif
     </div>
 
-    <!-- Entidades Envolvidas -->
-    <div x-data="entidadesManager()" class="bg-white rounded-lg shadow p-6 mb-6">
+            <!-- Fim Detalhes -->
+            </div>
+
+            <!-- Seção: Entidades Envolvidas -->
+            <div id="entidades" class="space-y-6 scroll-mt-20">
+            <div x-data="entidadesManager()" class="bg-white rounded-lg shadow p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">Entidades Envolvidas</h2>
             <button onclick="openModal('entidadeModal', false, { evento_id: {{ $evento->id }} })" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
@@ -125,8 +136,12 @@
         </table>
     </div>
 
-    <!-- Participantes Dirigentes -->
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
+            </div>
+            </div>
+
+            <!-- Seção: Participantes Dirigentes -->
+            <div id="dirigentes" class="space-y-6 scroll-mt-20">
+            <div class="bg-white rounded-lg shadow p-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-bold">Participantes Dirigentes</h2>
             <div class="flex gap-2">
@@ -245,9 +260,13 @@
             </table>
         </div>
 
-    <!-- Tipos de Camiseta -->
-    @if ($evento->tiposCamiseta->count())
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
+            </div>
+            </div>
+
+            <!-- Seção: Tipos de Camiseta -->
+            @if ($evento->isModuloHabilitado('tipos_camiseta'))
+            <div id="camisetas" class="space-y-6 scroll-mt-20">
+            <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-xl font-bold mb-4">Tipos de Camiseta Disponíveis</h2>
 
         <div x-data="{ activeType: null }" class="space-y-3">
@@ -302,11 +321,14 @@
             @endforeach
         </div>
     </div>
-    @endif
+            </div>
+            </div>
+            @endif
 
-    <!-- Tabela de Preços -->
-    @if ($evento->valores->count())
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <!-- Seção: Preços -->
+            @if ($evento->isModuloHabilitado('precos'))
+            <div id="precos" class="space-y-6 scroll-mt-20">
+            <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-xl font-bold mb-4">Tabela de Preços</h2>
 
         <table class="w-full">
@@ -327,14 +349,16 @@
                 @endforeach
             </tbody>
         </table>
-    </div>
-    @endif
+            </div>
+            </div>
+            @endif
 
-    <!-- Barzinhos do Evento -->
-    @if ($evento->barzinhos && $evento->barzinhos->count())
-    <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <!-- Seção: Barzinho -->
+            @if ($evento->isModuloHabilitado('barzinho') && $evento->barzinho)
+            <div id="barzinho" class="space-y-6 scroll-mt-20">
+            <div class="bg-white rounded-lg shadow p-6">
         <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Barzinhos do Evento</h2>
+            <h2 class="text-xl font-bold">Barzinho do Evento</h2>
         </div>
 
         <div class="space-y-3">
@@ -360,17 +384,20 @@
             </div>
             @endforeach
         </div>
-    </div>
-    @endif
+            </div>
+            </div>
+            @endif
 
-    <!-- Participantes Externos -->
-    <div x-data="participantesManager()" class="bg-white rounded-lg shadow p-6 mb-6">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Participantes Externos</h2>
-            <button onclick="openModal('participanteModal', false, { evento_id: {{ $evento->id }}, tipo_participante: 'externo' })" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
-                Adicionar Externo
-            </button>
-        </div>
+            <!-- Seção: Participantes Externos -->
+            @if ($evento->isModuloHabilitado('participantes_externos'))
+            <div id="externos" class="space-y-6 scroll-mt-20">
+            <div x-data="participantesManager()" class="bg-white rounded-lg shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Participantes Externos</h2>
+                    <button onclick="openModal('participanteModal', false, { evento_id: {{ $evento->id }}, tipo_participante: 'externo' })" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm">
+                        Adicionar Externo
+                    </button>
+                </div>
 
         <table class="w-full">
             <thead class="bg-gray-100">
@@ -414,6 +441,53 @@
                 @endforelse
             </tbody>
         </table>
+            </div>
+            </div>
+            </div>
+            @endif
+
+            <!-- Seção: Cronograma -->
+            @if ($evento->isModuloHabilitado('cronograma'))
+            <div id="cronograma" class="space-y-6 scroll-mt-20">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <h2 class="text-xl font-bold mb-4">Cronograma de Atividades</h2>
+                    <div id="cronograma-container" class="space-y-3">
+                        @forelse ($evento->getCronogramaOrdenado() as $atividade)
+                            <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                                <div class="flex justify-between items-start">
+                                    <div class="flex-1">
+                                        <div class="flex items-center gap-2">
+                                            <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-2 py-1 rounded">
+                                                Dia {{ $atividade['dia'] }}
+                                            </span>
+                                            <span class="text-gray-900 font-semibold">{{ $atividade['horario'] }}</span>
+                                        </div>
+                                        <h3 class="text-lg font-bold text-gray-900 mt-2">{{ $atividade['titulo'] }}</h3>
+                                        @if($atividade['descricao'])
+                                            <p class="text-gray-600 mt-2">{{ $atividade['descricao'] }}</p>
+                                        @endif
+                                        <div class="flex gap-4 mt-3 text-sm text-gray-600">
+                                            @if($atividade['local'])
+                                                <span><strong>Local:</strong> {{ $atividade['local'] }}</span>
+                                            @endif
+                                            @if($atividade['responsavel'])
+                                                <span><strong>Responsável:</strong> {{ $atividade['responsavel'] }}</span>
+                                            @endif
+                                            @if($atividade['duracao_minutos'])
+                                                <span><strong>Duração:</strong> {{ $atividade['duracao_minutos'] }}min</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="text-gray-500 text-center py-8">Nenhuma atividade no cronograma</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+            @endif
+
     </div>
 
     <!-- Modal for Entidades -->

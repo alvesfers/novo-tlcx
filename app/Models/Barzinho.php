@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\TipoBarzinho;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,11 +18,15 @@ class Barzinho extends Model
         'evento_id',
         'nome',
         'descricao',
+        'tipo_venda',
+        'barzinho_config',
         'ativo',
     ];
 
     protected $casts = [
         'ativo' => 'boolean',
+        'tipo_venda' => TipoBarzinho::class,
+        'barzinho_config' => 'json',
     ];
 
     public function evento(): BelongsTo
