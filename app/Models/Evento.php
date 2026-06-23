@@ -32,6 +32,8 @@ class Evento extends Model
         'modulos_habilitados',
         'id_casa',
         'fornecedores_camisetas_id',
+        'quartos',
+        'grupos',
     ];
 
     protected $casts = [

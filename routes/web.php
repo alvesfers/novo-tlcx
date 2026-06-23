@@ -192,6 +192,10 @@ Route::middleware('auth')->group(function () {
         ->name('eventos.externos.index');
     Route::get('/eventos/{evento}/cronograma', [\App\Http\Controllers\EventoCronogramaPageController::class, 'index'])
         ->name('eventos.cronograma.index');
+    Route::get('/eventos/{evento}/quartos', [\App\Http\Controllers\EventoQuartosPageController::class, 'index'])
+        ->name('eventos.quartos.index');
+    Route::get('/eventos/{evento}/grupos', [\App\Http\Controllers\EventoGruposPageController::class, 'index'])
+        ->name('eventos.grupos.index');
 
     // API: Cronograma
     Route::get('/api/eventos/{evento}/cronograma', [EventoCronogramaController::class, 'listar'])
@@ -202,6 +206,22 @@ Route::middleware('auth')->group(function () {
         ->name('api.eventos.cronograma.editar');
     Route::delete('/api/eventos/{evento}/cronograma/{cronogramaId}', [EventoCronogramaController::class, 'remover'])
         ->name('api.eventos.cronograma.remover');
+
+    // API: Quartos
+    Route::post('/api/eventos/{evento}/quartos/adicionar', [\App\Http\Controllers\Api\EventoQuartosApiController::class, 'adicionar'])
+        ->name('api.eventos.quartos.adicionar');
+    Route::post('/api/eventos/{evento}/quartos/remover', [\App\Http\Controllers\Api\EventoQuartosApiController::class, 'remover'])
+        ->name('api.eventos.quartos.remover');
+
+    // API: Grupos
+    Route::post('/api/eventos/{evento}/grupos', [\App\Http\Controllers\EventoGruposPageController::class, 'store'])
+        ->name('api.eventos.grupos.store');
+    Route::post('/api/eventos/{evento}/grupos/participante', [\App\Http\Controllers\EventoGruposPageController::class, 'adicionarParticipante'])
+        ->name('api.eventos.grupos.adicionar-participante');
+    Route::delete('/api/eventos/{evento}/grupos/participante', [\App\Http\Controllers\EventoGruposPageController::class, 'removerParticipante'])
+        ->name('api.eventos.grupos.remover-participante');
+    Route::delete('/api/eventos/{evento}/grupos/{grupo_id}', [\App\Http\Controllers\EventoGruposPageController::class, 'deletar'])
+        ->name('api.eventos.grupos.deletar');
 
     Route::resource('eventos', EventoController::class);
     Route::post('/eventos/delete-multiple', [EventoController::class, 'deleteMultiple'])->name('eventos.delete-multiple');

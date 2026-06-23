@@ -13,6 +13,8 @@ enum ModulosEvento: string
     case BARZINHO = 'barzinho';
     case CRONOGRAMA = 'cronograma';
     case CHECKIN = 'checkin';
+    case QUARTOS = 'quartos';
+    case GRUPOS = 'grupos';
 
     public function label(): string
     {
@@ -26,6 +28,8 @@ enum ModulosEvento: string
             self::BARZINHO => 'Barzinho',
             self::CRONOGRAMA => 'Cronograma',
             self::CHECKIN => 'Check-in',
+            self::QUARTOS => 'Alocação de Quartos',
+            self::GRUPOS => 'Grupos de Participantes',
         };
     }
 
@@ -41,6 +45,8 @@ enum ModulosEvento: string
             self::BARZINHO => '🍷',
             self::CRONOGRAMA => '⏰',
             self::CHECKIN => '✓',
+            self::QUARTOS => '🛏️',
+            self::GRUPOS => '👫',
         };
     }
 }

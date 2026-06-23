@@ -234,6 +234,44 @@
                     </li>
                     @endif
 
+                    <!-- Quartos -->
+                    @if ($modulos['quartos'] ?? false)
+                    <li>
+                        <a href="{{ route('eventos.quartos.index', $eventoId) }}" class="menu-item group"
+                            :class="[
+                                isActive('/eventos/{{ $eventoId }}/quartos') ? 'menu-item-active' : 'menu-item-inactive',
+                                (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/quartos') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
+                                <x-menu-icon icon="home" />
+                            </span>
+                            <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                class="menu-item-text">Quartos</span>
+                        </a>
+                    </li>
+                    @endif
+
+                    <!-- Grupos -->
+                    @if ($modulos['grupos'] ?? false)
+                    <li>
+                        <a href="{{ route('eventos.grupos.index', $eventoId) }}" class="menu-item group"
+                            :class="[
+                                isActive('/eventos/{{ $eventoId }}/grupos') ? 'menu-item-active' : 'menu-item-inactive',
+                                (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
+                                'xl:justify-center' :
+                                'justify-start'
+                            ]">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/grupos') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
+                                <x-menu-icon icon="users" />
+                            </span>
+                            <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                class="menu-item-text">Grupos</span>
+                        </a>
+                    </li>
+                    @endif
+
                     <!-- Check-in -->
                     @if ($modulos['checkin'] ?? false)
                     <li>
