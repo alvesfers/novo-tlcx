@@ -45,6 +45,11 @@ Route::post('/inscricao', [InscricaoController::class, 'store'])->name('inscrica
 Route::get('/inscricoes/secretarias', [\App\Http\Controllers\InscricoesSecretariasController::class, 'index'])->name('inscricoes.secretarias');
 Route::post('/inscricoes/secretarias/store', [\App\Http\Controllers\InscricoesSecretariasController::class, 'storeSecretaria'])->name('inscricoes.secretarias.store');
 Route::post('/inscricoes/secretarias/habilidade', [\App\Http\Controllers\InscricoesSecretariasController::class, 'storeHabilidade'])->name('inscricoes.secretarias.habilidade.store');
+
+// Formulários públicos para participantes externos
+Route::get('/evento/{eventoUuid}/cadastro', [\App\Http\Controllers\Public\FormularioParticipanteController::class, 'show'])->name('evento.formulario.show');
+Route::post('/evento/{eventoUuid}/cadastro', [\App\Http\Controllers\Public\FormularioParticipanteController::class, 'enviar'])->name('evento.formulario.enviar');
+Route::get('/evento/{eventoUuid}/cadastro/sucesso', [\App\Http\Controllers\Public\FormularioParticipanteController::class, 'sucesso'])->name('evento.formulario.sucesso');
 Route::delete('/inscricoes/secretarias/habilidade', [\App\Http\Controllers\InscricoesSecretariasController::class, 'deleteHabilidade'])->name('inscricoes.secretarias.habilidade.delete');
 Route::put('/inscricoes/secretarias/update', [\App\Http\Controllers\InscricoesSecretariasController::class, 'updateSecretaria'])->name('inscricoes.secretarias.update');
 

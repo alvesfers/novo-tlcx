@@ -20,6 +20,7 @@ class ParticipanteExterno extends Model
         'documento',
         'genero',
         'data_nascimento',
+        'respostas_formulario',
     ];
 
     protected $casts = [
