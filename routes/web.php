@@ -196,6 +196,8 @@ Route::middleware('auth')->group(function () {
         ->name('eventos.quartos.index');
     Route::get('/eventos/{evento}/grupos', [\App\Http\Controllers\EventoGruposPageController::class, 'index'])
         ->name('eventos.grupos.index');
+    Route::get('/eventos/{evento}/formularios', [\App\Http\Controllers\EventoFormulariosController::class, 'show'])
+        ->name('eventos.formularios.show');
 
     // API: Cronograma
     Route::get('/api/eventos/{evento}/cronograma', [EventoCronogramaController::class, 'listar'])
@@ -222,6 +224,14 @@ Route::middleware('auth')->group(function () {
         ->name('api.eventos.grupos.remover-participante');
     Route::delete('/api/eventos/{evento}/grupos/{grupo_id}', [\App\Http\Controllers\EventoGruposPageController::class, 'deletar'])
         ->name('api.eventos.grupos.deletar');
+
+    // API: Formulários
+    Route::post('/api/eventos/{evento}/formularios', [\App\Http\Controllers\EventoFormulariosController::class, 'adicionarCampo'])
+        ->name('api.eventos.formularios.adicionar');
+    Route::put('/api/eventos/{evento}/formularios/{campoId}', [\App\Http\Controllers\EventoFormulariosController::class, 'atualizarCampo'])
+        ->name('api.eventos.formularios.atualizar');
+    Route::delete('/api/eventos/{evento}/formularios/{campoId}', [\App\Http\Controllers\EventoFormulariosController::class, 'removerCampo'])
+        ->name('api.eventos.formularios.remover');
 
     Route::resource('eventos', EventoController::class);
     Route::post('/eventos/delete-multiple', [EventoController::class, 'deleteMultiple'])->name('eventos.delete-multiple');
