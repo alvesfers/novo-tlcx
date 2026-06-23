@@ -138,6 +138,16 @@ class Evento extends Model
         return $this->hasOne(Barzinho::class, 'evento_id');
     }
 
+    public function casaDeRetiro()
+    {
+        return $this->belongsTo(CasasDeRetiro::class, 'id_casa', 'id_casa');
+    }
+
+    public function fornecedorCamisetas()
+    {
+        return $this->belongsTo(FornecedorCamiseta::class, 'fornecedores_camisetas_id');
+    }
+
     public function scopeAtivos($query)
     {
         return $query->where('ativo', true);
