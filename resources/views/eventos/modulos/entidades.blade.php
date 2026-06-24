@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50" x-data="entidadesManager()">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <!-- Header -->
         <div class="mb-8">
@@ -10,7 +10,7 @@
         </div>
 
         <!-- Content -->
-        <div x-data="entidadesManager()" class="bg-white rounded-lg shadow">
+        <div class="bg-white rounded-lg shadow">
             <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
                 <h2 class="text-xl font-semibold text-gray-900">Lista de Entidades</h2>
                 <button @click="openModal()" class="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg transition">
@@ -72,8 +72,8 @@
     </div>
 
     <!-- Modal for Adding Entidades -->
-    <div x-data="entidadesManager()" x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" style="display: none;">
-        <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4">
+    <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="closeModal()" style="display: none;">
+        <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4" @click.stop>
             <div class="px-6 py-4 border-b border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900">Adicionar Entidade ao Evento</h3>
             </div>
@@ -120,9 +120,10 @@
     </div>
 </div>
 
+@push('scripts')
 <script>
-function entidadesManager() {
-    return {
+document.addEventListener('alpine:init', () => {
+    Alpine.data('entidadesManager', () => ({
         showModal: false,
         formData: {
             entidade_id: '',
@@ -136,6 +137,11 @@ function entidadesManager() {
             this.showModal = false;
         },
         submitForm() {
+            if (!this.formData.entidade_id || !this.formData.tipo_participacao) {
+                alert('Por favor, preencha todos os campos obrigatórios');
+                return;
+            }
+
             const form = document.createElement('form');
             form.method = 'POST';
             form.action = '{{ route("eventos.entidades.store", $evento) }}';
@@ -153,7 +159,8 @@ function entidadesManager() {
                 event.target.submit();
             }
         }
-    };
-}
+    }));
+});
 </script>
+@endpush
 @endsection
