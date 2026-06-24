@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Evento;
 use App\Models\Entidade;
-use Illuminate\Http\Request;
 
 class EventoEntidadesPageController extends Controller
 {
@@ -17,8 +16,12 @@ class EventoEntidadesPageController extends Controller
         }
 
         $evento->load('eventoEntidades.entidade');
-        $entidades = Entidade::ativas()->get();
 
-        return view('eventos.modulos.entidades', compact('evento', 'entidades'));
+        // Buscar dioceses, núcleos e secretarias já envolvidos
+        $dioceses = Entidade::ativas()->whereNotNull('tipo_entidade')->where('tipo_entidade', 'diocese')->get();
+        $nucleos = Entidade::ativas()->whereNotNull('tipo_entidade')->where('tipo_entidade', 'nucleo')->get();
+        $secretarias = Entidade::ativas()->whereNotNull('tipo_entidade')->where('tipo_entidade', 'secretaria')->get();
+
+        return view('eventos.modulos.entidades', compact('evento', 'dioceses', 'nucleos', 'secretarias'));
     }
 }

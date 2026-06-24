@@ -79,21 +79,80 @@
             </div>
 
             <form @submit.prevent="submitForm" class="p-6 space-y-4">
+                <!-- Passo 1: Selecionar tipo de entidade -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-900 mb-2">Entidade *</label>
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Tipo de Entidade *</label>
+                    <select
+                        x-model="formData.tipoEntidade"
+                        @change="resetSubSelects()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Selecione o tipo...</option>
+                        <option value="diocese">Diocese</option>
+                        <option value="secretaria">Secretaria</option>
+                        <option value="nucleo">Núcleo</option>
+                    </select>
+                </div>
+
+                <!-- Passo 2a: Se for Diocese -->
+                <div x-show="formData.tipoEntidade === 'diocese'">
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Diocese *</label>
                     <select
                         x-model="formData.entidade_id"
                         required
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     >
-                        <option value="">Selecione uma entidade...</option>
-                        @foreach ($entidades as $entidade)
-                            <option value="{{ $entidade->id }}">{{ $entidade->nome }}</option>
+                        <option value="">Selecione uma diocese...</option>
+                        @foreach ($dioceses as $diocese)
+                            <option value="{{ $diocese->id }}">{{ $diocese->nome }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <div>
+                <!-- Passo 2b: Se for Secretaria -->
+                <div x-show="formData.tipoEntidade === 'secretaria'">
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Secretaria *</label>
+                    <select
+                        x-model="formData.entidade_id"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Selecione uma secretaria...</option>
+                        @foreach ($secretarias as $secretaria)
+                            <option value="{{ $secretaria->id }}">{{ $secretaria->nome }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Passo 2c: Se for Núcleo -->
+                <div x-show="formData.tipoEntidade === 'nucleo'">
+                    <label class="block text-sm font-medium text-gray-900 mb-2">Diocese *</label>
+                    <select
+                        x-model="formData.dioceseId"
+                        @change="carregarNucleos()"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Selecione uma diocese...</option>
+                        @foreach ($dioceses as $diocese)
+                            <option value="{{ $diocese->id }}">{{ $diocese->nome }}</option>
+                        @endforeach
+                    </select>
+
+                    <label class="block text-sm font-medium text-gray-900 mb-2 mt-4">Núcleo *</label>
+                    <select
+                        x-model="formData.entidade_id"
+                        required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    >
+                        <option value="">Selecione um núcleo...</option>
+                        <template x-for="nucleo in nucleosFiltrados" :key="nucleo.id">
+                            <option :value="nucleo.id" x-text="nucleo.nome"></option>
+                        </template>
+                    </select>
+                </div>
+
+                <!-- Tipo de Participação -->
+                <div x-show="formData.entidade_id">
                     <label class="block text-sm font-medium text-gray-900 mb-2">Tipo de Participação *</label>
                     <select
                         x-model="formData.tipo_participacao"
@@ -125,16 +184,40 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('entidadesManager', () => ({
         showModal: false,
+        nucleosFiltrados: [],
         formData: {
+            tipoEntidade: '',
+            dioceseId: '',
             entidade_id: '',
             tipo_participacao: '',
         },
+        allNucleos: @json($nucleos),
         openModal() {
-            this.formData = { entidade_id: '', tipo_participacao: '' };
+            this.formData = {
+                tipoEntidade: '',
+                dioceseId: '',
+                entidade_id: '',
+                tipo_participacao: '',
+            };
+            this.nucleosFiltrados = [];
             this.showModal = true;
         },
         closeModal() {
             this.showModal = false;
+        },
+        resetSubSelects() {
+            this.formData.dioceseId = '';
+            this.formData.entidade_id = '';
+            this.formData.tipo_participacao = '';
+            this.nucleosFiltrados = [];
+        },
+        carregarNucleos() {
+            if (!this.formData.dioceseId) {
+                this.nucleosFiltrados = [];
+                return;
+            }
+            this.nucleosFiltrados = this.allNucleos.filter(n => n.entidade_pai_id == this.formData.dioceseId);
+            this.formData.entidade_id = '';
         },
         submitForm() {
             if (!this.formData.entidade_id || !this.formData.tipo_participacao) {
