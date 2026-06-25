@@ -113,8 +113,7 @@ window.dirigentesManager = function() {
 
 // Global info modal function
 window.openInfoModal = function(type, id, name) {
-    const modal = document.getElementById('infoModal');
-    const modalTitle = modal.querySelector('h2');
+    const modalTitle = document.getElementById('infoModalTitle');
     const modalContent = document.getElementById('infoModalContent');
 
     modalTitle.textContent = `Informações: ${name}`;
@@ -236,5 +235,5 @@ window.openInfoModal = function(type, id, name) {
             });
     }
 
-    document.getElementById('infoModal').classList.remove('hidden');
+    window.showModal('infoModal');
 };

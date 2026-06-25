@@ -261,7 +261,7 @@
     </div>
 
     <!-- Modal -->
-    <x-modal-form
+    <x-modal
         id="participanteModal"
         title="Criar Novo Participante Externo"
         resource="participante-externos"
@@ -339,7 +339,7 @@
                 <span class="text-red-500 text-sm" id="participanteModaldata_nascimentoError"></span>
             </div>
         </div>
-    </x-modal-form>
+    </x-modal>
 
     <script>
         function participantesManager() {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de Dirigentes - {{ $evento->nome }}</title>
+    <title>{{ $titulo ?? 'Cadastro de Dirigentes' }} - {{ $evento->nome }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
@@ -14,8 +14,15 @@
             <div class="bg-white rounded-lg shadow-lg p-8 md:p-12">
                 <!-- Header -->
                 <div class="mb-8">
-                    <div class="inline-block bg-blue-100 text-blue-800 text-sm font-bold px-3 py-1 rounded-full mb-3">
-                        Cadastro de Dirigentes
+                    @php
+                        $badgeClasses = match($tipo ?? 'geral') {
+                            'interno' => 'bg-blue-100 text-blue-800',
+                            'externo' => 'bg-purple-100 text-purple-800',
+                            default   => 'bg-blue-100 text-blue-800',
+                        };
+                    @endphp
+                    <div class="inline-block {{ $badgeClasses }} text-sm font-bold px-3 py-1 rounded-full mb-3">
+                        {{ $titulo ?? 'Cadastro de Dirigentes' }}
                     </div>
                     <h1 class="text-3xl md:text-4xl font-bold text-gray-900">{{ $evento->nome }}</h1>
                     <p class="text-gray-600 mt-2">{{ $evento->entidadeCriadora->nome }}</p>
@@ -180,7 +187,7 @@
 
             try {
                 const response = await axios.post(
-                    '{{ route("evento.formulario.enviar.dirigente", $evento->uuid) }}',
+                    '{{ $rotaEnvio ?? route("evento.formulario.enviar.dirigente", $evento->uuid) }}',
                     data,
                     {
                         headers: {

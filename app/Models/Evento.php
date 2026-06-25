@@ -34,6 +34,10 @@ class Evento extends Model
         'fornecedores_camisetas_id',
         'quartos',
         'grupos',
+        'formulario_dirigentes',
+        'formulario_dirigentes_interno',
+        'formulario_dirigentes_externo',
+        'formulario_participantes',
     ];
 
     protected $casts = [
@@ -44,6 +48,10 @@ class Evento extends Model
         'ativo' => 'boolean',
         'cronograma' => 'json',
         'modulos_habilitados' => 'json',
+        'formulario_dirigentes' => 'json',
+        'formulario_dirigentes_interno' => 'json',
+        'formulario_dirigentes_externo' => 'json',
+        'formulario_participantes' => 'json',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -126,6 +134,16 @@ class Evento extends Model
     public function valores()
     {
         return $this->hasMany(EventoValor::class);
+    }
+
+    public function tiposInscricao()
+    {
+        return $this->hasMany(EventoTipoInscricao::class)->orderBy('ordem');
+    }
+
+    public function tiposInscricaoAtivos()
+    {
+        return $this->tiposInscricao()->where('ativo', true);
     }
 
     public function barzinhos()

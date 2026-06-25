@@ -266,7 +266,7 @@
     </div>
 
     <!-- Modal -->
-    <x-modal-form
+    <x-modal
         id="vinculoModal"
         title="Criar Novo Vínculo"
         :resource="'dirigentes.vinculos'"
@@ -362,7 +362,7 @@
                 <span class="ml-2">Vínculo ativo no sistema</span>
             </label>
         </div>
-    </x-modal-form>
+    </x-modal>
 </div>
 
 <script>

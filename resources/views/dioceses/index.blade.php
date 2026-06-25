@@ -290,10 +290,9 @@
     </div>
 
     <!-- Modal de Criação/Edição -->
-    <x-crud-modal
+    <x-modal
         id="dioceseModal"
         title="Criar Nova Diocese"
-        formId="dioceseModalForm"
         submitText="Criar"
     >
         <input type="hidden" name="id" id="dioceseId" value="">
@@ -339,7 +338,7 @@
                 <span class="ml-2">Diocese ativa no sistema</span>
             </label>
         </div>
-    </x-crud-modal>
+    </x-modal>
 
     <!-- Info Modal -->
     <x-info-modal id="infoModal">
@@ -357,7 +356,7 @@
         document.getElementById('dioceseModalForm').reset();
         document.getElementById('dioceseId').value = '';
         document.getElementById('ativoField').style.display = 'none';
-        document.getElementById('dioceseModal').classList.remove('hidden');
+        showModal('dioceseModal');
     }
 
     // Abre modal para editar diocese
@@ -377,7 +376,7 @@
         if (emailEl) emailEl.value = email;
         if (ativoEl) ativoEl.checked = ativo == 1 || ativo == true;
         if (ativoField) ativoField.style.display = 'block';
-        document.getElementById('dioceseModal').classList.remove('hidden');
+        showModal('dioceseModal');
     }
 
     // Submete o formulário
@@ -414,7 +413,7 @@
                 return;
             }
 
-            document.getElementById('dioceseModal').classList.add('hidden');
+            hideModal('dioceseModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

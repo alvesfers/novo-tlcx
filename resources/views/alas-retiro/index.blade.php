@@ -90,10 +90,9 @@
     @endif
 
     <!-- CRUD Modal -->
-    <x-crud-modal
+    <x-modal
         id="alaModal"
         title="Criar Nova Ala"
-        formId="alaForm"
         submitText="Criar"
     >
         <input type="hidden" name="id" id="alaId">
@@ -109,7 +108,7 @@
             <textarea name="descricao" id="alaDescricao" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             <span class="text-red-500 text-sm" id="descricaoError"></span>
         </div>
-    </x-crud-modal>
+    </x-modal>
 </div>
 
 <form id="deleteForm" method="POST" style="display: none;">
@@ -121,9 +120,9 @@
 function openCreateAlaModal() {
     document.getElementById('alaModalTitle').textContent = 'Criar Nova Ala';
     document.getElementById('alaModalSubmitText').textContent = 'Criar';
-    document.getElementById('alaForm').reset();
+    document.getElementById('alaModalForm').reset();
     document.getElementById('alaId').value = '';
-    document.getElementById('alaModal').classList.remove('hidden');
+    showModal('alaModal');
 }
 
 function openEditAlaModal(id, nome, descricao) {
@@ -132,10 +131,10 @@ function openEditAlaModal(id, nome, descricao) {
     document.getElementById('alaId').value = id;
     document.getElementById('alaNome').value = nome;
     document.getElementById('alaDescricao').value = descricao;
-    document.getElementById('alaModal').classList.remove('hidden');
+    showModal('alaModal');
 }
 
-document.getElementById('alaForm').addEventListener('submit', async function(e) {
+document.getElementById('alaModalForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const id = document.getElementById('alaId').value;
@@ -168,7 +167,7 @@ document.getElementById('alaForm').addEventListener('submit', async function(e) 
             return;
         }
 
-        document.getElementById('alaModal').classList.add('hidden');
+        hideModal('alaModal');
         Swal.fire({
             icon: 'success',
             title: 'Sucesso!',

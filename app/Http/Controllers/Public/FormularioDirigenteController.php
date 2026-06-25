@@ -10,106 +10,134 @@ use Illuminate\Http\Request;
 
 class FormularioDirigenteController extends Controller
 {
-    public function show($eventoUuid)
+    // ── Formulário geral (legado) ────────────────────────────────────────────
+
+    public function show(string $eventoUuid)
     {
-        $evento = Evento::where('uuid', $eventoUuid)->firstOrFail();
-
+        $evento    = Evento::where('uuid', $eventoUuid)->firstOrFail();
         $formulario = $evento->formulario_dirigentes ?? [];
-
         return view('public.formulario-dirigente', compact('evento', 'formulario'));
     }
 
-    public function enviar(Request $request, $eventoUuid)
+    public function enviar(Request $request, string $eventoUuid)
+    {
+        $evento    = Evento::where('uuid', $eventoUuid)->firstOrFail();
+        $formulario = $evento->formulario_dirigentes ?? [];
+        return $this->processarEnvio($request, $evento, $formulario, 'geral');
+    }
+
+    public function sucesso(string $eventoUuid)
     {
         $evento = Evento::where('uuid', $eventoUuid)->firstOrFail();
+        return view('public.formulario-sucesso-dirigente', compact('evento'));
+    }
 
-        $formulario = $evento->formulario_dirigentes ?? [];
+    // ── Formulário interno ───────────────────────────────────────────────────
+
+    public function showInterno(string $eventoUuid)
+    {
+        $evento    = Evento::where('uuid', $eventoUuid)->firstOrFail();
+        $formulario = $evento->formulario_dirigentes_interno ?? [];
+
+        if (empty($formulario)) {
+            abort(404, 'Formulário para dirigentes internos não configurado.');
+        }
+
+        return view('public.formulario-dirigente', [
+            'evento'     => $evento,
+            'formulario' => $formulario,
+            'tipo'       => 'interno',
+            'titulo'     => 'Formulário — Dirigente Interno',
+            'rotaEnvio'  => route('evento.formulario.enviar.dirigente.interno', $eventoUuid),
+        ]);
+    }
+
+    public function enviarInterno(Request $request, string $eventoUuid)
+    {
+        $evento    = Evento::where('uuid', $eventoUuid)->firstOrFail();
+        $formulario = $evento->formulario_dirigentes_interno ?? [];
+        return $this->processarEnvio($request, $evento, $formulario, 'interno');
+    }
+
+    // ── Formulário externo ───────────────────────────────────────────────────
+
+    public function showExterno(string $eventoUuid)
+    {
+        $evento    = Evento::where('uuid', $eventoUuid)->firstOrFail();
+        $formulario = $evento->formulario_dirigentes_externo ?? [];
+
+        if (empty($formulario)) {
+            abort(404, 'Formulário para dirigentes externos não configurado.');
+        }
+
+        return view('public.formulario-dirigente', [
+            'evento'     => $evento,
+            'formulario' => $formulario,
+            'tipo'       => 'externo',
+            'titulo'     => 'Formulário — Dirigente Externo',
+            'rotaEnvio'  => route('evento.formulario.enviar.dirigente.externo', $eventoUuid),
+        ]);
+    }
+
+    public function enviarExterno(Request $request, string $eventoUuid)
+    {
+        $evento    = Evento::where('uuid', $eventoUuid)->firstOrFail();
+        $formulario = $evento->formulario_dirigentes_externo ?? [];
+        return $this->processarEnvio($request, $evento, $formulario, 'externo');
+    }
+
+    // ── Processamento compartilhado ──────────────────────────────────────────
+
+    private function processarEnvio(Request $request, Evento $evento, array $formulario, string $tipo): \Illuminate\Http\JsonResponse
+    {
+        if (empty($formulario)) {
+            return response()->json(['success' => false, 'message' => 'Formulário não configurado.'], 422);
+        }
+
+        // Monta regras de validação dinâmicas
         $regras = [];
-
-        // Gerar regras de validação dinâmicas
         foreach ($formulario as $campo) {
-            $campoNome = preg_replace('/[^a-zA-Z0-9_]/', '_', strtolower($campo['nome']));
-
-            if ($campo['obrigatorio']) {
-                $regras[$campoNome] = 'required';
-            } else {
-                $regras[$campoNome] = 'nullable';
-            }
-
-            // Adicionar tipo de validação
-            if ($campo['tipo'] === 'email') {
-                $regras[$campoNome] .= '|email';
-            } elseif ($campo['tipo'] === 'number') {
-                $regras[$campoNome] .= '|numeric';
-            } elseif ($campo['tipo'] === 'date') {
-                $regras[$campoNome] .= '|date';
-            }
-
-            $regras[$campoNome] = array_filter(explode('|', $regras[$campoNome]));
+            $chave = $this->slugCampo($campo['nome']);
+            $regra = $campo['obrigatorio'] ? 'required' : 'nullable';
+            if ($campo['tipo'] === 'email')  $regra .= '|email';
+            if ($campo['tipo'] === 'number') $regra .= '|numeric';
+            if ($campo['tipo'] === 'date')   $regra .= '|date';
+            $regras[$chave] = array_filter(explode('|', $regra));
         }
 
         $validated = $request->validate($regras);
 
-        // Criar ou obter dirigente
-        $nomeField = preg_replace('/[^a-zA-Z0-9_]/', '_', strtolower($formulario[0]['nome'] ?? 'nome'));
-        $nome = $validated[$nomeField] ?? 'Dirigente';
+        // Busca campo nome e email
+        $nomeCampo  = $this->slugCampo($formulario[0]['nome'] ?? 'nome');
+        $nome       = $validated[$nomeCampo] ?? 'Dirigente';
+        $emailCampo = collect($formulario)->first(fn($c) => $c['tipo'] === 'email');
+        $email      = $emailCampo ? ($validated[$this->slugCampo($emailCampo['nome'])] ?? null) : null;
 
-        $emailField = null;
-        foreach ($formulario as $campo) {
-            if ($campo['tipo'] === 'email') {
-                $emailField = preg_replace('/[^a-zA-Z0-9_]/', '_', strtolower($campo['nome']));
-                break;
-            }
-        }
-        $email = $emailField ? ($validated[$emailField] ?? null) : null;
+        // Busca ou cria o dirigente
+        $dirigente = Dirigente::when($email, fn($q) => $q->where('email', $email))
+            ->where('nome', $nome)
+            ->first()
+            ?? Dirigente::create(['nome' => $nome, 'email' => $email, 'ativo' => true]);
 
-        // Buscar ou criar dirigente
-        $dirigente = Dirigente::where('nome', $nome)
-            ->where('email', $email)
-            ->first();
-
-        if (!$dirigente) {
-            $dirigente = Dirigente::create([
-                'nome' => $nome,
-                'email' => $email,
-                'data_inicio' => now(),
-                'ativo' => true,
-            ]);
-        }
-
-        // Criar ou atualizar evento_participante com respostas
-        $eventoParticipante = EventoParticipante::where('evento_id', $evento->id)
-            ->where('dirigente_id', $dirigente->id)
-            ->where('tipo_participante', 'dirigente')
-            ->first();
-
-        if ($eventoParticipante) {
-            // Atualizar respostas se já existir
-            $eventoParticipante->update([
-                'respostas_formulario' => $validated,
-            ]);
-        } else {
-            // Criar novo registro
-            EventoParticipante::create([
-                'evento_id' => $evento->id,
-                'dirigente_id' => $dirigente->id,
+        // Cria ou atualiza participação
+        EventoParticipante::updateOrCreate(
+            [
+                'evento_id'        => $evento->id,
+                'dirigente_id'     => $dirigente->id,
                 'tipo_participante' => 'dirigente',
-                'presenca' => false,
-                'respostas_formulario' => $validated,
-            ]);
-        }
+            ],
+            ['respostas_formulario' => $validated, 'presenca' => false]
+        );
 
         return response()->json([
-            'success' => true,
-            'message' => 'Formulário enviado com sucesso! Obrigado por participar.',
-            'redirect' => route('evento.formulario.sucesso.dirigente', $eventoUuid),
+            'success'  => true,
+            'message'  => 'Formulário enviado com sucesso! Obrigado por participar.',
+            'redirect' => route('evento.formulario.sucesso.dirigente', $evento->uuid),
         ]);
     }
 
-    public function sucesso($eventoUuid)
+    private function slugCampo(string $nome): string
     {
-        $evento = Evento::where('uuid', $eventoUuid)->firstOrFail();
-
-        return view('public.formulario-sucesso-dirigente', compact('evento'));
+        return preg_replace('/[^a-zA-Z0-9_]/', '_', strtolower($nome));
     }
 }

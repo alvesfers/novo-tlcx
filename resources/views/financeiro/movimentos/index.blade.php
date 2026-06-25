@@ -232,7 +232,7 @@
     </div>
 
     <!-- Modal -->
-    <x-modal-form
+    <x-modal
         id="movimentoModal"
         title="Criar Novo Movimento"
         resource="financeiro-movimentos"
@@ -348,7 +348,7 @@
             ></textarea>
             <span class="text-red-500 text-sm" id="movimentoModalobservacaoError"></span>
         </div>
-    </x-modal-form>
+    </x-modal>
 
     <script>
         function movimentosManager() {

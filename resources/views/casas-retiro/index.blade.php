@@ -102,10 +102,9 @@
     @endif
 
     <!-- CRUD Modal -->
-    <x-crud-modal
+    <x-modal
         id="casaModal"
         title="Criar Nova Casa de Retiro"
-        formId="casaForm"
         submitText="Criar"
     >
         <input type="hidden" name="id" id="casaId">
@@ -147,7 +146,7 @@
                 <span class="ml-2 text-sm font-medium">Casa ativa</span>
             </label>
         </div>
-    </x-crud-modal>
+    </x-modal>
 </div>
 
 <form id="deleteForm" method="POST" style="display: none;">
@@ -159,10 +158,10 @@
 function openCreateCasaModal() {
     document.getElementById('casaModalTitle').textContent = 'Criar Nova Casa de Retiro';
     document.getElementById('casaModalSubmitText').textContent = 'Criar';
-    document.getElementById('casaForm').reset();
+    document.getElementById('casaModalForm').reset();
     document.getElementById('casaId').value = '';
     document.getElementById('casaAtivaField').style.display = 'none';
-    document.getElementById('casaModal').classList.remove('hidden');
+    showModal('casaModal');
 }
 
 function openEditCasaModal(id, nome, endereco, valor, capacidade, acessibilidade, ativa) {
@@ -176,10 +175,10 @@ function openEditCasaModal(id, nome, endereco, valor, capacidade, acessibilidade
     document.getElementById('casaAcessibilidade').checked = acessibilidade == 1 || acessibilidade == true;
     document.getElementById('casaAtiva').checked = ativa == 1 || ativa == true;
     document.getElementById('casaAtivaField').style.display = 'block';
-    document.getElementById('casaModal').classList.remove('hidden');
+    showModal('casaModal');
 }
 
-document.getElementById('casaForm').addEventListener('submit', async function(e) {
+document.getElementById('casaModalForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const id = document.getElementById('casaId').value;
@@ -212,7 +211,7 @@ document.getElementById('casaForm').addEventListener('submit', async function(e)
             return;
         }
 
-        document.getElementById('casaModal').classList.add('hidden');
+        hideModal('casaModal');
         Swal.fire({
             icon: 'success',
             title: 'Sucesso!',

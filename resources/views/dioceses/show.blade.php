@@ -201,10 +201,9 @@
 </div>
 
 <!-- Modal para editar diocese -->
-<x-crud-modal
+<x-modal
     id="dioceseEditModal"
     title="Editar Diocese"
-    formId="dioceseEditForm"
     submitText="Atualizar"
 >
     <input type="hidden" name="id" id="dioceseId" value="">
@@ -239,7 +238,7 @@
             <span class="ml-2">Diocese ativa no sistema</span>
         </label>
     </div>
-</x-crud-modal>
+</x-modal>
 
 <script>
     function dioceseShowManager() {
@@ -269,14 +268,14 @@
         document.getElementById('dioceseName').value = nome;
         document.getElementById('dioceseEmail').value = email;
         document.getElementById('dioceseAtivo').checked = ativo == 1 || ativo == true;
-        document.getElementById('dioceseEditModal').classList.remove('hidden');
+        showModal('dioceseEditModal');
     }
 
     async function submitDioceseForm(event) {
         event.preventDefault();
         const id = document.getElementById('dioceseId').value;
         const url = `/dioceses/${id}`;
-        const formData = new FormData(document.getElementById('dioceseEditForm'));
+        const formData = new FormData(document.getElementById('dioceseEditModalForm'));
         const data = Object.fromEntries(formData);
 
         try {
@@ -302,7 +301,7 @@
                 return;
             }
 
-            document.getElementById('dioceseEditModal').classList.add('hidden');
+            hideModal('dioceseEditModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

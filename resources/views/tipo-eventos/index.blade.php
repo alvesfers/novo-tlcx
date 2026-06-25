@@ -218,7 +218,7 @@
     </div>
 
     <!-- Modal -->
-    <x-modal-form
+    <x-modal
         id="tipoEventoModal"
         title="Criar Novo Tipo de Evento"
         resource="tipo-eventos"
@@ -246,7 +246,7 @@
             ></textarea>
             <span class="text-red-500 text-sm" id="tipoEventoModaldescricaoError"></span>
         </div>
-    </x-modal-form>
+    </x-modal>
 
     <script>
         function tiposEventoManager() {

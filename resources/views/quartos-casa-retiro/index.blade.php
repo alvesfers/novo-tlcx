@@ -109,10 +109,9 @@
     @endif
 
     <!-- CRUD Modal -->
-    <x-crud-modal
+    <x-modal
         id="quartoModal"
         title="Criar Novo Quarto"
-        formId="quartoForm"
         submitText="Criar"
     >
         <input type="hidden" name="id" id="quartoId">
@@ -141,7 +140,7 @@
                 <span class="ml-2 text-sm font-medium">Acessibilidade</span>
             </label>
         </div>
-    </x-crud-modal>
+    </x-modal>
 </div>
 
 <form id="deleteForm" method="POST" style="display: none;">
@@ -153,9 +152,9 @@
 function openCreateQuartoModal() {
     document.getElementById('quartoModalTitle').textContent = 'Criar Novo Quarto';
     document.getElementById('quartoModalSubmitText').textContent = 'Criar';
-    document.getElementById('quartoForm').reset();
+    document.getElementById('quartoModalForm').reset();
     document.getElementById('quartoId').value = '';
-    document.getElementById('quartoModal').classList.remove('hidden');
+    showModal('quartoModal');
 }
 
 function openEditQuartoModal(id, numero, vagas, banheiros, acessibilidade) {
@@ -166,10 +165,10 @@ function openEditQuartoModal(id, numero, vagas, banheiros, acessibilidade) {
     document.getElementById('quartoVagas').value = vagas;
     document.getElementById('quartoBanheiros').value = banheiros;
     document.getElementById('quartoAcessibilidade').checked = acessibilidade == 1 || acessibilidade == true;
-    document.getElementById('quartoModal').classList.remove('hidden');
+    showModal('quartoModal');
 }
 
-document.getElementById('quartoForm').addEventListener('submit', async function(e) {
+document.getElementById('quartoModalForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const id = document.getElementById('quartoId').value;
@@ -202,7 +201,7 @@ document.getElementById('quartoForm').addEventListener('submit', async function(
             return;
         }
 
-        document.getElementById('quartoModal').classList.add('hidden');
+        hideModal('quartoModal');
         Swal.fire({
             icon: 'success',
             title: 'Sucesso!',

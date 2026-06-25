@@ -140,6 +140,24 @@
                     </li>
                     @endif
 
+                    <!-- Inscrições -->
+                    @if ($modulos['inscricoes'] ?? false)
+                    <li>
+                        <a href="{{ route('eventos.inscricoes.index', $eventoId) }}" class="menu-item group"
+                            :class="[
+                                isActive('/eventos/{{ $eventoId }}/inscricoes') ? 'menu-item-active' : 'menu-item-inactive',
+                                (!$store.sidebar.isExpanded && !$store.sidebar.isHovered && !$store.sidebar.isMobileOpen) ?
+                                'xl:justify-center' : 'justify-start'
+                            ]">
+                            <span :class="isActive('/eventos/{{ $eventoId }}/inscricoes') ? 'menu-item-icon-active' : 'menu-item-icon-inactive'">
+                                <x-menu-icon icon="ticket" />
+                            </span>
+                            <span x-show="$store.sidebar.isExpanded || $store.sidebar.isHovered || $store.sidebar.isMobileOpen"
+                                class="menu-item-text">Inscrições</span>
+                        </a>
+                    </li>
+                    @endif
+
                     <!-- Participantes Dirigentes -->
                     @if ($modulos['participantes_dirigentes'] ?? false)
                     <li>

@@ -10,6 +10,7 @@
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <style>[x-cloak]{display:none!important}</style>
 
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -205,6 +206,108 @@
         </div>
 
     </div>
+
+<script>
+(function() {
+    if (window._tlcModalInited) return;
+    window._tlcModalInited = true;
+    window.modalStates = {};
+
+    window.showModal = function(id) {
+        window.dispatchEvent(new Event('open-modal-' + id.toLowerCase()));
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.hideModal = function(id) {
+        window.dispatchEvent(new Event('close-modal-' + id.toLowerCase()));
+        document.body.style.overflow = '';
+    };
+
+    window.openModal = function(id, isEditing, data) {
+        isEditing = isEditing || false;
+        data = data || null;
+        window.modalStates[id] = window.modalStates[id] || { isEditing: false, currentId: null, resourceName: null };
+
+        var form = document.getElementById(id + 'Form');
+        var title = document.getElementById(id + 'Title');
+        var submitBtn = document.getElementById(id + 'SubmitBtn');
+
+        if (isEditing && data) {
+            window.modalStates[id].isEditing = true;
+            window.modalStates[id].currentId = data.id;
+            if (title) {
+                var orig = title.getAttribute('data-create-title') || title.textContent;
+                title.setAttribute('data-create-title', orig);
+                title.textContent = orig.replace(/\b(Criar|Novo|Nova)\b/gi, 'Editar');
+            }
+            if (submitBtn) submitBtn.textContent = 'Atualizar';
+            if (form) {
+                Object.keys(data).forEach(function(key) {
+                    var input = form.querySelector('[name="' + key + '"]');
+                    if (input) {
+                        if (input.type === 'checkbox') input.checked = !!data[key];
+                        else input.value = data[key] != null ? data[key] : '';
+                    }
+                });
+                form.querySelectorAll('[data-edit-only]').forEach(function(el) { el.style.display = 'block'; });
+                form.querySelectorAll('[data-create-only]').forEach(function(el) { el.style.display = 'none'; });
+            }
+        } else {
+            window.modalStates[id].isEditing = false;
+            window.modalStates[id].currentId = null;
+            if (title) {
+                var orig = title.getAttribute('data-create-title') || title.textContent;
+                title.textContent = orig;
+            }
+            if (submitBtn) submitBtn.textContent = 'Criar';
+            if (form) {
+                form.reset();
+                form.querySelectorAll('[data-edit-only]').forEach(function(el) { el.style.display = 'none'; });
+                form.querySelectorAll('[data-create-only]').forEach(function(el) { el.style.display = ''; });
+            }
+        }
+        if (form) form.querySelectorAll('[id$="Error"]').forEach(function(el) { el.textContent = ''; });
+        window.showModal(id);
+    };
+
+    window.closeModal = function(id) {
+        window.hideModal(id);
+        if (window.modalStates && window.modalStates[id]) {
+            window.modalStates[id].isEditing = false;
+            window.modalStates[id].currentId = null;
+        }
+    };
+
+    window.submitModalForm = async function(id, onSuccess) {
+        var state = window.modalStates && window.modalStates[id];
+        if (!state || !state.resourceName) return;
+        var form = document.getElementById(id + 'Form');
+        if (!form) return;
+        var url = state.isEditing ? '/' + state.resourceName + '/' + state.currentId : '/' + state.resourceName;
+        var method = state.isEditing ? 'PUT' : 'POST';
+        var data = Object.fromEntries(new FormData(form));
+        try {
+            var resp = await fetch(url, {
+                method: method,
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                body: JSON.stringify(data),
+            });
+            if (!resp.ok) {
+                var err = await resp.json();
+                if (err.errors) Object.keys(err.errors).forEach(function(k) {
+                    var el = document.getElementById(id + k.charAt(0).toUpperCase() + k.slice(1) + 'Error');
+                    if (el) el.textContent = err.errors[k][0];
+                });
+                Swal.fire({ icon: 'error', title: 'Erro', text: err.message || 'Erro ao processar o formulário' });
+                return;
+            }
+            window.closeModal(id);
+            Swal.fire({ icon: 'success', title: 'Sucesso!', text: state.isEditing ? 'Registro atualizado!' : 'Registro criado!', showConfirmButton: false, timer: 1500 })
+                .then(function() { onSuccess ? onSuccess() : window.location.reload(); });
+        } catch(e) { Swal.fire({ icon: 'error', title: 'Erro', text: 'Erro ao processar o formulário' }); }
+    };
+})();
+</script>
 
 </body>
 

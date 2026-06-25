@@ -74,7 +74,7 @@
     </div>
 
     <!-- Modal for Participante Externo -->
-    <x-modal-form
+    <x-modal
         id="participanteExternoModal"
         title="Adicionar Participante Externo"
         :resource="'eventos.participantes'"
@@ -112,6 +112,6 @@
                 class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             >
         </div>
-    </x-modal-form>
+    </x-modal>
 </div>
 @endsection

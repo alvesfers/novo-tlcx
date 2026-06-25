@@ -71,110 +71,110 @@
         </div>
     </div>
 
-    <!-- Modal for Adding Entidades -->
-    <div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.self="closeModal()" style="display: none;">
-        <div class="bg-white rounded-lg shadow-lg max-w-md w-full mx-4" @click.stop>
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900">Adicionar Entidade ao Evento</h3>
+    {{-- Backdrop --}}
+    <div x-show="showModal" x-transition.opacity.duration.200ms
+         class="fixed inset-0 z-[999998] bg-gray-900/50 backdrop-blur-sm"
+         @click="closeModal()" style="display:none;"></div>
+
+    {{-- Modal for Adding Entidades --}}
+    <div x-show="showModal" x-transition
+         class="fixed inset-0 z-[999999] flex items-center justify-center p-4" style="display:none;">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] flex flex-col" @click.stop>
+
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-6 pt-6 pb-4">
+                <h3 class="text-base font-semibold text-gray-800">Adicionar Entidade ao Evento</h3>
+                <button type="button" @click="closeModal()"
+                    class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
             </div>
 
-            <form @submit.prevent="submitForm" class="p-6 space-y-4">
-                <!-- Passo 1: Selecionar tipo de entidade -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-900 mb-2">Tipo de Entidade *</label>
-                    <select
-                        x-model="formData.tipoEntidade"
-                        @change="resetSubSelects()"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">Selecione o tipo...</option>
-                        <option value="diocese">Diocese</option>
-                        <option value="secretaria">Secretaria</option>
-                        <option value="nucleo">Núcleo</option>
-                    </select>
-                </div>
+            {{-- Body --}}
+            <form @submit.prevent="submitForm" class="overflow-y-auto px-6 pb-2 flex-1">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipo de Entidade <span class="text-red-500">*</span></label>
+                        <select x-model="formData.tipoEntidade" @change="resetSubSelects()"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="">Selecione o tipo...</option>
+                            <option value="diocese">Diocese</option>
+                            <option value="secretaria">Secretaria</option>
+                            <option value="nucleo">Núcleo</option>
+                        </select>
+                    </div>
 
-                <!-- Passo 2a: Se for Diocese -->
-                <div x-show="formData.tipoEntidade === 'diocese'">
-                    <label class="block text-sm font-medium text-gray-900 mb-2">Diocese *</label>
-                    <select
-                        x-model="formData.entidade_id"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">Selecione uma diocese...</option>
-                        @foreach ($dioceses as $diocese)
-                            <option value="{{ $diocese->id }}">{{ $diocese->nome }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div x-show="formData.tipoEntidade === 'diocese'">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Diocese <span class="text-red-500">*</span></label>
+                        <select x-model="formData.entidade_id"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="">Selecione uma diocese...</option>
+                            @foreach ($dioceses as $diocese)
+                                <option value="{{ $diocese->id }}">{{ $diocese->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <!-- Passo 2b: Se for Secretaria -->
-                <div x-show="formData.tipoEntidade === 'secretaria'">
-                    <label class="block text-sm font-medium text-gray-900 mb-2">Secretaria *</label>
-                    <select
-                        x-model="formData.entidade_id"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">Selecione uma secretaria...</option>
-                        @foreach ($secretarias as $secretaria)
-                            <option value="{{ $secretaria->id }}">{{ $secretaria->nome }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    <div x-show="formData.tipoEntidade === 'secretaria'">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Secretaria <span class="text-red-500">*</span></label>
+                        <select x-model="formData.entidade_id"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="">Selecione uma secretaria...</option>
+                            @foreach ($secretarias as $secretaria)
+                                <option value="{{ $secretaria->id }}">{{ $secretaria->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                <!-- Passo 2c: Se for Núcleo -->
-                <div x-show="formData.tipoEntidade === 'nucleo'">
-                    <label class="block text-sm font-medium text-gray-900 mb-2">Diocese *</label>
-                    <select
-                        x-model="formData.dioceseId"
-                        @change="carregarNucleos()"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">Selecione uma diocese...</option>
-                        @foreach ($dioceses as $diocese)
-                            <option value="{{ $diocese->id }}">{{ $diocese->nome }}</option>
-                        @endforeach
-                    </select>
+                    <div x-show="formData.tipoEntidade === 'nucleo'" class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Diocese <span class="text-red-500">*</span></label>
+                            <select x-model="formData.dioceseId" @change="carregarNucleos()"
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                <option value="">Selecione uma diocese...</option>
+                                @foreach ($dioceses as $diocese)
+                                    <option value="{{ $diocese->id }}">{{ $diocese->nome }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Núcleo <span class="text-red-500">*</span></label>
+                            <select x-model="formData.entidade_id"
+                                class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                                <option value="">Selecione um núcleo...</option>
+                                <template x-for="nucleo in nucleosFiltrados" :key="nucleo.id">
+                                    <option :value="nucleo.id" x-text="nucleo.nome"></option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
 
-                    <label class="block text-sm font-medium text-gray-900 mb-2 mt-4">Núcleo *</label>
-                    <select
-                        x-model="formData.entidade_id"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">Selecione um núcleo...</option>
-                        <template x-for="nucleo in nucleosFiltrados" :key="nucleo.id">
-                            <option :value="nucleo.id" x-text="nucleo.nome"></option>
-                        </template>
-                    </select>
-                </div>
-
-                <!-- Tipo de Participação -->
-                <div x-show="formData.entidade_id">
-                    <label class="block text-sm font-medium text-gray-900 mb-2">Tipo de Participação *</label>
-                    <select
-                        x-model="formData.tipo_participacao"
-                        required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    >
-                        <option value="">Selecione o tipo...</option>
-                        <option value="organizadora">Organizadora</option>
-                        <option value="participante">Participante</option>
-                        <option value="apoio">Apoio</option>
-                    </select>
-                </div>
-
-                <div class="flex gap-3 justify-end pt-4">
-                    <button type="button" @click="closeModal()" class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
-                        Adicionar
-                    </button>
+                    <div x-show="formData.entidade_id">
+                        <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipo de Participação <span class="text-red-500">*</span></label>
+                        <select x-model="formData.tipo_participacao"
+                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                            <option value="">Selecione o tipo...</option>
+                            <option value="organizadora">Organizadora</option>
+                            <option value="participante">Participante</option>
+                            <option value="apoio">Apoio</option>
+                        </select>
+                    </div>
                 </div>
             </form>
+
+            {{-- Footer --}}
+            <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+                <button type="button" @click="closeModal()"
+                    class="px-4 py-2 text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                    Cancelar
+                </button>
+                <button type="button" @click="submitForm()"
+                    class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg min-w-[90px] transition-colors">
+                    Adicionar
+                </button>
+            </div>
         </div>
     </div>
 </div>

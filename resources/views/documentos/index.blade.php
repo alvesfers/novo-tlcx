@@ -230,10 +230,9 @@
 </div>
 
 <!-- Modal de Criação/Edição -->
-<x-crud-modal
+<x-modal
     id="documentoModal"
     title="Criar Novo Documento"
-    formId="documentoModalForm"
     submitText="Criar"
 >
     <input type="hidden" name="id" id="documentoId" value="">
@@ -303,7 +302,7 @@
     </div>
 
     <input type="hidden" name="entidade_id" value="{{ auth()->user()->entidade_id }}">
-</x-crud-modal>
+</x-modal>
 
 <script>
     // Abre modal para criar documento
@@ -313,7 +312,7 @@
         document.getElementById('documentoModalForm').reset();
         document.getElementById('documentoId').value = '';
         document.getElementById('arquivoField').style.display = 'block';
-        document.getElementById('documentoModal').classList.remove('hidden');
+        showModal('documentoModal');
     }
 
     // Abre modal para editar documento
@@ -324,7 +323,7 @@
         document.getElementById('documentoTitulo').value = titulo;
         document.getElementById('documentoTipo').value = tipo;
         document.getElementById('arquivoField').style.display = 'none';
-        document.getElementById('documentoModal').classList.remove('hidden');
+        showModal('documentoModal');
     }
 
     // Submete o formulário
@@ -361,7 +360,7 @@
                 return;
             }
 
-            document.getElementById('documentoModal').classList.add('hidden');
+            hideModal('documentoModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

@@ -283,7 +283,7 @@
     </div>
 
     <!-- Modal -->
-    <x-modal-form
+    <x-modal
         id="entidadeModal"
         title="Criar Nova Entidade"
         resource="entidades"
@@ -350,7 +350,7 @@
                 <span class="ml-2">Entidade ativa no sistema</span>
             </label>
         </div>
-    </x-modal-form>
+    </x-modal>
 
     <script>
         function entidadesManager() {

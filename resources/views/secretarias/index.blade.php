@@ -304,10 +304,9 @@
     </div>
 
     <!-- Modal de Criação/Edição -->
-    <x-crud-modal
+    <x-modal
         id="secretariaModal"
         title="Criar Nova Secretaria"
-        formId="secretariaModalForm"
         submitText="Criar"
     >
         <div>
@@ -418,7 +417,7 @@
                 </label>
             </div>
         </div>
-    </x-crud-modal>
+    </x-modal>
 
     <!-- Info Modal -->
     <x-info-modal id="infoModal">
@@ -645,7 +644,7 @@
         document.querySelectorAll('#secretariaModal [data-edit-only]').forEach(el => {
             el.style.display = 'none';
         });
-        document.getElementById('secretariaModal').classList.remove('hidden');
+        showModal('secretariaModal');
     }
 
     // Handle edit button via data attributes
@@ -680,7 +679,7 @@
         document.querySelectorAll('#secretariaModal [data-edit-only]').forEach(el => {
             el.style.display = 'block';
         });
-        document.getElementById('secretariaModal').classList.remove('hidden');
+        showModal('secretariaModal');
         loadHabilidades(id);
     }
 
@@ -735,7 +734,7 @@
                 return;
             }
 
-            document.getElementById('secretariaModal').classList.add('hidden');
+            hideModal('secretariaModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

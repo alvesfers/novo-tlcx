@@ -97,10 +97,9 @@
     @endif
 
     <!-- CRUD Modal -->
-    <x-crud-modal
+    <x-modal
         id="formaModal"
         title="Criar Nova Forma de Pagamento"
-        formId="formaForm"
         submitText="Criar"
     >
         <input type="hidden" name="id" id="formaId">
@@ -148,7 +147,7 @@
                 <span class="ml-2 text-sm font-medium">Forma ativa</span>
             </label>
         </div>
-    </x-crud-modal>
+    </x-modal>
 </div>
 
 <form id="deleteForm" method="POST" style="display: none;">
@@ -160,10 +159,10 @@
 function openCreateFormaModal() {
     document.getElementById('formaModalTitle').textContent = 'Criar Nova Forma de Pagamento';
     document.getElementById('formaModalSubmitText').textContent = 'Criar';
-    document.getElementById('formaForm').reset();
+    document.getElementById('formaModalForm').reset();
     document.getElementById('formaId').value = '';
     document.getElementById('formaAtivaField').style.display = 'none';
-    document.getElementById('formaModal').classList.remove('hidden');
+    showModal('formaModal');
 }
 
 function openEditFormaModal(id, nome, tipo, taxaCredito, taxaDebito, taxaPix, ativa) {
@@ -177,10 +176,10 @@ function openEditFormaModal(id, nome, tipo, taxaCredito, taxaDebito, taxaPix, at
     document.getElementById('formaTaxaPix').value = taxaPix;
     document.getElementById('formaAtiva').checked = ativa == 1 || ativa == true;
     document.getElementById('formaAtivaField').style.display = 'block';
-    document.getElementById('formaModal').classList.remove('hidden');
+    showModal('formaModal');
 }
 
-document.getElementById('formaForm').addEventListener('submit', async function(e) {
+document.getElementById('formaModalForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const id = document.getElementById('formaId').value;
@@ -213,7 +212,7 @@ document.getElementById('formaForm').addEventListener('submit', async function(e
             return;
         }
 
-        document.getElementById('formaModal').classList.add('hidden');
+        hideModal('formaModal');
         Swal.fire({
             icon: 'success',
             title: 'Sucesso!',

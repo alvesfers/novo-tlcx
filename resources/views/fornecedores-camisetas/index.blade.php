@@ -87,10 +87,9 @@
     @endif
 
     <!-- CRUD Modal -->
-    <x-crud-modal
+    <x-modal
         id="fornecedorModal"
         title="Criar Novo Fornecedor"
-        formId="fornecedorForm"
         submitText="Criar"
     >
         <input type="hidden" name="id" id="fornecedorId">
@@ -119,7 +118,7 @@
                 <span class="ml-2 text-sm font-medium">Fornecedor ativo</span>
             </label>
         </div>
-    </x-crud-modal>
+    </x-modal>
 </div>
 
 <form id="deleteForm" method="POST" style="display: none;">
@@ -131,10 +130,10 @@
 function openCreateFornecedorModal() {
     document.getElementById('fornecedorModalTitle').textContent = 'Criar Novo Fornecedor';
     document.getElementById('fornecedorModalSubmitText').textContent = 'Criar';
-    document.getElementById('fornecedorForm').reset();
+    document.getElementById('fornecedorModalForm').reset();
     document.getElementById('fornecedorId').value = '';
     document.getElementById('fornecedorAtivoField').style.display = 'none';
-    document.getElementById('fornecedorModal').classList.remove('hidden');
+    showModal('fornecedorModal');
 }
 
 function openEditFornecedorModal(id, nome, contato, email, ativo) {
@@ -146,10 +145,10 @@ function openEditFornecedorModal(id, nome, contato, email, ativo) {
     document.getElementById('fornecedorEmail').value = email;
     document.getElementById('fornecedorAtivo').checked = ativo == 1 || ativo == true;
     document.getElementById('fornecedorAtivoField').style.display = 'block';
-    document.getElementById('fornecedorModal').classList.remove('hidden');
+    showModal('fornecedorModal');
 }
 
-document.getElementById('fornecedorForm').addEventListener('submit', async function(e) {
+document.getElementById('fornecedorModalForm').addEventListener('submit', async function(e) {
     e.preventDefault();
 
     const id = document.getElementById('fornecedorId').value;
@@ -200,7 +199,7 @@ document.getElementById('fornecedorForm').addEventListener('submit', async funct
 
         console.log('✅ SUCESSO! Dados retornados:');
         console.table(responseData);
-        document.getElementById('fornecedorModal').classList.add('hidden');
+        hideModal('fornecedorModal');
         Swal.fire({
             icon: 'success',
             title: 'Sucesso!',

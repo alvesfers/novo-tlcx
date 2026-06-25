@@ -317,10 +317,9 @@
     </div>
 
     <!-- Modal de Criação/Edição -->
-    <x-crud-modal
+    <x-modal
         id="nucleoModal"
         title="Criar Novo Núcleo"
-        formId="nucleoModalForm"
         submitText="Criar"
     >
         <div>
@@ -413,7 +412,7 @@
                 <span class="ml-2">Núcleo ativo no sistema</span>
             </label>
         </div>
-    </x-crud-modal>
+    </x-modal>
 
     <!-- Info Modal -->
     <x-info-modal id="infoModal">
@@ -435,7 +434,7 @@
         document.querySelectorAll('#nucleoModal [data-edit-only]').forEach(el => {
             el.style.display = 'none';
         });
-        document.getElementById('nucleoModal').classList.remove('hidden');
+        showModal('nucleoModal');
     }
 
     // Handle edit button via data attributes
@@ -481,7 +480,7 @@
         document.querySelectorAll('#nucleoModal [data-edit-only]').forEach(el => {
             el.style.display = 'block';
         });
-        document.getElementById('nucleoModal').classList.remove('hidden');
+        showModal('nucleoModal');
     }
 
     // Submete o formulário
@@ -535,7 +534,7 @@
                 return;
             }
 
-            document.getElementById('nucleoModal').classList.add('hidden');
+            hideModal('nucleoModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

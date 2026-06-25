@@ -8,6 +8,7 @@ enum ModulosEvento: string
     case ENTIDADES = 'entidades';
     case PARTICIPANTES_DIRIGENTES = 'participantes_dirigentes';
     case PARTICIPANTES_EXTERNOS = 'participantes_externos';
+    case INSCRICOES = 'inscricoes';
     case TIPOS_CAMISETA = 'tipos_camiseta';
     case PRECOS = 'precos';
     case BARZINHO = 'barzinho';
@@ -23,6 +24,7 @@ enum ModulosEvento: string
             self::ENTIDADES => 'Entidades Envolvidas',
             self::PARTICIPANTES_DIRIGENTES => 'Participantes Dirigentes',
             self::PARTICIPANTES_EXTERNOS => 'Participantes Externos',
+            self::INSCRICOES => 'Inscrições',
             self::TIPOS_CAMISETA => 'Tipos de Camiseta',
             self::PRECOS => 'Tabela de Preços',
             self::BARZINHO => 'Barzinho',
@@ -40,6 +42,7 @@ enum ModulosEvento: string
             self::ENTIDADES => '🏢',
             self::PARTICIPANTES_DIRIGENTES => '👥',
             self::PARTICIPANTES_EXTERNOS => '👤',
+            self::INSCRICOES => '🎫',
             self::TIPOS_CAMISETA => '👕',
             self::PRECOS => '💰',
             self::BARZINHO => '🍷',

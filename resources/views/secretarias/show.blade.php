@@ -284,10 +284,9 @@
 </div>
 
 <!-- Modal para editar secretaria -->
-<x-crud-modal
+<x-modal
     id="secretariaEditModal"
     title="Editar Secretaria"
-    formId="secretariaEditForm"
     submitText="Atualizar"
 >
     <input type="hidden" name="id" id="secretariaId" value="">
@@ -353,7 +352,7 @@
             <span class="ml-2">Secretaria ativa no sistema</span>
         </label>
     </div>
-</x-crud-modal>
+</x-modal>
 
 <script>
     function secretariaShowManager() {
@@ -402,14 +401,14 @@
         document.getElementById('secretariaNucleo').value = nucleoId;
         document.getElementById('secretariaTipo').value = tipo;
         document.getElementById('secretariaAtivo').checked = ativo == 1 || ativo == true;
-        document.getElementById('secretariaEditModal').classList.remove('hidden');
+        showModal('secretariaEditModal');
     }
 
     async function submitSecretariaForm(event) {
         event.preventDefault();
         const id = document.getElementById('secretariaId').value;
         const url = `/secretarias/${id}`;
-        const formData = new FormData(document.getElementById('secretariaEditForm'));
+        const formData = new FormData(document.getElementById('secretariaEditModalForm'));
         const data = Object.fromEntries(formData);
 
         try {
@@ -435,7 +434,7 @@
                 return;
             }
 
-            document.getElementById('secretariaEditModal').classList.add('hidden');
+            hideModal('secretariaEditModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

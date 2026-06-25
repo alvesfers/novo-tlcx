@@ -89,11 +89,70 @@ class EventoParticipanteController extends Controller
     public function marcarPresenca(Evento $evento, EventoParticipante $eventoParticipante)
     {
         $this->authorize('manageParticipantes', $evento);
+        $eventoParticipante->marcarPresenca();
+        return back()->with('success', 'Presença marcada com sucesso');
+    }
 
-        $this->eventoService->marcarPresenca($eventoParticipante);
+    public function desmarcarPresenca(Evento $evento, EventoParticipante $eventoParticipante)
+    {
+        $this->authorize('manageParticipantes', $evento);
+        $eventoParticipante->desmarcarPresenca();
+        return back()->with('success', 'Presença desmarcada');
+    }
 
-        return redirect()->route('eventos.show', $evento)
-            ->with('success', 'Presença marcada com sucesso');
+    public function dirigentesPorEntidade(Evento $evento, Request $request)
+    {
+        $this->authorize('view', $evento);
+
+        $entidade_id = $request->query('entidade_id');
+
+        $jaParticipam = EventoParticipante::where('evento_id', $evento->id)
+            ->where('tipo_participante', 'dirigente')
+            ->pluck('dirigente_id');
+
+        $dirigentes = Dirigente::where('ativo', true)
+            ->whereNotIn('id', $jaParticipam)
+            ->whereHas('vinculos', function ($q) use ($entidade_id) {
+                $q->where('entidade_id', $entidade_id)->where('ativo', true);
+            })
+            ->select('id', 'nome', 'email', 'apelido')
+            ->orderBy('nome')
+            ->get();
+
+        return response()->json($dirigentes);
+    }
+
+    public function storeLote(Evento $evento, Request $request)
+    {
+        $this->authorize('manageParticipantes', $evento);
+
+        $ids = $request->input('dirigente_ids', []);
+        $adicionados = 0;
+
+        foreach ($ids as $dirigente_id) {
+            $jaParticipa = EventoParticipante::where('evento_id', $evento->id)
+                ->where('dirigente_id', $dirigente_id)
+                ->where('tipo_participante', TipoParticipanteEvento::Dirigente->value)
+                ->exists();
+
+            if (!$jaParticipa && Dirigente::where('id', $dirigente_id)->where('ativo', true)->exists()) {
+                EventoParticipante::create([
+                    'evento_id'              => $evento->id,
+                    'tipo_participante'      => TipoParticipanteEvento::Dirigente->value,
+                    'dirigente_id'           => $dirigente_id,
+                    'presenca'               => false,
+                    'inscricao_opcao_id'     => $request->input('inscricao_opcao_id') ?: null,
+                    'inscricao_camiseta_tipo' => $request->input('inscricao_camiseta_tipo') ?: null,
+                ]);
+                $adicionados++;
+            }
+        }
+
+        return response()->json([
+            'success'    => true,
+            'adicionados' => $adicionados,
+            'message'    => "$adicionados participante(s) adicionado(s) com sucesso!",
+        ]);
     }
 
     public function marcarPresencaLote(Evento $evento, Request $request)

@@ -46,10 +46,16 @@ Route::get('/inscricoes/secretarias', [\App\Http\Controllers\InscricoesSecretari
 Route::post('/inscricoes/secretarias/store', [\App\Http\Controllers\InscricoesSecretariasController::class, 'storeSecretaria'])->name('inscricoes.secretarias.store');
 Route::post('/inscricoes/secretarias/habilidade', [\App\Http\Controllers\InscricoesSecretariasController::class, 'storeHabilidade'])->name('inscricoes.secretarias.habilidade.store');
 
-// Formulários públicos para dirigentes
+// Formulários públicos para dirigentes (geral - legado)
 Route::get('/evento/{eventoUuid}/cadastro/dirigentes', [\App\Http\Controllers\Public\FormularioDirigenteController::class, 'show'])->name('evento.formulario.show.dirigente');
 Route::post('/evento/{eventoUuid}/cadastro/dirigentes', [\App\Http\Controllers\Public\FormularioDirigenteController::class, 'enviar'])->name('evento.formulario.enviar.dirigente');
 Route::get('/evento/{eventoUuid}/cadastro/dirigentes/sucesso', [\App\Http\Controllers\Public\FormularioDirigenteController::class, 'sucesso'])->name('evento.formulario.sucesso.dirigente');
+
+// Formulários públicos por tipo de função (interno / externo)
+Route::get('/evento/{eventoUuid}/cadastro/dirigentes/interno', [\App\Http\Controllers\Public\FormularioDirigenteController::class, 'showInterno'])->name('evento.formulario.show.dirigente.interno');
+Route::post('/evento/{eventoUuid}/cadastro/dirigentes/interno', [\App\Http\Controllers\Public\FormularioDirigenteController::class, 'enviarInterno'])->name('evento.formulario.enviar.dirigente.interno');
+Route::get('/evento/{eventoUuid}/cadastro/dirigentes/externo', [\App\Http\Controllers\Public\FormularioDirigenteController::class, 'showExterno'])->name('evento.formulario.show.dirigente.externo');
+Route::post('/evento/{eventoUuid}/cadastro/dirigentes/externo', [\App\Http\Controllers\Public\FormularioDirigenteController::class, 'enviarExterno'])->name('evento.formulario.enviar.dirigente.externo');
 
 // Formulários públicos para participantes externos
 Route::get('/evento/{eventoUuid}/cadastro/externos', [\App\Http\Controllers\Public\FormularioParticipanteController::class, 'show'])->name('evento.formulario.show');
@@ -256,9 +262,12 @@ Route::middleware('auth')->group(function () {
 // evento participantes routes
 Route::post('/eventos/{evento}/participantes/todos/escopo', [EventoController::class, 'adicionarTodosEscopo'])->name('eventos.participantes.todos-escopo');
 Route::get('/eventos/{evento}/participantes/create', [EventoParticipanteController::class, 'create'])->name('eventos.participantes.create');
+Route::get('/eventos/{evento}/participantes/dirigentes-por-entidade', [EventoParticipanteController::class, 'dirigentesPorEntidade'])->name('eventos.participantes.dirigentes-por-entidade');
+Route::post('/eventos/{evento}/participantes/lote', [EventoParticipanteController::class, 'storeLote'])->name('eventos.participantes.store-lote');
 Route::post('/eventos/{evento}/participantes', [EventoParticipanteController::class, 'store'])->name('eventos.participantes.store');
 Route::delete('/eventos/{evento}/participantes/{eventoParticipante}', [EventoParticipanteController::class, 'destroy'])->name('eventos.participantes.destroy');
 Route::post('/eventos/{evento}/participantes/{eventoParticipante}/presenca', [EventoParticipanteController::class, 'marcarPresenca'])->name('eventos.participantes.presenca');
+Route::delete('/eventos/{evento}/participantes/{eventoParticipante}/presenca', [EventoParticipanteController::class, 'desmarcarPresenca'])->name('eventos.participantes.desmarcar-presenca');
 Route::post('/eventos/{evento}/participantes/marcar-presenca-lote', [EventoParticipanteController::class, 'marcarPresencaLote'])->name('eventos.participantes.marcar-presenca-lote');
 Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteController::class, 'removerLote'])->name('eventos.participantes.remover-lote');
 
@@ -324,6 +333,16 @@ Route::post('/eventos/{evento}/participantes/remover-lote', [EventoParticipanteC
     // eventos - tipos de camiseta e valores
     Route::resource('eventos.tipos-camiseta', \App\Http\Controllers\EventoTipoCamisetaController::class)->shallow();
     Route::resource('eventos.valores', \App\Http\Controllers\EventoValorController::class)->shallow();
+
+    // eventos - inscrições
+    Route::get('/eventos/{evento}/inscricoes', [\App\Http\Controllers\EventoInscricaoController::class, 'index'])->name('eventos.inscricoes.index');
+    Route::get('/eventos/{evento}/inscricoes/opcoes', [\App\Http\Controllers\EventoInscricaoController::class, 'apiOpcoesPorPublico'])->name('eventos.inscricoes.opcoes');
+    Route::post('/eventos/{evento}/inscricoes/tipos', [\App\Http\Controllers\EventoInscricaoController::class, 'storeTipo'])->name('eventos.inscricoes.tipos.store');
+    Route::put('/eventos/{evento}/inscricoes/tipos/{tipo}', [\App\Http\Controllers\EventoInscricaoController::class, 'updateTipo'])->name('eventos.inscricoes.tipos.update');
+    Route::delete('/eventos/{evento}/inscricoes/tipos/{tipo}', [\App\Http\Controllers\EventoInscricaoController::class, 'destroyTipo'])->name('eventos.inscricoes.tipos.destroy');
+    Route::post('/eventos/{evento}/inscricoes/tipos/{tipo}/opcoes', [\App\Http\Controllers\EventoInscricaoController::class, 'storeOpcao'])->name('eventos.inscricoes.opcoes.store');
+    Route::put('/eventos/{evento}/inscricoes/tipos/{tipo}/opcoes/{opcao}', [\App\Http\Controllers\EventoInscricaoController::class, 'updateOpcao'])->name('eventos.inscricoes.opcoes.update');
+    Route::delete('/eventos/{evento}/inscricoes/tipos/{tipo}/opcoes/{opcao}', [\App\Http\Controllers\EventoInscricaoController::class, 'destroyOpcao'])->name('eventos.inscricoes.opcoes.destroy');
 
     // barzinhos - índice e recursos aninhados
     Route::resource('barzinhos', BarzinhoController::class);

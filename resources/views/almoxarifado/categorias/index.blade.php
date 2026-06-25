@@ -191,10 +191,9 @@
     </div>
 </div>
 
-<x-crud-modal
+<x-modal
     id="categoriaModal"
     title="Nova Categoria"
-    formId="categoriaModalForm"
     submitText="Criar"
 >
     <div>
@@ -229,7 +228,7 @@
     </div>
 
     <input type="hidden" name="entidade_id" value="{{ auth()->user()->entidade_id }}">
-</x-crud-modal>
+</x-modal>
 
 <script>
     let categoriaEditId = null;
@@ -240,7 +239,7 @@
         document.getElementById('categoriaSubmitBtn').textContent = 'Criar';
         document.getElementById('categoriaModalForm').reset();
         document.getElementById('ativoField').style.display = 'none';
-        document.getElementById('categoriaModal').classList.remove('hidden');
+        showModal('categoriaModal');
     }
 
     function openEditCategoriaModal(id, nome, descricao, ativo) {
@@ -258,7 +257,7 @@
         if (descricaoEl) descricaoEl.value = descricao;
         if (ativoEl) ativoEl.checked = ativo == 1 || ativo == true;
         if (ativoField) ativoField.style.display = 'block';
-        document.getElementById('categoriaModal').classList.remove('hidden');
+        showModal('categoriaModal');
     }
 
     async function submitCategoriaForm(event) {
@@ -294,7 +293,7 @@
                 return;
             }
 
-            document.getElementById('categoriaModal').classList.add('hidden');
+            hideModal('categoriaModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

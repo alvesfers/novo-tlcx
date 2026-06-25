@@ -311,7 +311,7 @@
     </div>
 
     <!-- Modal -->
-    <x-modal-form
+    <x-modal
         id="eventoModal"
         title="Criar Novo Evento"
         resource="eventos"
@@ -452,7 +452,7 @@
                 <span class="ml-2">Evento ativo no sistema</span>
             </label>
         </div>
-    </x-modal-form>
+    </x-modal>
 
     <script>
         function eventosManager() {

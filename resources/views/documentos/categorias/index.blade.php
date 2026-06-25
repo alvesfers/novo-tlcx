@@ -209,10 +209,9 @@
 </div>
 
 <!-- Modal de Criação/Edição -->
-<x-crud-modal
+<x-modal
     id="categoriaModal"
     title="Criar Nova Categoria"
-    formId="categoriaModalForm"
     submitText="Criar"
 >
     <input type="hidden" name="id" id="categoriaId" value="">
@@ -249,7 +248,7 @@
     </div>
 
     <input type="hidden" name="entidade_id" value="{{ auth()->user()->entidade_id }}">
-</x-crud-modal>
+</x-modal>
 
 <script>
     // Abre modal para criar categoria
@@ -259,7 +258,7 @@
         document.getElementById('categoriaModalForm').reset();
         document.getElementById('categoriaId').value = '';
         document.getElementById('ativoField').style.display = 'none';
-        document.getElementById('categoriaModal').classList.remove('hidden');
+        showModal('categoriaModal');
     }
 
     // Abre modal para editar categoria
@@ -271,7 +270,7 @@
         document.getElementById('categoriaDescricao').value = descricao;
         document.getElementById('categoriaAtivo').checked = ativo == 1 || ativo == true;
         document.getElementById('ativoField').style.display = 'block';
-        document.getElementById('categoriaModal').classList.remove('hidden');
+        showModal('categoriaModal');
     }
 
     // Submete o formulário
@@ -308,7 +307,7 @@
                 return;
             }
 
-            document.getElementById('categoriaModal').classList.add('hidden');
+            hideModal('categoriaModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

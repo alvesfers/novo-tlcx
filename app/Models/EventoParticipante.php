@@ -16,6 +16,8 @@ class EventoParticipante extends Model
         'presenca',
         'checkin_em',
         'observacao',
+        'inscricao_opcao_id',
+        'inscricao_camiseta_tipo',
     ];
 
     protected $casts = [
@@ -46,6 +48,11 @@ class EventoParticipante extends Model
         return $this->belongsTo(FuncaoDirigente::class);
     }
 
+    public function inscricaoOpcao()
+    {
+        return $this->belongsTo(EventoInscricaoOpcao::class, 'inscricao_opcao_id');
+    }
+
     public function isDirigente(): bool
     {
         return $this->tipo_participante === TipoParticipanteEvento::Dirigente;
@@ -62,5 +69,18 @@ class EventoParticipante extends Model
         $this->checkin_em = now();
         $this->save();
         return $this;
+    }
+
+    public function desmarcarPresenca()
+    {
+        $this->presenca = false;
+        $this->checkin_em = null;
+        $this->save();
+        return $this;
+    }
+
+    public function camisetaMedidas()
+    {
+        return $this->hasMany(EventoParticipanteCamisetaMedida::class, 'evento_participante_id');
     }
 }

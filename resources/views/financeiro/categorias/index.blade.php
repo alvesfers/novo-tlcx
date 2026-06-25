@@ -269,7 +269,7 @@
     </div>
 
     <!-- Modal -->
-    <x-modal-form
+    <x-modal
         id="categoriaModal"
         title="Criar Nova Categoria"
         resource="financeiro-categorias"
@@ -310,7 +310,7 @@
                 <span class="ml-2">Categoria ativa</span>
             </label>
         </div>
-    </x-modal-form>
+    </x-modal>
 
     <script>
         function categoriasManager() {

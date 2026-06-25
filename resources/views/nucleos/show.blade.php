@@ -221,10 +221,9 @@
 </div>
 
 <!-- Modal para editar núcleo -->
-<x-crud-modal
+<x-modal
     id="nucleoEditModal"
     title="Editar Núcleo"
-    formId="nucleoEditForm"
     submitText="Atualizar"
 >
     <input type="hidden" name="id" id="nucleoId" value="">
@@ -275,7 +274,7 @@
             <span class="ml-2">Núcleo ativo no sistema</span>
         </label>
     </div>
-</x-crud-modal>
+</x-modal>
 
 <script>
     function nucleoShowManager() {
@@ -306,14 +305,14 @@
         document.getElementById('nucleoEmail').value = email;
         document.getElementById('nucleoDiocese').value = dioceseId;
         document.getElementById('nucleoAtivo').checked = ativo == 1 || ativo == true;
-        document.getElementById('nucleoEditModal').classList.remove('hidden');
+        showModal('nucleoEditModal');
     }
 
     async function submitNucleoForm(event) {
         event.preventDefault();
         const id = document.getElementById('nucleoId').value;
         const url = `/nucleos/${id}`;
-        const formData = new FormData(document.getElementById('nucleoEditForm'));
+        const formData = new FormData(document.getElementById('nucleoEditModalForm'));
         const data = Object.fromEntries(formData);
 
         try {
@@ -339,7 +338,7 @@
                 return;
             }
 
-            document.getElementById('nucleoEditModal').classList.add('hidden');
+            hideModal('nucleoEditModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',

@@ -3,30 +3,47 @@
     'title' => 'Informações',
 ])
 
-<div id="{{ $id }}" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999999] overflow-y-auto">
-    <div class="bg-white rounded-lg shadow-lg max-w-2xl w-full mx-4 dark:bg-gray-800 my-8">
-        <!-- Header -->
-        <div class="flex justify-between items-start p-6 border-b dark:border-gray-700">
-            <h2 class="text-xl font-bold dark:text-white" id="{{ $id }}Title">{{ $title }}</h2>
-            <button onclick="document.getElementById('{{ $id }}').classList.add('hidden')" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                </svg>
-            </button>
-        </div>
+@php $idLower = strtolower($id); @endphp
 
-        <!-- Body com Scroll (sem form) -->
-        <div class="max-h-[70vh] overflow-y-auto p-6 dark:text-gray-300">
-            <div id="{{ $id }}Content">
+<div x-data="{ open: false }"
+     @open-modal-{{ $idLower }}.window="open = true"
+     @close-modal-{{ $idLower }}.window="open = false"
+     @keydown.escape.window="if(open){ open = false; document.body.style.overflow = ''; }"
+     x-cloak>
+
+    {{-- Backdrop --}}
+    <div x-show="open" x-transition.opacity.duration.200ms
+         class="fixed inset-0 z-[999998] bg-gray-900/50 backdrop-blur-sm"
+         @click="open = false; document.body.style.overflow = '';"></div>
+
+    {{-- Modal --}}
+    <div x-show="open" x-transition
+         class="fixed inset-0 z-[999999] flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col" @click.stop>
+
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-6 pt-6 pb-4">
+                <h2 class="text-base font-semibold text-gray-800" id="{{ $id }}Title">{{ $title }}</h2>
+                <button type="button" onclick="hideModal('{{ $id }}')"
+                    class="text-gray-400 hover:text-gray-600 p-1 rounded-lg hover:bg-gray-100 transition-colors">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Body --}}
+            <div class="overflow-y-auto px-6 pb-4 flex-1" id="{{ $id }}Content">
                 {{ $slot }}
             </div>
-        </div>
 
-        <!-- Footer (apenas Fechar) -->
-        <div class="flex justify-end p-6 border-t dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-            <button type="button" onclick="document.getElementById('{{ $id }}').classList.add('hidden')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800">
-                Fechar
-            </button>
+            {{-- Footer --}}
+            <div class="flex justify-end px-6 py-4 border-t border-gray-100">
+                <button type="button" onclick="hideModal('{{ $id }}')"
+                    class="px-4 py-2 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors">
+                    Fechar
+                </button>
+            </div>
         </div>
     </div>
 </div>

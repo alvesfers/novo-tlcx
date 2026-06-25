@@ -270,10 +270,9 @@
 </div>
 
 <!-- Modal de Criação/Edição -->
-<x-crud-modal
+<x-modal
     id="tarefaModal"
     title="Criar Nova Tarefa"
-    formId="tarefaModalForm"
     submitText="Criar"
 >
     <input type="hidden" name="id" id="tarefaId" value="">
@@ -357,7 +356,7 @@
     </div>
 
     <input type="hidden" name="entidade_id" value="{{ auth()->user()->entidade_id }}">
-</x-crud-modal>
+</x-modal>
 
 <script>
     // Abre modal para criar tarefa
@@ -366,7 +365,7 @@
         document.getElementById('tarefaSubmitBtn').textContent = 'Criar';
         document.getElementById('tarefaModalForm').reset();
         document.getElementById('tarefaId').value = '';
-        document.getElementById('tarefaModal').classList.remove('hidden');
+        showModal('tarefaModal');
     }
 
     // Abre modal para editar tarefa
@@ -377,7 +376,7 @@
         document.getElementById('tarefaTitulo').value = titulo;
         document.getElementById('tarefaStatus').value = status;
         document.getElementById('tarefaPrioridade').value = prioridade;
-        document.getElementById('tarefaModal').classList.remove('hidden');
+        showModal('tarefaModal');
     }
 
     // Submete o formulário
@@ -414,7 +413,7 @@
                 return;
             }
 
-            document.getElementById('tarefaModal').classList.add('hidden');
+            hideModal('tarefaModal');
             Swal.fire({
                 icon: 'success',
                 title: 'Sucesso!',
